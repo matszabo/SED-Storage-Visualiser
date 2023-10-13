@@ -1,0 +1,17 @@
+table, td{
+    border: 1px solid;
+    border-collapse: collapse; 
+}
+
+
+.darkCol{
+    background-color: darkgrey;
+}
+
+.fsetRow{
+    border: 3px solid;
+}
+
+.redBg{
+    background-color: red;
+}
