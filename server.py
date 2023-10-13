@@ -1,10 +1,7 @@
 """ TODO 
     - licence for Bottle?
-    - Add checks of filepath? does static_file protect from this?
-    - add integrity checks of JSON
     - add checks of signing
     - add logging?
-    - overall error handling
 """
 
 from bottle import run, static_file, get, post, request, response
@@ -34,7 +31,7 @@ def saveJSON(clientJSON):
 # Default routing of files
 @get('/')
 def defaultRoute():
-    return static_file(filename="index.html", root='/home/iqeq100/Documents/MUNI/5. semestr/DP/code/opal-logger')
+    return static_file(filename="index.html", root=absRootPath)
 
 @get('/<filepath:path>')
 def returnFile(filepath):
@@ -56,8 +53,11 @@ def receiveUpdate():
     if(isDrivePresent(clientJSON["Identify"]["Serial number"])):
         response.status = 202
     else:
-        saveJSON(clientJSON)
-        response.status = 201
+        try:
+            saveJSON(clientJSON)
+        except:
+            print("Failed to save given JSON")
+            response.status = 400
     return response
         
 run(host='localhost', port=8000, debug=True)
