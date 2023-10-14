@@ -2,8 +2,7 @@
 
 /**
     TODO List:
-    - Check if feature sets are missing
-    - add filtering
+    - remember checked boxes (probably using LocalStorage or smth)
     - add some basic heuristic (opal compliance)
     - add styling
 */
@@ -76,12 +75,16 @@ var devices = []
 
 function populateDevList(){
     let devList = document.getElementById("devList");
+    // Using loop with index here intentionally to use index in aliases
     for(let i = 0; i < devices.length; i++){
-        devList.innerHTML += `d${i} : ${devices[i]["Identify"]["Model number"]}<br>`;
+        devList.innerHTML += `<input class="devCBox" id="d${i}" type="checkbox" checked="true"></input>d${i} : ${devices[i]["Identify"]["Model number"]}<br>`;
         devices[i]["alias"] = `d${i}`;
     }
+    let fSetList = document.getElementById("fSetList");
+    Object.entries(discovery0Features).forEach(([fsetName, values]) => {
+        fSetList.innerHTML += `<input class="fSetCBox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+    });
 }
-
 
 
 // Populating body of the Feature sets table
@@ -90,29 +93,68 @@ function populateTbody(){
     // Print feature set name
     Object.entries(discovery0Features).forEach(([fsetName, values]) => {
         let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
-        item += `<tr class="fsetRow" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
+        item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
         // Print device names afterwards
         devices.forEach((device) => {
-            item += `<td>${device["alias"]}</td>`;
+            item += `<td class="${device["alias"]}">${device["alias"]}</td>`;
         });
         tableBody.innerHTML += `${item}</tr>`;
         // Prepare rows for values from Feature sets
         values.forEach((value) => {
             item = "";
             // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
-            item += `<tr id="${fsetName}${value}"><td>${value}</td>`;
+            item += `<tr class="${fsetName}" id="${fsetName}${value}"><td>${value}</td>`;
             // Fill features rows with values corresponding to each device
             devices.forEach((device) => {
                 try {
-                    item += `<td>${device["Discovery 0"][fsetName][value]}</td>`;
+                    item += `<td class="${device["alias"]}">${device["Discovery 0"][fsetName][value]}</td>`;
                 } catch (error) {
-                    item += `<td class="redBg">N/A</td>`;
+                    item += `<td class="redBg ${device["alias"]}">N/A</td>`;
                 }
             });
             tableBody.innerHTML += `${item}</tr>`;
         });
             
     });
+}
+
+function renderCBoxes(){
+    // Filtration based on drives
+    let devCBoxes = document.getElementsByClassName("devCBox");
+    for(let i = 0; i < devCBoxes.length; i++){
+        let checkbox = devCBoxes.item(i);
+        checkbox.onclick = () => {
+            let devCells = document.getElementsByClassName(checkbox.id);
+            for(let j = 0; j < devCells.length; j++){
+                let cell = devCells.item(j);
+                
+                if(!checkbox.checked){
+                    cell.style.display = 'none';
+                }
+                else{
+                    cell.style.display = "";
+                }
+            }
+        }
+    }
+    // Filtration based on Feature Sets
+    let fSetBoxes = document.getElementsByClassName("fSetCBox");
+    for(let i = 0; i < fSetBoxes.length; i++){
+        let checkbox = fSetBoxes.item(i);
+        checkbox.onclick = () => {
+            let fSetRow = document.getElementsByClassName(checkbox.id);
+            for(let j = 0; j < fSetRow.length; j++){
+                let row = fSetRow.item(j);
+                
+                if(!checkbox.checked){
+                    row.style.display = 'none';
+                }
+                else{
+                    row.style.display = "";
+                }
+            }
+        }
+    }
 }
 
 async function fetchDevices(){
@@ -137,6 +179,6 @@ async function fetchDevices(){
     devices = await Promise.all(tmpRes);
     populateDevList();
     populateTbody();
-    
+    renderCBoxes();
 }
 window.onload = fetchDevices();
