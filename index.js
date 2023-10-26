@@ -1,4 +1,4 @@
-//nvme0n1-discovery_all.json
+// SPDX-License-Identifier: MIT
 
 /**
     TODO List:

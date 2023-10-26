@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+
 """ TODO 
     - licence for Bottle?
     - add checks of signing

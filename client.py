@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+
 """ TODO
     - trim serial numbers etc.?
     - add actual use of discovery tool
