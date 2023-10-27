@@ -12,13 +12,13 @@ import json
 
 absRootPath = os.path.dirname(os.path.abspath(__file__))
 
-def isDrivePresent(serialNumber : str):
+def isDrivePresent(serialNumber : str, firmwareVersion : str):
     filesSaved = os.listdir("./outputs")
     for fileName in filesSaved:
         try:
             with open("./outputs/" + fileName, "r") as fd:
                 data = json.load(fd)
-                if(serialNumber == data["Identify"]["Serial number"]):
+                if(serialNumber == data["Identify"]["Serial number"] and firmwareVersion == data["Identify"]["Firmware version"]):
                     return True
         except:
             print("Error while reading file " + fileName + ", skipping")
@@ -52,7 +52,7 @@ def fetchFilenames():
 @post('/')
 def receiveUpdate():
     clientJSON = request.json
-    if(isDrivePresent(clientJSON["Identify"]["Serial number"])):
+    if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
         response.status = 202
     else:
         try:
