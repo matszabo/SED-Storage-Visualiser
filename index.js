@@ -5,6 +5,7 @@
     - remember checked boxes (probably using LocalStorage or smth)
     - add some basic heuristic (opal compliance)
     - add styling
+    - change Single user mode from mandatory do additional and add PSID as mandatory
 */
 
 var devFiles = [];
@@ -72,6 +73,54 @@ var discovery0Features = {
 }; 
 
 var devices = []
+
+function findUID(JSONnode, UID){
+    return JSON.stringify(JSONnode).match(UID)
+}
+
+/* Function fills the minor version row in SSC V2 Feature set based on other present sets
+ * Currently checks for presence of Block SID (02 mandatory addition) and of Interface
+ * control template (00) by checking for its UID 0x0000020400000007 have to add PSID check for 01
+ * by checking UID 000000090001ff01
+ * TODO add collision explanation and further info into .html legend
+ */
+function setMinorVersions(){
+    for(let i = 0; i < devices.length; i++){
+        let cluesDetected = []
+        if(devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
+            if(devices[i]["Discovery 0"]["Block SID Authentication Feature"]){
+                cluesDetected.push(2)
+            }
+            if(findUID(devices[i]["Discovery 2"], "0x000000090001ff01")){
+                cluesDetected.push(1)
+            }
+            if(findUID(devices[i]["Discovery 2"], "0x0000020400000007")){
+                cluesDetected.push(0)
+            }
+            console.log(cluesDetected)
+            // Normal Opal 2.02
+            if(2 in cluesDetected & 1 in cluesDetected & cluesDetected.length == 2 
+                & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 2){
+                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (2)";
+            }
+            // Normal Opal 2.01
+            else if(cluesDetected.length == 1 & 1 in cluesDetected
+                    & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 1){
+                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (1)";
+            }
+            // Normal Opal 2.00
+            else if(cluesDetected.length == 1 & 0 in cluesDetected
+                    & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 0){
+                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (0)";
+            }
+            // Conflicts were found, print maximum found version and indicate discrepancy
+            // TODO add these conflicting clues to details page of each drive
+            else{
+                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
+            }
+        }
+    }
+}
 
 function populateDevList(){
     let devList = document.getElementById("devList");
@@ -178,6 +227,7 @@ async function fetchDevices(){
     // Wait for all responses to be converted to JSON
     devices = await Promise.all(tmpRes);
     populateDevList();
+    setMinorVersions();
     populateTbody();
     renderCBoxes();
 }

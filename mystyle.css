@@ -17,3 +17,15 @@ table, td{
 .redBg{
     background-color: red;
 }
+
+.square{
+    float: left;
+    height: 15px;
+    width: 15px;
+    border: 1px solid black;
+}
+
+p{
+    max-width: 60%;
+    min-width: 50%;
+}
