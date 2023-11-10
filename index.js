@@ -74,6 +74,15 @@ var discovery0Features = {
 
 var devices = []
 
+/* Function stores all drives into localStorage to make it available for details page
+ * This is a temporary function, as the entire logic should in future be replaced by IndexedDB
+ */
+function saveDevices(){
+    for(let i = 0; i < devices.length; i++){
+        localStorage.setItem(`d${i}`, JSON.stringify(devices[i]));
+    }
+}
+
 function findUID(JSONnode, UID){
     return JSON.stringify(JSONnode).match(UID)
 }
@@ -97,7 +106,6 @@ function setMinorVersions(){
             if(findUID(devices[i]["Discovery 2"], "0x0000020400000007")){
                 cluesDetected.push(0)
             }
-            console.log(cluesDetected)
             // Normal Opal 2.02
             if(2 in cluesDetected & 1 in cluesDetected & cluesDetected.length == 2 
                 & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 2){
@@ -228,6 +236,7 @@ async function fetchDevices(){
     devices = await Promise.all(tmpRes);
     populateDevList();
     setMinorVersions();
+    saveDevices();
     populateTbody();
     renderCBoxes();
 }
