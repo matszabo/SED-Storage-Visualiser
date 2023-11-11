@@ -29,3 +29,16 @@ p{
     max-width: 60%;
     min-width: 50%;
 }
+
+a:visited{
+    text-decoration: none;
+    color: black;
+}
+
+a:link{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    text-decoration: underline;
+}

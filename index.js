@@ -134,7 +134,7 @@ function populateDevList(){
     let devList = document.getElementById("devList");
     // Using loop with index here intentionally to use index in aliases
     for(let i = 0; i < devices.length; i++){
-        devList.innerHTML += `<input class="devCBox" id="d${i}" type="checkbox" checked="true"></input>d${i} : ${devices[i]["Identify"]["Model number"]}, Firmware version: ${devices[i]["Identify"]["Firmware version"]}<br>`;
+        devList.innerHTML += `<input class="devCBox" id="d${i}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=d${i}">d${i} : ${devices[i]["Identify"]["Model number"]}, Firmware version: ${devices[i]["Identify"]["Firmware version"]}</a><br>`;
         devices[i]["alias"] = `d${i}`;
     }
     let fSetList = document.getElementById("fSetList");
