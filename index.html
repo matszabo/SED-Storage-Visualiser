@@ -16,7 +16,11 @@
         
     </div>
     <h2>Shown feature sets</h2>
-    <div id="fSetList">
+    <h3>Mandatory</h3>
+    <div id="fSetManList"></div>
+
+    <h3>Optional</h3>
+    <div id="fSetOptList"></div>
 
     <h2>Legend</h2>
     <p>() - this means that internal heuristics determined the number reported by the device to be incorrect
@@ -27,8 +31,16 @@
 
     </div>
     <h2>Detected feature sets and their values</h2>
-    <table id="tab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
-        <tbody id = "features">
+    <h3>Mandatory</h3>
+    <table id="manTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
+        <tbody id = "manFeatures">
+        </tbody>
+    </table>
+
+    <h3>Optional</h3>
+
+    <table id="optTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
+        <tbody id = "optFeatures">
         </tbody>
     </table>
     </body>

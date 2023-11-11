@@ -10,7 +10,7 @@
 
 var devFiles = [];
 
-var discovery0Features = {
+var dis0ManFsets = {
     "TPer Feature" : [
         "Version",
         "ComID Mgmt Supported",
@@ -31,13 +31,6 @@ var discovery0Features = {
         "Locking Enabled",
         "Locking Supported"
     ], 
-    "Geometry Feature": [
-        "Version",
-        "ALIGN",
-        "LogicalBlockSize",
-        "AlignmentGranularity",
-        "LowestAlignedLBA"
-    ], 
     "Opal SSC V2.00 Feature": [
         "Feature Descriptor Version Number",
         "SSC Minor Version Number",
@@ -48,13 +41,6 @@ var discovery0Features = {
         "Number of Locking SP User Authorities Supported",
         "Initial C_PIN_SID PIN Indicator",
         "Behavior of C_PIN_SID PIN upon TPer Revert"
-    ], 
-    "Single User Mode Feature": [
-        "Version",
-        "Number of Locking Objects Supported",
-        "Policy",
-        "All",
-        "Any"
     ], 
     "DataStore Table Feature": [
         "Version",
@@ -71,6 +57,23 @@ var discovery0Features = {
         "Hardware Reset"
     ]
 }; 
+
+var dis0optFsets = {
+    "Geometry Feature": [
+        "Version",
+        "ALIGN",
+        "LogicalBlockSize",
+        "AlignmentGranularity",
+        "LowestAlignedLBA"
+    ], 
+    "Single User Mode Feature": [
+        "Version",
+        "Number of Locking Objects Supported",
+        "Policy",
+        "All",
+        "Any"
+    ], 
+};
 
 var devices = []
 
@@ -137,18 +140,22 @@ function populateDevList(){
         devList.innerHTML += `<input class="devCBox" id="d${i}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=d${i}">d${i} : ${devices[i]["Identify"]["Model number"]}, Firmware version: ${devices[i]["Identify"]["Firmware version"]}</a><br>`;
         devices[i]["alias"] = `d${i}`;
     }
-    let fSetList = document.getElementById("fSetList");
-    Object.entries(discovery0Features).forEach(([fsetName, values]) => {
+    let fSetList = document.getElementById("fSetManList");
+    Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
+        fSetList.innerHTML += `<input class="fSetCBox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+    });
+    fSetList = document.getElementById("fSetOptList");
+    Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
         fSetList.innerHTML += `<input class="fSetCBox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
     });
 }
 
 
 // Populating body of the Feature sets table
-function populateTbody(){
-    let tableBody = document.getElementById("features");
+function populateTbody(tableName, featureSet){
+    let tableBody = document.getElementById(tableName);
     // Print feature set name
-    Object.entries(discovery0Features).forEach(([fsetName, values]) => {
+    Object.entries(featureSet).forEach(([fsetName, values]) => {
         let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
         item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
         // Print device names afterwards
@@ -237,7 +244,8 @@ async function fetchDevices(){
     populateDevList();
     setMinorVersions();
     saveDevices();
-    populateTbody();
+    populateTbody("manFeatures", dis0ManFsets);
+    populateTbody("optFeatures", dis0optFsets);
     renderCBoxes();
 }
 window.onload = fetchDevices();
