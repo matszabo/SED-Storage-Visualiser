@@ -55,6 +55,12 @@ var dis0ManFsets = {
         "SID Authentication Blocked State",
         "SID Value State",
         "Hardware Reset"
+    ],
+    "Supported Data Removal Mechanism Feature Descriptor": [
+        "Version",
+        "Supported Data Removal Mechanism",
+        "Data Removal Time Format for Bit 2",
+        "Data Removal Time for Supported Data Removal Mechanism Bit 2"
     ]
 }; 
 
@@ -130,6 +136,40 @@ function setMinorVersions(){
                 devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
             }
         }
+    }
+}
+
+function checkDataRemovalMech(){
+    // Append the check after the html with version
+    let mechanismsSupported = [];
+    for(drive in devices){
+        mechanismsSupported = [];
+        if(("Supported Data Removal Mechanism Feature Descriptor" in devices[drive]["Discovery 0"])){
+            let dis0value = parseInt(devices[drive]["Discovery 0"]["Supported Data Removal Mechanism Feature Descriptor"]["Supported Data Removal Mechanism"]);
+            // Check supported mechanisms
+            if(dis0value & 1){
+                mechanismsSupported.push("0 (Overwrite Data Erase)");
+            }
+
+            if(dis0value & 2){
+                mechanismsSupported.push("1 (Block Erase)");
+            }
+
+            if(dis0value & 4){ // Mandatory
+                mechanismsSupported.push("2 (Crypto Erase)");
+            }
+            // Just mark the cell as red because this is mandatory value
+            else{
+                let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .${devices[drive]["alias"]}`);
+                cell.classList.add("redBg");
+            }
+
+            if(dis0value & 32){
+                mechanismsSupported.push("5 (Vendor-specific Erase)");
+            }
+        }
+        // Store this for easier access in details page
+        devices[drive]["dataRemMechs"] = mechanismsSupported;
     }
 }
 
@@ -243,9 +283,10 @@ async function fetchDevices(){
     devices = await Promise.all(tmpRes);
     populateDevList();
     setMinorVersions();
-    saveDevices();
     populateTbody("manFeatures", dis0ManFsets);
     populateTbody("optFeatures", dis0optFsets);
+    checkDataRemovalMech();
     renderCBoxes();
+    saveDevices();
 }
 window.onload = fetchDevices();
