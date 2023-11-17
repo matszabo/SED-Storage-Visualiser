@@ -10,6 +10,7 @@
 
 var devFiles = [];
 
+// Note: PSID is not in Discovery 0, but added here to make it easier to render
 var dis0ManFsets = {
     "TPer Feature" : [
         "Version",
@@ -61,6 +62,9 @@ var dis0ManFsets = {
         "Supported Data Removal Mechanism",
         "Data Removal Time Format for Bit 2",
         "Data Removal Time for Supported Data Removal Mechanism Bit 2"
+    ],
+    "PSID feature" :[
+
     ]
 }; 
 
@@ -94,6 +98,22 @@ function saveDevices(){
 
 function findUID(JSONnode, UID){
     return JSON.stringify(JSONnode).match(UID)
+}
+
+
+function checkPSIDpresence(){
+    let PSIDhtml = document.querySelector(`[class="fsetRow PSID feature"]`);
+    let addedHTML = "";
+    addedHTML += `<tr class="PSID feature" id="PSID featurePresent"><td>PSID Authority present</td>`;
+    for(drive in devices){
+        if(findUID(devices[drive]["Discovery 2"], "0x000000090001ff01")){
+            addedHTML += `<td class="${devices[drive]["alias"]}">Yes</td>`;
+        }
+        else{
+            addedHTML += `<td class="${devices[drive]["alias"]} redBg">No</td>`;
+        }
+    }
+    PSIDhtml.insertAdjacentHTML("afterend", addedHTML);
 }
 
 /* Function fills the minor version row in SSC V2 Feature set based on other present sets
@@ -286,6 +306,7 @@ async function fetchDevices(){
     populateTbody("manFeatures", dis0ManFsets);
     populateTbody("optFeatures", dis0optFsets);
     checkDataRemovalMech();
+    checkPSIDpresence();
     renderCBoxes();
     saveDevices();
 }
