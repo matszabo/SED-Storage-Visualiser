@@ -3,54 +3,58 @@
 /**
     TODO List:
     - remember checked boxes (probably using LocalStorage or smth)
-    - add some basic heuristic (opal compliance)
     - add styling
-    - change Single user mode from mandatory do additional and add PSID as mandatory
 */
 
 var devFiles = [];
+
+// For easier check of required values when filling TBody
+var operators = {
+    '=' : function(a, b) {return a == b},
+    '>=' : function(a, b) {return a >= b}
+};
 
 // Note: PSID is not in Discovery 0, but added here to make it easier to render
 var dis0ManFsets = {
     "TPer Feature" : [
         "Version",
         "ComID Mgmt Supported",
-        "Streaming Supported",
+        {"Streaming Supported" : "= 1"},
         "Buffer Mgmt Supported",
         "ACK/NAK Supported",
         "Async Supported",
-        "Sync Supported"
+        {"Sync Supported" : "= 1"}
     ], 
     "Locking Feature": [
         "Version",
         "HW Reset for LOR/DOR Supported",
-        "MBR Shadowing Not Supported",
+        {"MBR Shadowing Not Supported" : "= 0"},
         "MBR Done",
         "MBR Enabled",
-        "Media Encryption",
+        {"Media Encryption" : "= 1"},
         "Locked",
         "Locking Enabled",
-        "Locking Supported"
+        {"Locking Supported" : "= 1"}
     ], 
     "Opal SSC V2.00 Feature": [
         "Feature Descriptor Version Number",
         "SSC Minor Version Number",
         "Base ComID",
-        "Number of ComIDs",
+        {"Number of ComIDs" : ">= 1"},
         "Range Crossing Behavior",
-        "Number of Locking SP Admin Authorities Supported",
-        "Number of Locking SP User Authorities Supported",
+        {"Number of Locking SP Admin Authorities Supported" : ">= 4"},
+       {"Number of Locking SP User Authorities Supported" : ">= 8"},
         "Initial C_PIN_SID PIN Indicator",
         "Behavior of C_PIN_SID PIN upon TPer Revert"
     ], 
     "DataStore Table Feature": [
         "Version",
-        "Maximum number of DataStore tables",
-        "Maximum total size of DataStore tables",
-        "DataStore table size alignment"
+        {"Maximum number of DataStore tables" : ">= 1"},
+        {"Maximum total size of DataStore tables" : ">= 0xA0000"},
+        {"DataStore table size alignment" : ">= 1"}
     ],
     "Block SID Authentication Feature": [
-        "Version",
+        {"Version" : ">= 2"},
         "Locking SP Freeze Lock State ",
         "Locking SP Freeze Lock supported",
         "SID Authentication Blocked State",
@@ -232,12 +236,37 @@ function populateDevList(){
     });
 }
 
+function setFsetAttrValue(fsetName, attrName, requiredValue, device){
+    let devValue;
+    try {
+        devValue = device["Discovery 0"][fsetName][attrName];
+    } catch{
+        return `<td class="redBg ${device["alias"]}">Missing</td>`;
+    }
+    if(requiredValue !== null){
+        // Parse required value into operator and value
+        requiredValue = requiredValue.split(" ");
+        let op = requiredValue[0]
+        if(operators[op](parseInt(devValue), parseInt(requiredValue[1]))){
+            return `<td class="${device["alias"]}">${devValue}</td>`;
+        }
+        else{
+            device["OpalCompl"]["isCompliant"] = false;
+            device["OpalCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredValue[1]}`);
+            return `<td class="${device["alias"]} redBg">${devValue}</td>`;
+        }
+    }
+    else{
+        return `<td class="${device["alias"]}">${devValue}</td>`;
+    }
+}
 
 // Populating body of the Feature sets table
 function populateTbody(tableName, featureSet){
+    let requiredVal;
     let tableBody = document.getElementById(tableName);
     // Print feature set name
-    Object.entries(featureSet).forEach(([fsetName, values]) => {
+    Object.entries(featureSet).forEach(([fsetName, attributes]) => {
         let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
         item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
         // Print device names afterwards
@@ -246,17 +275,19 @@ function populateTbody(tableName, featureSet){
         });
         tableBody.innerHTML += `${item}</tr>`;
         // Prepare rows for values from Feature sets
-        values.forEach((value) => {
+        attributes.forEach((attribute) => {
+            requiredVal = null;
             item = "";
+            // If atrribute has a required value
+            if(typeof attribute == "object"){
+                requiredVal = attribute[Object.keys(attribute)];
+                attribute = Object.keys(attribute);
+            }
             // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
-            item += `<tr class="${fsetName}" id="${fsetName}${value}"><td>${value}</td>`;
+            item += `<tr class="${fsetName}" id="${fsetName}${attribute}"><td>${attribute}</td>`;
             // Fill features rows with values corresponding to each device
             devices.forEach((device) => {
-                try {
-                    item += `<td class="${device["alias"]}">${device["Discovery 0"][fsetName][value]}</td>`;
-                } catch (error) {
-                    item += `<td class="redBg ${device["alias"]}">N/A</td>`;
-                }
+                item += setFsetAttrValue(fsetName, attribute, requiredVal, device);
             });
             tableBody.innerHTML += `${item}</tr>`;
         });
