@@ -57,12 +57,6 @@ var dis0ManFsets = {
         "SID Value State",
         "Hardware Reset"
     ],
-    "Supported Data Removal Mechanism Feature Descriptor": [
-        "Version",
-        "Supported Data Removal Mechanism",
-        "Data Removal Time Format for Bit 2",
-        "Data Removal Time for Supported Data Removal Mechanism Bit 2"
-    ],
     "PSID feature" :[
 
     ]
@@ -82,7 +76,13 @@ var dis0optFsets = {
         "Policy",
         "All",
         "Any"
-    ], 
+    ],
+    "Supported Data Removal Mechanism Feature Descriptor": [
+        "Version",
+        "Supported Data Removal Mechanism",
+        "Data Removal Time Format for Bit 2",
+        "Data Removal Time for Supported Data Removal Mechanism Bit 2"
+    ],
 };
 
 var devices = []
@@ -108,6 +108,7 @@ function checkPSIDpresence(){
     for(drive in devices){
         if(findUID(devices[drive]["Discovery 2"], "0x000000090001ff01")){
             addedHTML += `<td class="${devices[drive]["alias"]}">Yes</td>`;
+            devices[drive]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
         }
         else{
             addedHTML += `<td class="${devices[drive]["alias"]} redBg">No</td>`;
@@ -154,7 +155,10 @@ function setMinorVersions(){
             // TODO add these conflicting clues to details page of each drive
             else{
                 devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
+                devices[i]["OpalCompl"]["isCompliant"] = false;
+                devices[i]["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
             }
+        devices[i]["OpalSSCMinorVer"] = cluesDetected;
         }
     }
 }
@@ -180,6 +184,8 @@ function checkDataRemovalMech(){
             }
             // Just mark the cell as red because this is mandatory value
             else{
+                devices[i]["OpalCompl"]["isCompliant"] = false;
+                devices[i]["OpalCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
                 let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .${devices[drive]["alias"]}`);
                 cell.classList.add("redBg");
             }
@@ -193,12 +199,28 @@ function checkDataRemovalMech(){
     }
 }
 
+function findMissingFsets(){
+    devices.forEach((device) => {
+        for(fset in dis0ManFsets){
+            if(!(fset in device["Discovery 0"])){
+                device["OpalCompl"]["isCompliant"] = false;
+                device["OpalCompl"]["complBreaches"].push(`${fset} missing`);
+            }
+        }
+    });
+}
+
 function populateDevList(){
     let devList = document.getElementById("devList");
     // Using loop with index here intentionally to use index in aliases
     for(let i = 0; i < devices.length; i++){
         devList.innerHTML += `<input class="devCBox" id="d${i}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=d${i}">d${i} : ${devices[i]["Identify"]["Model number"]}, Firmware version: ${devices[i]["Identify"]["Firmware version"]}</a><br>`;
         devices[i]["alias"] = `d${i}`;
+        devices[i]["OpalCompl"] = {
+            "isCompliant" : true,
+            "complBreaches" : []
+        };
+
     }
     let fSetList = document.getElementById("fSetManList");
     Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
@@ -307,6 +329,7 @@ async function fetchDevices(){
     populateTbody("optFeatures", dis0optFsets);
     checkDataRemovalMech();
     checkPSIDpresence();
+    findMissingFsets();
     renderCBoxes();
     saveDevices();
 }

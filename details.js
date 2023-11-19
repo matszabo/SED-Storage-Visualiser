@@ -22,6 +22,7 @@ function getSelectedDev(){
     let query = window.location.search;
     let params = new URLSearchParams(query);
     device = params.get("dev");
+    devInfo = JSON.parse(localStorage.getItem(device));
 }
 
 // TODO change to table
@@ -51,19 +52,35 @@ function printSessionInfo(){
     }
 }
 
+function printOpalBreaches(){
+    let OpalHMTL = document.getElementById("OpalCompl");
+    if(devInfo["OpalCompl"]["isCompliant"]){
+        OpalHMTL.innerHTML += "<p>The device is compliant with Opal</p>";
+    }
+    else{
+        OpalHMTL.innerHTML += "<p>The device isn't compliant with Opal for the following reasons:</p>";
+        for(reason in devInfo["OpalCompl"]["complBreaches"]){
+            OpalHMTL.innerHTML += `<p>${devInfo["OpalCompl"]["complBreaches"][reason]}</p>`;
+        }
+    }
+}
+
 function printDetails(){
-    devInfo = JSON.parse(localStorage.getItem(device));
     let identification = document.getElementById("devID");
     for(key in devInfo["Identify"]){
         identification.innerHTML += `<p>${key}: ${devInfo["Identify"][key]}</p>`
     }
     printSessionInfo();
+    printOpalBreaches();
 }
 
 function printJSON(){
     let outputInfo = devInfo;
     // Remove internal alias to present user with real output from tool
     delete outputInfo["alias"];
+    delete outputInfo["OpalCompl"];
+    delete outputInfo["OpalSSCMinorVer"];
+    delete outputInfo["dataRemMechs"];
     // This is done here again, because pre-formatting in index.js didn't work
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
