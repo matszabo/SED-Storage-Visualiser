@@ -130,6 +130,7 @@ function checkPSIDpresence(){
 function setMinorVersions(){
     for(let i = 0; i < devices.length; i++){
         let cluesDetected = []
+        let versionDetected = -1;
         if(devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
             if(devices[i]["Discovery 0"]["Block SID Authentication Feature"]){
                 cluesDetected.push(2)
@@ -141,26 +142,29 @@ function setMinorVersions(){
                 cluesDetected.push(0)
             }
             // Normal Opal 2.02
-            if(2 in cluesDetected & 1 in cluesDetected & cluesDetected.length == 2 
-                & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 2){
-                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (2)";
+            if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
+                versionDetected = 2;
             }
             // Normal Opal 2.01
-            else if(cluesDetected.length == 1 & 1 in cluesDetected
-                    & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 1){
-                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (1)";
+            else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
+                versionDetected = 1;
             }
             // Normal Opal 2.00
-            else if(cluesDetected.length == 1 & 0 in cluesDetected
-                    & devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != 0){
-                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += " (0)";
+            else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
+                versionDetected = 0;
             }
-            // Conflicts were found, print maximum found version and indicate discrepancy
-            // TODO add these conflicting clues to details page of each drive
-            else{
-                devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
-                devices[i]["OpalCompl"]["isCompliant"] = false;
-                devices[i]["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+            
+            if(devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != versionDetected){
+                // Conflicts were found, print maximum found version and indicate discrepancy
+                if(versionDetected == -1){
+                    devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
+                    devices[i]["OpalCompl"]["isCompliant"] = false;
+                    devices[i]["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+                }
+                // Detected version clear, but different from reported version
+                else {
+                    devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${versionDetected})`;
+                }
             }
         devices[i]["OpalSSCMinorVer"] = cluesDetected;
         }
