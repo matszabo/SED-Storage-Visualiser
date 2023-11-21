@@ -233,12 +233,27 @@ function populateDevList(){
     }
     let fSetList = document.getElementById("fSetManList");
     Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
-        fSetList.innerHTML += `<input class="fSetCBox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+        fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
     });
     fSetList = document.getElementById("fSetOptList");
     Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
-        fSetList.innerHTML += `<input class="fSetCBox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+        fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
     });
+    let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
+    allCboxes.forEach((allBox) => {
+        let allBoxEl = document.getElementById(allBox);
+        allBoxEl.onchange = () => {
+            // The self selection has to be here, because this code is evaluated only after the event
+            let cBoxes = document.querySelectorAll(`.${allBoxEl.classList[0]}`);
+            console.log(allBoxEl.classList);
+            cBoxes.forEach((cBox) => {
+                if(cBox.checked != allBoxEl.checked){
+                    cBox.click();
+                }
+            });
+        } 
+    })
+    let allDevsCBox = document.getElementById("allDevsCbox");
 }
 
 function setFsetAttrValue(fsetName, attrName, requiredValue, device){
