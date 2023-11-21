@@ -160,13 +160,14 @@ function setMinorVersions(){
                     devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
                     devices[i]["OpalCompl"]["isCompliant"] = false;
                     devices[i]["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+                    devices[i]["OpalMinorVerConflicts"] = cluesDetected;
                 }
                 // Detected version clear, but different from reported version
                 else {
                     devices[i]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${versionDetected})`;
+                    devices[i]["OpalMinorVerConflicts"] = [];
                 }
             }
-        devices[i]["OpalSSCMinorVer"] = cluesDetected;
         }
     }
 }

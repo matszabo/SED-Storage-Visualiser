@@ -45,10 +45,36 @@ function printSessionInfo(){
     // Check for additional fields
     TPerElement = document.getElementById("TPerOptional");
     for(field in SessionInfo){
-        console.log(field);
         if(!(field in TPerManFields)){
             TPerElement.innerHTML += `<p>${field} : ${SessionInfo[field]}</p>`
         }
+    }
+}
+
+function checkOpalMinorVer(){
+    // Version conflicts were found
+    if(devInfo["OpalMinorVerConflicts"].length > 0){
+        let opalComplHTML = document.getElementById("OpalCompl");
+        let output = "";
+        devInfo["OpalMinorVerConflicts"].forEach((clue, index) => {
+            switch (clue) {
+                case 0:
+                    output += "<p>Interface control template found (.00 only feature)</p>";
+                    break;
+                case 1:
+                    output += "<p>PSID authority found (>= .01 feature)</p>";
+                    break;
+                case 2:
+                    output += "<p>Block SID Authentication feature found (>= .02 feature)</p>";
+                    if(devInfo["OpalMinorVerConflicts"].indexOf(1) == -1){
+                        output += "<p>PSID authority missing (>= .01 feature)</p>";
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+        opalComplHTML.insertAdjacentHTML("afterend", `<h3>Opal minor version mismatches:</h3>${output}`);
     }
 }
 
@@ -72,6 +98,7 @@ function printDetails(){
     }
     printSessionInfo();
     printOpalBreaches();
+    checkOpalMinorVer();
 }
 
 function printJSON(){
@@ -79,7 +106,7 @@ function printJSON(){
     // Remove internal alias to present user with real output from tool
     delete outputInfo["alias"];
     delete outputInfo["OpalCompl"];
-    delete outputInfo["OpalSSCMinorVer"];
+    delete outputInfo["OpalMinorVerConflicts"];
     delete outputInfo["dataRemMechs"];
     // This is done here again, because pre-formatting in index.js didn't work
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
