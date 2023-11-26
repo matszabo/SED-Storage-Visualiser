@@ -5,7 +5,9 @@
 "Identify": {
   "Serial number": "1179255400231",
   "Firmware version": "2.8.8341",
-  "Model number": "LENSE20256GMSP34MEAT2TA                 "
+  "Model number": "LENSE20256GMSP34MEAT2TA",
+  "Serial number long": "LENSE20256GMSP34MEAT2TA_1179255400231_1",
+  "Source": "udev"
 },
 "Discovery 0": {
   "TPer Feature": {
