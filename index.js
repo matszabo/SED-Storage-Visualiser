@@ -26,7 +26,7 @@ var dis0ManFsets = {
         {"Sync Supported" : "= 1"}
     ], 
     "Locking Feature": [
-        "Version",
+        {"Version" : ">= 3"},
         "HW Reset for LOR/DOR Supported",
         {"MBR Shadowing Not Supported" : "= 0"},
         "MBR Done",
@@ -38,7 +38,7 @@ var dis0ManFsets = {
     ], 
     "Opal SSC V2.00 Feature": [
         "Feature Descriptor Version Number",
-        "SSC Minor Version Number",
+        {"SSC Minor Version Number" : ">= 2"},
         "Base ComID",
         {"Number of ComIDs" : ">= 1"},
         "Range Crossing Behavior",
@@ -104,6 +104,17 @@ function findUID(JSONnode, UID){
     return JSON.stringify(JSONnode).match(UID)
 }
 
+// This function currently works only for version 3, but is placed here for future versions
+function setLockingVersion(){
+    devices.forEach((device) => {
+        // Check for version 3
+        if("HW Reset for LOR/DOR Supported" in device["Discovery 0"]["Locking Feature"] &
+            "MBR Shadowing Not Supported" in device["Discovery 0"]["Locking Feature"]){
+            let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .${device["alias"]}`);
+            lockVerHTML.innerHTML += " (3)";
+        }
+    });
+}
 
 function checkPSIDpresence(){
     let PSIDhtml = document.querySelector(`[class="fsetRow PSID feature"]`);
@@ -380,6 +391,7 @@ async function fetchDevices(){
     populateTbody("optFeatures", dis0optFsets);
     checkDataRemovalMech();
     checkPSIDpresence();
+    setLockingVersion();
     findMissingFsets();
     renderCBoxes();
     saveDevices();
