@@ -1,0 +1,58 @@
+{
+"Metadata": {
+  "Version": "1"
+},
+"Identify": {
+  "Serial number": "01293805077A",
+  "Firmware version": "1.00",
+  "Model number": "Me SK hynix 128G",
+  "Vendor": "BC501 NV",
+  "Serial number long": "BC501_NV_Me_SK_hynix_128G_01293805077A-0:0",
+  "Source": "udev"
+},
+"Discovery 0": {
+  "TPer Feature": {
+    "Version": 1,
+    "ComID Mgmt Supported": 0,
+    "Streaming Supported": 1,
+    "Buffer Mgmt Supported": 0,
+    "ACK/NAK Supported": 0,
+    "Async Supported": 0,
+    "Sync Supported": 1
+  },
+  "Locking Feature": {
+    "Version": 2,
+    "HW Reset for LOR/DOR Supported": 1,
+    "MBR Shadowing Not Supported": 0,
+    "MBR Done": 0,
+    "MBR Enabled": 0,
+    "Media Encryption": 0,
+    "Locked": 0,
+    "Locking Enabled": 0,
+    "Locking Supported": 1
+  },
+  "Block SID Authentication Feature": {
+    "Version": 1,
+    "Locking SP Freeze Lock State ": 0,
+    "Locking SP Freeze Lock supported": 0,
+    "SID Authentication Blocked State": 0,
+    "SID Value State": 0,
+    "Hardware Reset": 0
+  },
+  "0x203": { "data": "0x0302101010000001000000000000000000000000" }},
+"Discovery 1": {
+},
+"Discovery 2": {
+},
+"Discovery 2 manual": {
+  "0x0000020100030001": {
+    "error": "UNKNOWN"
+  },
+  "0x0000110100000001": {
+    "error": "UNKNOWN"
+  }
+},
+"Random sample": [
+  "error: UNKNOWN"
+]
+}
