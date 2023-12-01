@@ -29,6 +29,10 @@ function getSelectedDev(){
 function printSessionInfo(){
     let TPerElement = document.getElementById("SessionInfo");
     let SessionInfo = devInfo["Discovery 1"]["Properties"];
+    if(typeof SessionInfo == "undefined"){
+        TPerElement.innerHTML += "<p>Discovery 1 is missing</p>";
+        return;
+    }
     // Discovery 1 check compliance
     for(field in TPerManFields){
         if(!field in SessionInfo){
@@ -97,8 +101,10 @@ function printDetails(){
         identification.innerHTML += `<p>${key}: ${devInfo["Identify"][key]}</p>`
     }
     printSessionInfo();
-    printOpalBreaches();
-    checkOpalMinorVer();
+    if(("Opal SSC V2.00 Feature" in devInfo["Discovery 0"])){
+        printOpalBreaches();
+        checkOpalMinorVer();
+    }
 }
 
 function printJSON(){

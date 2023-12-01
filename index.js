@@ -204,8 +204,8 @@ function checkDataRemovalMech(){
             }
             // Just mark the cell as red because this is mandatory value
             else{
-                devices[i]["OpalCompl"]["isCompliant"] = false;
-                devices[i]["OpalCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
+                devices[drive]["OpalCompl"]["isCompliant"] = false;
+                devices[drive]["OpalCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
                 let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .${devices[drive]["alias"]}`);
                 cell.classList.add("redBg");
             }
