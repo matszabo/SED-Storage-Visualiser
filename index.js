@@ -2,15 +2,18 @@
 
 /**
     TODO List:
-    - REDO details page to indexeddb
-    - rethink program flow - would there be a way to wrapper-rize indexdb?
+    - check integrity of passing by value - updating the cursor
+    - rethink program flow
     - change to generic SSC handling
+    - change handling of number of devs - count only successfully stored
     - fetchDevices - check connection
     - change naming of indexCursor - maybe change entire name of index property?
     - add styling
+    - add secure messaging check
 */
 
 var db;
+var numofDevs = 0;
 
 // For easier check of required values when filling TBody
 var operators = {
@@ -98,59 +101,26 @@ function findUID(JSONnode, UID){
 }
 
 // This function currently works only for version 3, but is placed here for future versions
-function setLockingVersion(){
-    const transaction = db.transaction("drives", "readwrite");
-    const store = transaction.objectStore("drives");
-
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        let cursor = event.target.result;
-        if(cursor){
-            let device = cursor.value;
-            // Check for version 3
-            if("HW Reset for LOR/DOR Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"] &
-            "MBR Shadowing Not Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"]){
-            let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .d${device["index"]}`);
-            lockVerHTML.innerHTML += " (3)";
-            }   
-            cursor.continue();
-        }
-    });
-
-    request.onerror = ((reason) => {
-        console.error(`Failed to open cursor in setLockingVersion()\n${reason}`);
-    });
+function setLockingVersion(device){
+    // Check for version 3
+    if("HW Reset for LOR/DOR Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"] &
+    "MBR Shadowing Not Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"]){
+        
+    let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .d${device["index"]}`);
+    lockVerHTML.innerHTML += " (3)";
+    }   
 }
 
-function checkPSIDpresence(){
-    const transaction = db.transaction("drives", "readwrite");
-    const store = transaction.objectStore("drives");
-    let PSIDhtml = document.querySelector(`[class="fsetRow PSID feature"]`);
-    let addedHTML = `<tr class="PSID feature" id="PSID featurePresent"><td>PSID Authority present</td>`;
-
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        const cursor = event.target.result;
-        if(cursor){
-            let device = cursor.value;
-            if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
-                addedHTML += `<td class="d${device["index"]}">Yes</td>`;
-                device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
-                cursor.update(device);
-            }
-            else{
-                addedHTML += `<td class="${device["index"]} redBg">No</td>`;
-            }
-            cursor.continue();
-        }
-        else{
-            PSIDhtml.insertAdjacentHTML("afterend", addedHTML);
-        }
-    });
-    request.onerror = ((reason) => {
-        console.error(`Failed to open cursor in checkPSIDpresence()\n${reason}`);
-    });
-    
+function checkPSIDpresence(device){
+    let driveCell = document.querySelector(`[id="PSID featurePresent"] .d${device["index"]}`);
+    if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
+        driveCell.innerHTML = "Yes"
+        device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
+    }
+    else{
+        driveCell.classList.add("redBg");
+        driveCell.innerHTML = `No`;
+    }
 }
 
 /* Function fills the minor version row in SSC V2 Feature set based on other present sets
@@ -159,72 +129,47 @@ function checkPSIDpresence(){
  * by checking UID 000000090001ff01
  * TODO add collision explanation and further info into .html legend
  */
-function setMinorVersions(){
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("drives", "readwrite");
-        const store = transaction.objectStore("drives");
-        let device;
-
-        const request = store.openCursor();
-        request.onsuccess = ((event) => {
-            const cursor = event.target.result;
-            if(cursor){
-                device = cursor.value;
-                let cluesDetected = [];
-                let versionDetected = -1;
-                if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
-                    if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
-                        cluesDetected.push(2)
-                    }
-                    if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
-                        cluesDetected.push(1)
-                    }
-                    if(findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007")){
-                        cluesDetected.push(0)
-                    }
-                    // Normal Opal 2.02
-                    if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
-                        versionDetected = 2;
-                    }
-                    // Normal Opal 2.01
-                    else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
-                        versionDetected = 1;
-                    }
-                    // Normal Opal 2.00
-                    else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
-                        versionDetected = 0;
-                    }
-                    
-                    if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != versionDetected){
-                        // Conflicts were found, print maximum found version and indicate discrepancy
-                        if(versionDetected == -1){
-                            device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
-                            device["OpalCompl"]["isCompliant"] = false;
-                            device["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
-                            device["OpalCompl"]["OpalMinorVerConflicts"] = cluesDetected;
-                        }
-                        // Detected version clear, but different from reported version
-                        else {
-                            device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${versionDetected})`;
-                            device["OpalCompl"]["OpalMinorVerConflicts"] = [];
-                        }
-                        const updateReq = cursor.update(device);
-                        updateReq.onerror = ((reason) => {
-                            console.error(`Failed to update cursor during setMinorVersion for d${device["index"]}\n${reason}`);
-                        });
-                    }
-                }
-                cursor.continue();
+function setMinorVersions(device){
+    let cluesDetected = [];
+    let versionDetected = -1;
+    if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
+        if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
+            cluesDetected.push(2)
+        }
+        if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
+            cluesDetected.push(1)
+        }
+        if(findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007")){
+            cluesDetected.push(0)
+        }
+        // Normal Opal 2.02
+        if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
+            versionDetected = 2;
+        }
+        // Normal Opal 2.01
+        else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
+            versionDetected = 1;
+        }
+        // Normal Opal 2.00
+        else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
+            versionDetected = 0;
+        }
+        
+        if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != versionDetected){
+            // Conflicts were found, print maximum found version and indicate discrepancy
+            if(versionDetected == -1){
+                device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
+                device["OpalCompl"]["isCompliant"] = false;
+                device["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+                device["OpalCompl"]["OpalMinorVerConflicts"] = cluesDetected;
             }
-            // All records were checked
-            else{
-                resolve();
+            // Detected version clear, but different from reported version
+            else {
+                device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${versionDetected})`;
+                device["OpalCompl"]["OpalMinorVerConflicts"] = [];
             }
-        });
-        request.onerror = ((reason) => {
-            console.error(`Failed to open cursor for object store\n${reason}`);
-        });
-    });
+        }
+    }
 }
 
 function checkDataRemovalMech(){
@@ -274,15 +219,13 @@ function checkDataRemovalMech(){
 
 }
 
-function findMissingFsets(){
-    devices.forEach((device) => {
-        for(fset in dis0ManFsets){
-            if(!(fset in device["Discovery 0"])){
-                device["OpalCompl"]["isCompliant"] = false;
-                device["OpalCompl"]["complBreaches"].push(`${fset} missing`);
-            }
+function findMissingFsets(device){
+    for(fset in dis0ManFsets){
+        if(!(fset in device["driveInfo"]["Discovery 0"])){
+            device["OpalCompl"]["isCompliant"] = false;
+            device["OpalCompl"]["complBreaches"].push(`${fset} missing`);
         }
-    });
+    }
 }
 
 function populateDevList(){
@@ -298,121 +241,72 @@ function populateDevList(){
             devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
             cursor.continue();
         }
+        else{
+            // Adding listeners to "All" Cboxes has to happen AFTER all of the device CBoxes were created
+            let fSetList = document.getElementById("fSetManList");
+            Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
+                fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+            });
+            fSetList = document.getElementById("fSetOptList");
+            Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
+                fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+            });
+            let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
+            allCboxes.forEach((allBox) => {
+                let allBoxEl = document.getElementById(allBox);
+                allBoxEl.onchange = () => {
+                    // The self selection has to be here, because this code is evaluated only after the event
+                    let cBoxes = document.querySelectorAll(`.${allBoxEl.classList[0]}`);
+                    cBoxes.forEach((cBox) => {
+                        if(cBox.checked != allBoxEl.checked){
+                            cBox.click();
+                        }
+                    });
+                } 
+            })            
+        }
     });
     request.onerror = ((reason) => {
         console.error(`Failed to open cursor for object store\n${reason}`);
     });
-    
-
-    let fSetList = document.getElementById("fSetManList");
-    Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
-        fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
-    });
-    fSetList = document.getElementById("fSetOptList");
-    Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
-        fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
-    });
-    let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
-    allCboxes.forEach((allBox) => {
-        let allBoxEl = document.getElementById(allBox);
-        allBoxEl.onchange = () => {
-            // The self selection has to be here, because this code is evaluated only after the event
-            let cBoxes = document.querySelectorAll(`.${allBoxEl.classList[0]}`);
-            cBoxes.forEach((cBox) => {
-                if(cBox.checked != allBoxEl.checked){
-                    cBox.click();
-                }
-            });
-        } 
-    })
 }
 
-function setFsetAttrValue(fsetName, attrName, requiredValue, HTMLitem){
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("drives", "readwrite");
-        const store = transaction.objectStore("drives");
-
-        const request = store.openCursor();
-        let devValue;
-        request.onsuccess = ((event) => {
-            const cursor = event.target.result;
-            if(cursor){
-                let device = cursor.value;
-                try {
-                    devValue = device["driveInfo"]["Discovery 0"][fsetName][attrName];
-                } catch{
-                    HTMLitem += `<td class="redBg d${device["index"]}">Missing</td>`;
-                    cursor.continue();
-                    return;
-                }
-                if(requiredValue !== null){
-                    // Parse required value into operator and value
-                    let requiredVal = requiredValue.split(" ");
-                    let op = requiredVal[0]
-                    if(operators[op](parseInt(devValue), parseInt(requiredVal[1]))){
-                        HTMLitem += `<td class="d${device["index"]}">${devValue}</td>`;
-                    }
-                    else{
-                        device["OpalCompl"]["isCompliant"] = false;
-                        device["OpalCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredVal[1]}`);
-                        cursor.update(device);
-                        HTMLitem += `<td class="d${device["index"]} redBg">${devValue}</td>`;
-                    }
-                }
-                else{
-                    HTMLitem += `<td class="d${device["index"]}">${devValue}</td>`;
-                }
-                cursor.continue();                
-            }
-            else{
-                resolve(HTMLitem);
-            }
-        });
-        request.onerror = ((reason) => {
-            console.error(`Cursor opening failed before setFsetAttrValue\n${reason}`);
-            resolve(HTMLitem);
-        });
-    });
-}
-
-function fillDevices(HTMLitem){
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("drives", "readonly");
-        const store = transaction.objectStore("drives");
-
-        const request = store.index("indexCursor");
-        const indexCursor = request.openCursor();
-        indexCursor.onsuccess = ((event) => {
-            const cursor = event.target.result;
-            if(cursor){
-                HTMLitem += `<td class="d${cursor.value["index"]}">d${cursor.value["index"]}</td>`;
-                cursor.continue();
-            }
-            else {
-                resolve(HTMLitem);
-            }
-        });
-        indexCursor.onerror = ((reason) => {
-            console.error(`Failed to open cursor on index in populateTbody\n${reason}`);
-            resolve();
-        });
-    });
+function setFsetAttrValue(device, fsetName, attrName, requiredValue){
+    let devValue;
+    let HTMLitem = document.querySelector(`[id="${fsetName}${attrName}"] .d${device["index"]}`);
+    try {
+        devValue = device["driveInfo"]["Discovery 0"][fsetName][attrName];
+    } catch{
+        HTMLitem.innerHTML = `Missing`;
+        HTMLitem.classList.add("redBg");
+        return;
+    }
+    if(requiredValue !== null){
+        // Parse required value into operator and value
+        let requiredVal = requiredValue.split(" ");
+        let op = requiredVal[0]
+        if(operators[op](parseInt(devValue), parseInt(requiredVal[1]))){
+            HTMLitem.innerHTML = `${devValue}`;
+        }
+        else{
+            device["OpalCompl"]["isCompliant"] = false;
+            device["OpalCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredVal[1]}`);
+            HTMLitem.innerHTML = `${devValue}`;
+            HTMLitem.classList.add("redBg");
+        }
+    }
+    else{
+        HTMLitem.innerHTML = `${devValue}`;
+    }
 }
 
 // Populating body of the Feature sets table
-async function populateTbody(tableName, featureSet){
+async function populateTbody(device, featureSet){
     let requiredVal;
-    let tableBody = document.getElementById(tableName);
     let attributes;
     // Print feature set name
     for(const fsetName in featureSet){
         attributes = featureSet[fsetName];
-        let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
-        item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
-
-        // Print device names afterwards
-        item = await fillDevices(item);
-        tableBody.innerHTML += `${item}</tr>`;
         // Prepare rows for values from Feature sets
         for(let attrIndex in attributes){
             let attribute = attributes[attrIndex];
@@ -423,12 +317,8 @@ async function populateTbody(tableName, featureSet){
                 requiredVal = attribute[Object.keys(attribute)];
                 attribute = Object.keys(attribute);
             }
-            // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
-            item += `<tr class="${fsetName}" id="${fsetName}${attribute}"><td>${attribute}</td>`;
             // Fill features rows with values corresponding to each device
-
-            item = await setFsetAttrValue(fsetName, attribute, requiredVal, item);
-            tableBody.innerHTML += `${item}</tr>`;
+            setFsetAttrValue(device, fsetName, attribute, requiredVal);
         }   
     }
 }
@@ -515,23 +405,108 @@ async function prepareDrives(filenames){
         responses.push(fetchDrive(`./outputs/${filename}`, index));
         index += 1;
     });
+    numofDevs = index;
     await Promise.all(responses);
     return;
 }
 
+function fillDevices(HTMLitem){
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readonly");
+        const store = transaction.objectStore("drives");
+
+        const request = store.index("indexCursor");
+        const indexCursor = request.openCursor();
+        indexCursor.onsuccess = ((event) => {
+            const cursor = event.target.result;
+            if(cursor){
+                HTMLitem += `<td class="d${cursor.value["index"]}">d${cursor.value["index"]}</td>`;
+                cursor.continue();
+            }
+            else {
+                resolve(HTMLitem);
+            }
+        });
+        indexCursor.onerror = ((reason) => {
+            console.error(`Failed to open cursor on index in populateTbody\n${reason}`);
+            resolve();
+        });
+    });
+}
+
+async function generateTbody(tableName, featureSet){
+    let tableBody = document.getElementById(tableName);
+    for(const fsetName in featureSet){
+        let attributes = featureSet[fsetName];
+        let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
+        item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
+
+        // Print device names afterwards
+        item = await fillDevices(item);
+        tableBody.innerHTML += `${item}</tr>`;
+        // This is for specific feature sets like PSID, which have no level 0 discovery table, but we need them visualised too
+        if(attributes.length == 0){
+            item = `<tr class="${fsetName}" id="${fsetName}Present"><td>Present</td>`;
+            for(let i = 0; i < numofDevs; i++){
+                item += `<td class="d${i}"></td>`;
+            }
+            tableBody.innerHTML += `${item}</tr>`;
+        }
+        // Prepare rows for values from Feature sets
+        for(let attrIndex in attributes){
+            let attribute = attributes[attrIndex];
+            item = "";
+            // If atrribute has a required value
+            if(typeof attribute == "object"){
+                attribute = Object.keys(attribute);
+            }
+            // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
+            item += `<tr class="${fsetName}" id="${fsetName}${attribute}"><td>${attribute}</td>`;
+            for(let i = 0; i < numofDevs; i++){
+                item += `<td class="d${i}"></td>`;
+            }
+            tableBody.innerHTML += `${item}</tr>`;
+        }
+    }   
+}
+
+async function checkDevCopmpliance(device){
+    setMinorVersions(device);
+    await populateTbody(device, dis0ManFsets);
+    await populateTbody(device, dis0optFsets);
+    checkDataRemovalMech(device);
+    checkPSIDpresence(device);
+    setLockingVersion(device);
+    findMissingFsets(device);
+}
+
 async function fetchDevices(){
-    
     let files = await fetch(`./names`);
     let filenames = await files.text();
     await prepareDrives(filenames);
     populateDevList();
-    await setMinorVersions();
-    await populateTbody("manFeatures", dis0ManFsets);
-    await populateTbody("optFeatures", dis0optFsets);
-    checkDataRemovalMech();
-    checkPSIDpresence();
-    setLockingVersion();
-    findMissingFsets();
+
+    await generateTbody("manFeatures", dis0ManFsets);
+    await generateTbody("optFeatures", dis0optFsets);
+
+    const transaction = db.transaction("drives", "readwrite");
+    const store = transaction.objectStore("drives");
+
+    const request = store.openCursor();
+    request.onsuccess = ((event) => {
+        const cursor = event.target.result;
+        if(cursor){
+            let device = cursor.value;
+            checkDevCopmpliance(device);
+            // TODO double-check if update is able to finish before continue
+            cursor.update(device);
+            cursor.continue();
+        }
+    });
+    request.onerror = ((reason) => {
+        console.error(`Failed to open drives Object Store in fetchDevices()`);
+    });
+
     renderCBoxes();
 }
 
