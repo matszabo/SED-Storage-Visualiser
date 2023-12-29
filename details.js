@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+/**
+ * Treat onupgradeneeded() here as error, because database should already be created by index.js
+ */
+
 // Mandatory Discovery fields, indicated values are required minimums, there are no maximums
 const TPerManFields = {
     "MaxMethods" : 1,
@@ -15,20 +19,50 @@ const TPerManFields = {
     "DefSessionTimeout" : 0
 }
 
-var device = "";
 var devInfo;
+var db;
 
 function getSelectedDev(){
-    let query = window.location.search;
-    let params = new URLSearchParams(query);
-    device = params.get("dev");
-    devInfo = JSON.parse(localStorage.getItem(device));
+    return new Promise((resolve, reject) => {
+
+        const dbReq = indexedDB.open("storageDevs", 1);
+    
+        dbReq.onerror = ((event) => {
+            alert("Failed to open internal indexedDB\n", event);
+        })
+    
+        dbReq.onupgradeneeded = ((event) => {
+            db = dbReq.result;
+            const store = db.createObjectStore("drives", {keyPath : "index"});
+            store.createIndex("indexCursor", ["index"], {unique : true});
+        });
+    
+        dbReq.onsuccess = ((event) => {
+            db = dbReq.result;
+            let query = window.location.search;
+            let params = new URLSearchParams(query);
+            driveIndex = parseInt(params.get("dev"));
+            
+            const transaction = db.transaction("drives", "readonly");
+            const store = transaction.objectStore("drives");
+        
+            const request = store.get(driveIndex);
+            request.onsuccess = ((event) => {
+                devInfo = request.result;
+                resolve();
+            });
+            request.onerror = ((reason) => {
+                console.error(`Failed to fetch drive with index ${driveIndex} from Indexeddb\n${reason}`);
+                reject();
+            });
+        });
+    });
 }
 
 // TODO change to table
 function printSessionInfo(){
     let TPerElement = document.getElementById("SessionInfo");
-    let SessionInfo = devInfo["Discovery 1"]["Properties"];
+    let SessionInfo = devInfo["driveInfo"]["Discovery 1"]["Properties"];
     if(typeof SessionInfo == "undefined"){
         TPerElement.innerHTML += "<p>Discovery 1 is missing</p>";
         return;
@@ -57,10 +91,10 @@ function printSessionInfo(){
 
 function checkOpalMinorVer(){
     // Version conflicts were found
-    if(devInfo["OpalMinorVerConflicts"].length > 0){
+    if(devInfo["OpalCompl"]["OpalMinorVerConflicts"].length > 0){
         let opalComplHTML = document.getElementById("OpalCompl");
         let output = "";
-        devInfo["OpalMinorVerConflicts"].forEach((clue, index) => {
+        devInfo["OpalCompl"]["OpalMinorVerConflicts"].forEach((clue, index) => {
             switch (clue) {
                 case 0:
                     output += "<p>Interface control template found (.00 only feature)</p>";
@@ -70,7 +104,7 @@ function checkOpalMinorVer(){
                     break;
                 case 2:
                     output += "<p>Block SID Authentication feature found (>= .02 feature)</p>";
-                    if(devInfo["OpalMinorVerConflicts"].indexOf(1) == -1){
+                    if(devInfo["OpalCompl"]["OpalMinorVerConflicts"].indexOf(1) == -1){
                         output += "<p>PSID authority missing (>= .01 feature)</p>";
                     }
                     break;
@@ -97,27 +131,23 @@ function printOpalBreaches(){
 
 function printDetails(){
     let identification = document.getElementById("devID");
-    for(key in devInfo["Identify"]){
-        identification.innerHTML += `<p>${key}: ${devInfo["Identify"][key]}</p>`
+    for(key in devInfo["driveInfo"]["Identify"]){
+        identification.innerHTML += `<p>${key}: ${devInfo["driveInfo"]["Identify"][key]}</p>`
     }
     printSessionInfo();
-    if(("Opal SSC V2.00 Feature" in devInfo["Discovery 0"])){
+    if(("Opal SSC V2.00 Feature" in devInfo["driveInfo"]["Discovery 0"])){
         printOpalBreaches();
         checkOpalMinorVer();
     }
 }
 
 function printJSON(){
-    let outputInfo = devInfo;
-    // Remove internal alias to present user with real output from tool
-    delete outputInfo["alias"];
-    delete outputInfo["OpalCompl"];
-    delete outputInfo["OpalMinorVerConflicts"];
-    delete outputInfo["dataRemMechs"];
+    let outputInfo = devInfo["driveInfo"];
     // This is done here again, because pre-formatting in index.js didn't work
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
 
-getSelectedDev();
-printDetails();
-printJSON();
+getSelectedDev().then(() => {
+    printDetails();
+    printJSON();
+});
