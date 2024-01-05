@@ -1,0 +1,77 @@
+{
+    "SSC name" : "Opal 2.02",
+    "SSC fset" : "Opal SSC V2.00 Feature",  
+    "mandatory" : {
+        "TPer Feature" : [
+            "Version",
+            "ComID Mgmt Supported",
+            {"Streaming Supported" : "= 1"},
+            "Buffer Mgmt Supported",
+            "ACK/NAK Supported",
+            "Async Supported",
+            {"Sync Supported" : "= 1"}
+        ], 
+        "Locking Feature": [
+            {"Version" : ">= 3"},
+            "HW Reset for LOR/DOR Supported",
+            {"MBR Shadowing Not Supported" : "= 0"},
+            "MBR Done",
+            "MBR Enabled",
+            {"Media Encryption" : "= 1"},
+            "Locked",
+            "Locking Enabled",
+            {"Locking Supported" : "= 1"}
+        ], 
+        "Opal SSC V2.00 Feature": [
+            "Feature Descriptor Version Number",
+            {"SSC Minor Version Number" : ">= 2"},
+            "Base ComID",
+            {"Number of ComIDs" : ">= 1"},
+            "Range Crossing Behavior",
+            {"Number of Locking SP Admin Authorities Supported" : ">= 4"},
+        {"Number of Locking SP User Authorities Supported" : ">= 8"},
+            "Initial C_PIN_SID PIN Indicator",
+            "Behavior of C_PIN_SID PIN upon TPer Revert"
+        ], 
+        "DataStore Table Feature": [
+            "Version",
+            {"Maximum number of DataStore tables" : ">= 1"},
+            {"Maximum total size of DataStore tables" : ">= 0xA0000"},
+            {"DataStore table size alignment" : ">= 1"}
+        ],
+        "Block SID Authentication Feature": [
+            {"Version" : ">= 2"},
+            "Locking SP Freeze Lock State ",
+            "Locking SP Freeze Lock supported",
+            "SID Authentication Blocked State",
+            "SID Value State",
+            "Hardware Reset"
+        ],
+        "PSID feature" :[
+
+        ]
+    },
+
+    "optional" : {
+        "Geometry Feature": [
+            "Version",
+            "ALIGN",
+            "LogicalBlockSize",
+            "AlignmentGranularity",
+            "LowestAlignedLBA"
+        ], 
+        "Single User Mode Feature": [
+            "Version",
+            "Number of Locking Objects Supported",
+            "Policy",
+            "All",
+            "Any"
+        ],
+        "Supported Data Removal Mechanism Feature Descriptor": [
+            "Version",
+            "Supported Data Removal Mechanism",
+            "Data Removal Time Format for Bit 2",
+            "Data Removal Time for Supported Data Removal Mechanism Bit 2"
+        ]
+    }
+}

@@ -91,10 +91,10 @@ function printSessionInfo(){
 
 function checkOpalMinorVer(){
     // Version conflicts were found
-    if(devInfo["OpalCompl"]["OpalMinorVerConflicts"].length > 0){
-        let opalComplHTML = document.getElementById("OpalCompl");
+    if(devInfo["SSCCompl"]["OpalMinorVerConflicts"].length > 0){
+        let SSCComplHTML = document.getElementById("SSCCompl");
         let output = "";
-        devInfo["OpalCompl"]["OpalMinorVerConflicts"].forEach((clue, index) => {
+        devInfo["SSCCompl"]["OpalMinorVerConflicts"].forEach((clue, index) => {
             switch (clue) {
                 case 0:
                     output += "<p>Interface control template found (.00 only feature)</p>";
@@ -104,7 +104,7 @@ function checkOpalMinorVer(){
                     break;
                 case 2:
                     output += "<p>Block SID Authentication feature found (>= .02 feature)</p>";
-                    if(devInfo["OpalCompl"]["OpalMinorVerConflicts"].indexOf(1) == -1){
+                    if(devInfo["SSCCompl"]["OpalMinorVerConflicts"].indexOf(1) == -1){
                         output += "<p>PSID authority missing (>= .01 feature)</p>";
                     }
                     break;
@@ -112,19 +112,19 @@ function checkOpalMinorVer(){
                     break;
             }
         });
-        opalComplHTML.insertAdjacentHTML("afterend", `<h3>Opal minor version mismatches:</h3>${output}`);
+        SSCComplHTML.insertAdjacentHTML("afterend", `<h3>Opal minor version mismatches:</h3>${output}`);
     }
 }
 
-function printOpalBreaches(){
-    let OpalHMTL = document.getElementById("OpalCompl");
-    if(devInfo["OpalCompl"]["isCompliant"]){
-        OpalHMTL.innerHTML += "<p>The device is compliant with Opal</p>";
+function printSSCBreaches(){
+    let SSCHTML = document.getElementById("SSCCompl");
+    if(devInfo["SSCCompl"]["isCompliant"]){
+        SSCHTML.innerHTML += "<p>The device is compliant with its SSC</p>";
     }
     else{
-        OpalHMTL.innerHTML += "<p>The device isn't compliant with Opal for the following reasons:</p>";
-        for(reason in devInfo["OpalCompl"]["complBreaches"]){
-            OpalHMTL.innerHTML += `<p>${devInfo["OpalCompl"]["complBreaches"][reason]}</p>`;
+        SSCHTML.innerHTML += "<p>The device isn't compliant with its SSC for the following reasons:</p>";
+        for(reason in devInfo["SSCCompl"]["complBreaches"]){
+            SSCHTML.innerHTML += `<p>${devInfo["SSCCompl"]["complBreaches"][reason]}</p>`;
         }
     }
 }
@@ -136,9 +136,9 @@ function printDetails(){
     }
     printSessionInfo();
     if(("Opal SSC V2.00 Feature" in devInfo["driveInfo"]["Discovery 0"])){
-        printOpalBreaches();
         checkOpalMinorVer();
     }
+    printSSCBreaches();
 }
 
 function printJSON(){

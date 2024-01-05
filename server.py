@@ -12,7 +12,7 @@ import json
 
 absRootPath = os.path.dirname(os.path.abspath(__file__))
 
-def isDrivePresent(serialNumber : str, firmwareVersion : str):
+def isDrivePresent(serialNumber: str, firmwareVersion: str):
     filesSaved = os.listdir("./outputs")
     for fileName in filesSaved:
         try:
@@ -21,7 +21,7 @@ def isDrivePresent(serialNumber : str, firmwareVersion : str):
                 if(serialNumber == data["Identify"]["Serial number"] and firmwareVersion == data["Identify"]["Firmware version"]):
                     return True
         except:
-            print("Error while reading file " + fileName + ", skipping")
+            print(f"Error while reading file {fileName}, skipping")
     return False
 
 def saveJSON(clientJSON):
@@ -44,7 +44,16 @@ def returnFile(filepath):
 def fetchFilenames():
     savedFiles = os.listdir("./outputs")
     returnString = ""
-    for file in savedFiles:
+    for file in savedFiles: # ",".join()
+        returnString += file + ","
+    returnString = returnString[:-1] # remove last ,
+    return returnString
+
+@get('/SSCs')
+def fetchSSCs():
+    savedFiles = os.listdir("./SSCs")
+    returnString = ""
+    for file in savedFiles: # ",".join()
         returnString += file + ","
     returnString = returnString[:-1] # remove last ,
     return returnString

@@ -2,98 +2,24 @@
 
 /**
     TODO List:
-    - check integrity of passing by value - updating the cursor
-    - rethink program flow
-    - change to generic SSC handling
     - change handling of number of devs - count only successfully stored
     - fetchDevices - check connection
     - change naming of indexCursor - maybe change entire name of index property?
     - add styling
     - add secure messaging check
+    - consider size of all possible SSCs (is LocalStorage enough?)
 */
 
 var db;
 var numofDevs = 0;
+var selectedSSC = "";
+var dis0ManFsets = {};
+var dis0optFsets = {};
 
 // For easier check of required values when filling TBody
 var operators = {
     '=' : function(a, b) {return a == b},
     '>=' : function(a, b) {return a >= b}
-};
-
-// Note: PSID is not in Discovery 0, but added here to make it easier to render
-var dis0ManFsets = {
-    "TPer Feature" : [
-        "Version",
-        "ComID Mgmt Supported",
-        {"Streaming Supported" : "= 1"},
-        "Buffer Mgmt Supported",
-        "ACK/NAK Supported",
-        "Async Supported",
-        {"Sync Supported" : "= 1"}
-    ], 
-    "Locking Feature": [
-        {"Version" : ">= 3"},
-        "HW Reset for LOR/DOR Supported",
-        {"MBR Shadowing Not Supported" : "= 0"},
-        "MBR Done",
-        "MBR Enabled",
-        {"Media Encryption" : "= 1"},
-        "Locked",
-        "Locking Enabled",
-        {"Locking Supported" : "= 1"}
-    ], 
-    "Opal SSC V2.00 Feature": [
-        "Feature Descriptor Version Number",
-        {"SSC Minor Version Number" : ">= 2"},
-        "Base ComID",
-        {"Number of ComIDs" : ">= 1"},
-        "Range Crossing Behavior",
-        {"Number of Locking SP Admin Authorities Supported" : ">= 4"},
-       {"Number of Locking SP User Authorities Supported" : ">= 8"},
-        "Initial C_PIN_SID PIN Indicator",
-        "Behavior of C_PIN_SID PIN upon TPer Revert"
-    ], 
-    "DataStore Table Feature": [
-        "Version",
-        {"Maximum number of DataStore tables" : ">= 1"},
-        {"Maximum total size of DataStore tables" : ">= 0xA0000"},
-        {"DataStore table size alignment" : ">= 1"}
-    ],
-    "Block SID Authentication Feature": [
-        {"Version" : ">= 2"},
-        "Locking SP Freeze Lock State ",
-        "Locking SP Freeze Lock supported",
-        "SID Authentication Blocked State",
-        "SID Value State",
-        "Hardware Reset"
-    ],
-    "PSID feature" :[
-
-    ]
-}; 
-
-var dis0optFsets = {
-    "Geometry Feature": [
-        "Version",
-        "ALIGN",
-        "LogicalBlockSize",
-        "AlignmentGranularity",
-        "LowestAlignedLBA"
-    ], 
-    "Single User Mode Feature": [
-        "Version",
-        "Number of Locking Objects Supported",
-        "Policy",
-        "All",
-        "Any"
-    ],
-    "Supported Data Removal Mechanism Feature Descriptor": [
-        "Version",
-        "Supported Data Removal Mechanism",
-        "Data Removal Time Format for Bit 2",
-        "Data Removal Time for Supported Data Removal Mechanism Bit 2"
-    ],
 };
 
 function findUID(JSONnode, UID){
@@ -127,9 +53,9 @@ function checkPSIDpresence(device){
  * Currently checks for presence of Block SID (02 mandatory addition) and of Interface
  * control template (00) by checking for its UID 0x0000020400000007 have to add PSID check for 01
  * by checking UID 000000090001ff01
- * TODO add collision explanation and further info into .html legend
  */
 function setMinorVersions(device){
+    let versionHTML = document.querySelector(`[id="Opal SSC V2.00 FeatureSSC Minor Version Number"] .d${device["index"]}`);
     let cluesDetected = [];
     let versionDetected = -1;
     if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
@@ -155,119 +81,116 @@ function setMinorVersions(device){
             versionDetected = 0;
         }
         
-        if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] != versionDetected){
+        let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"];
+        if(minorVerNum != versionDetected){
             // Conflicts were found, print maximum found version and indicate discrepancy
             if(versionDetected == -1){
-                device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${Math.max(...cluesDetected)}!)`;
-                device["OpalCompl"]["isCompliant"] = false;
-                device["OpalCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
-                device["OpalCompl"]["OpalMinorVerConflicts"] = cluesDetected;
+                versionHTML.innerHTML = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
+                device["SSCCompl"]["isCompliant"] = false;
+                //debugger;
+                if(device["SSCCompl"]["OpalMinorVerConflicts"].length == 0){
+                    device["SSCCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+                    device["SSCCompl"]["OpalMinorVerConflicts"] = cluesDetected;
+                }
             }
             // Detected version clear, but different from reported version
             else {
-                device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"] += ` (${versionDetected})`;
-                device["OpalCompl"]["OpalMinorVerConflicts"] = [];
+                versionHTML.innerHTML = `${minorVerNum} (${versionDetected})`;
+                device["SSCCompl"]["OpalMinorVerConflicts"] = [];
             }
         }
     }
 }
 
-function checkDataRemovalMech(){
-    const transaction = db.transaction("drives", "readwrite");
-    const store = transaction.objectStore("drives");
-    let device;
-
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        const cursor = event.target.result;
-        if(cursor){
-            let device = cursor.value;
-            let mechanismsSupported = [];
-            mechanismsSupported = [];
-            if(("Supported Data Removal Mechanism Feature Descriptor" in device["driveInfo"]["Discovery 0"])){
-                let dis0value = parseInt(device["driveInfo"]["Discovery 0"]["Supported Data Removal Mechanism Feature Descriptor"]["Supported Data Removal Mechanism"]);
-                // Check supported mechanisms
-                if(dis0value & 1){
-                    mechanismsSupported.push("0 (Overwrite Data Erase)");
-                }
-    
-                if(dis0value & 2){
-                    mechanismsSupported.push("1 (Block Erase)");
-                }
-    
-                if(dis0value & 4){ // Mandatory
-                    mechanismsSupported.push("2 (Crypto Erase)");
-                }
-                // Just mark the cell as red because this is mandatory value
-                else{
-                    device["OpalCompl"]["isCompliant"] = false;
-                    device["OpalCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
-                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
-                    cell.classList.add("redBg");
-                }
-    
-                if(dis0value & 32){
-                    mechanismsSupported.push("5 (Vendor-specific Erase)");
-                }
-            }
-            // Store this for easier access in details page
-            device["dataRemMechs"] = mechanismsSupported;
-            cursor.update(device);
-            cursor.continue();
+function checkDataRemovalMech(device){
+    let mechanismsSupported = [];
+    if(("Supported Data Removal Mechanism Feature Descriptor" in device["driveInfo"]["Discovery 0"])){
+        let dis0value = parseInt(device["driveInfo"]["Discovery 0"]["Supported Data Removal Mechanism Feature Descriptor"]["Supported Data Removal Mechanism"]);
+        // Check supported mechanisms
+        if(dis0value & 1){
+            mechanismsSupported.push("0 (Overwrite Data Erase)");
         }
-    });
 
+        if(dis0value & 2){
+            mechanismsSupported.push("1 (Block Erase)");
+        }
+
+        if(dis0value & 4){ // Mandatory
+            mechanismsSupported.push("2 (Crypto Erase)");
+        }
+        // Just mark the cell as red because this is mandatory value
+        else{
+            device["SSCCompl"]["isCompliant"] = false;
+            device["SSCCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
+            let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
+            cell.classList.add("redBg");
+        }
+
+        if(dis0value & 32){
+            mechanismsSupported.push("5 (Vendor-specific Erase)");
+        }
+    }
+    // Store this for easier access in details page
+    device["dataRemMechs"] = mechanismsSupported;
 }
 
 function findMissingFsets(device){
     for(fset in dis0ManFsets){
         if(!(fset in device["driveInfo"]["Discovery 0"])){
-            device["OpalCompl"]["isCompliant"] = false;
-            device["OpalCompl"]["complBreaches"].push(`${fset} missing`);
+            device["SSCCompl"]["isCompliant"] = false;
+            device["SSCCompl"]["complBreaches"].push(`${fset} missing`);
         }
     }
 }
 
 function populateDevList(){
-    const transaction = db.transaction("drives", "readonly");
-    const store = transaction.objectStore("drives");
-
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        const cursor = event.target.result;
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readonly");
+        const store = transaction.objectStore("drives");
         let devList = document.getElementById("devList");
-        if(cursor){
-            let device = cursor.value;
-            devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
-            cursor.continue();
-        }
-        else{
-            // Adding listeners to "All" Cboxes has to happen AFTER all of the device CBoxes were created
-            let fSetList = document.getElementById("fSetManList");
-            Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
-                fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
-            });
-            fSetList = document.getElementById("fSetOptList");
-            Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
-                fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
-            });
-            let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
-            allCboxes.forEach((allBox) => {
-                let allBoxEl = document.getElementById(allBox);
-                allBoxEl.onchange = () => {
-                    // The self selection has to be here, because this code is evaluated only after the event
-                    let cBoxes = document.querySelectorAll(`.${allBoxEl.classList[0]}`);
-                    cBoxes.forEach((cBox) => {
-                        if(cBox.checked != allBoxEl.checked){
-                            cBox.click();
-                        }
-                    });
-                } 
-            })            
-        }
-    });
-    request.onerror = ((reason) => {
-        console.error(`Failed to open cursor for object store\n${reason}`);
+        devList.innerHTML = `<input type="checkbox" class="devCBox" name="allDevs" checked="true" id="allDevsCbox">All<br>`;
+    
+        const request = store.openCursor();
+        request.onsuccess = ((event) => {
+            const cursor = event.target.result;
+            
+            if(cursor){
+                let device = cursor.value;
+                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
+                cursor.continue();
+            }
+            else{
+                // Adding listeners to "All" Cboxes has to happen AFTER all of the device CBoxes were created
+                let fSetList = document.getElementById("fSetManList");
+                fSetList.innerHTML = `<input type="checkbox" class="manFsetCbox" name="allDevs" checked="true" id="allManFsetCbox">All<br>`;
+                Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
+                    fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+                });
+                fSetList = document.getElementById("fSetOptList");
+                fSetList.innerHTML = `<input type="checkbox" class="optFsetCbox" name="allDevs" checked="true" id="allOptFsetCbox">All<br>`;
+                Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
+                    fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+                });
+                let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
+                allCboxes.forEach((allBox) => {
+                    let allBoxEl = document.getElementById(allBox);
+                    allBoxEl.onchange = () => {
+                        // The self selection has to be here, because this code is evaluated only after the event
+                        let cBoxes = document.querySelectorAll(`.${allBoxEl.classList[0]}`);
+                        cBoxes.forEach((cBox) => {
+                            if(cBox.checked != allBoxEl.checked){
+                                cBox.click();
+                            }
+                        });
+                    } 
+                })
+                resolve();            
+            }
+        });
+        request.onerror = ((reason) => {
+            console.error(`Failed to open cursor for object store\n${reason}`);
+            reject();
+        });
     });
 }
 
@@ -289,14 +212,14 @@ function setFsetAttrValue(device, fsetName, attrName, requiredValue){
             HTMLitem.innerHTML = `${devValue}`;
         }
         else{
-            device["OpalCompl"]["isCompliant"] = false;
-            device["OpalCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredVal[1]}`);
+            device["SSCCompl"]["isCompliant"] = false;
+            device["SSCCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredVal[1]}`);
             HTMLitem.innerHTML = `${devValue}`;
             HTMLitem.classList.add("redBg");
         }
     }
     else{
-        HTMLitem.innerHTML = `${devValue}`;
+        HTMLitem.innerHTML = `${devValue}`;        
     }
 }
 
@@ -373,7 +296,7 @@ function storeDrive(drive, indexNum){
         const transaction = db.transaction("drives", "readwrite");
         const store = transaction.objectStore("drives");
 
-        let putReq = store.put({index : indexNum, driveInfo : drive, OpalCompl : {isCompliant : true, complBreaches : [], OpalMinorVerConflicts : []}});
+        let putReq = store.put({index : indexNum, driveInfo : drive, SSCCompl : {isCompliant : true, complBreaches : [], OpalMinorVerConflicts : []}});
         putReq.onsuccess = ((event) => {
             resolve();
         });
@@ -436,6 +359,7 @@ function fillDevices(HTMLitem){
 
 async function generateTbody(tableName, featureSet){
     let tableBody = document.getElementById(tableName);
+    tableBody.innerHTML = "";
     for(const fsetName in featureSet){
         let attributes = featureSet[fsetName];
         let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
@@ -470,43 +394,111 @@ async function generateTbody(tableName, featureSet){
     }   
 }
 
-async function checkDevCopmpliance(device){
-    setMinorVersions(device);
+async function checkDevCompliance(device){
+    device["SSCCompl"]["complBreaches"] = [];
     await populateTbody(device, dis0ManFsets);
     await populateTbody(device, dis0optFsets);
+
+    switch (String(selectedSSC)) {
+        case "Opal 2.02":
+            setMinorVersions(device);
+        case "Opal 2.01":
+            break;
+        case "Opal 2.00": 
+        default:
+            console.error(`Unknown SSC encountered in checkDevCompliance(): ${String(selectedSSC)}`);
+            break;
+    }
+
     checkDataRemovalMech(device);
     checkPSIDpresence(device);
     setLockingVersion(device);
     findMissingFsets(device);
 }
 
-async function fetchDevices(){
-    let files = await fetch(`./names`);
-    let filenames = await files.text();
-    await prepareDrives(filenames);
-    populateDevList();
+function populateTables(){
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readwrite");
+        const store = transaction.objectStore("drives");
+    
+        const request = store.openCursor();
+        request.onsuccess = ((event) => {
+            const cursor = event.target.result;
+            if(cursor){
+                let device = cursor.value;
+                checkDevCompliance(device).then(() => {
+                    cursor.update(device);
+                    cursor.continue();
+                })
+            }
+            else {
+                resolve();
+            }
+        });
+        request.onerror = ((reason) => {
+            console.error(`Failed to open drives Object Store in fetchDevices()`);
+            resolve();
+        });
+    });
+
+} 
+
+async function regenerateSSC(SSCname){
+    let SSCbuttonsHTML = document.querySelectorAll(`[id="SSCbuttons"] button`);
+    SSCbuttonsHTML.forEach((buttonHTML) => {
+        buttonHTML.classList.value = "deselectedButton";
+    })
+    let selectedButton = document.querySelector(`[id="${SSCname}"]`);
+    selectedButton.classList.add("selectedButton");
+    let SSCtext = localStorage.getItem(SSCname);
+    let SSCjson = JSON.parse(SSCtext);
+
+    selectedSSC = SSCjson["SSC name"];
+    dis0ManFsets = SSCjson["mandatory"];
+    dis0optFsets = SSCjson["optional"];
+
+    await populateDevList();
+
+    renderCBoxes();
 
     await generateTbody("manFeatures", dis0ManFsets);
     await generateTbody("optFeatures", dis0optFsets);
 
-    const transaction = db.transaction("drives", "readwrite");
-    const store = transaction.objectStore("drives");
+    populateTables();
+}
 
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        const cursor = event.target.result;
-        if(cursor){
-            let device = cursor.value;
-            checkDevCopmpliance(device);
-            // TODO double-check if update is able to finish before continue
-            cursor.update(device);
-            cursor.continue();
-        }
-    });
-    request.onerror = ((reason) => {
-        console.error(`Failed to open drives Object Store in fetchDevices()`);
-    });
+async function fetchDevices(){
+    let files = await fetch(`./names`);
+    let filenames = await files.text();
+    let SSCfiles = await fetch(`./SSCs`);
+    let SSCfilenames = await SSCfiles.text();
 
+    SSCfilenames =  SSCfilenames.split(',');
+    let SSCjson;
+    let i;
+    for(i in SSCfilenames){
+        let response = await fetch(`./SSCs/${SSCfilenames[i]}`);
+        let SSCstring = await response.text();
+        SSCjson = JSON.parse(SSCstring);
+        localStorage.setItem(SSCfilenames[i], SSCstring);
+        // the filename is used here because using the SSC name was proving troublesome due to unexpected behaviour of the string
+        document.getElementById("SSCbuttons").innerHTML += `<button onclick=regenerateSSC("${SSCfilenames[i]}") id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
+    }
+    SSCjson = JSON.parse(localStorage.getItem(SSCfilenames[0]));
+    selectedSSC = SSCjson["SSC name"];
+    dis0ManFsets = SSCjson["mandatory"];
+    dis0optFsets = SSCjson["optional"];
+
+    let selectedButton = document.querySelector(`[id="${SSCfilenames[0]}"]`);
+    selectedButton.classList.add("selectedButton");
+
+    await prepareDrives(filenames);
+    await populateDevList();
+
+    await generateTbody("manFeatures", dis0ManFsets);
+    await generateTbody("optFeatures", dis0optFsets);
+
+    await populateTables();
     renderCBoxes();
 }
 

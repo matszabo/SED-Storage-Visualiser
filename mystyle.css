@@ -42,3 +42,12 @@ a:link{
 a:hover{
     text-decoration: underline;
 }
+
+.selectedButton{
+    border: 2px solid black;
+    background-color: gray;
+}
+
+.deselectedButton{
+    border: 1px solid black;
+}
