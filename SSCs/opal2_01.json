@@ -12,7 +12,7 @@
             {"Sync Supported" : "= 1"}
         ], 
         "Locking Feature": [
-            {"Version" : ">= 3"},
+            {"Version" : ">= 1"},
             "HW Reset for LOR/DOR Supported",
             {"MBR Shadowing Not Supported" : "= 0"},
             "MBR Done",

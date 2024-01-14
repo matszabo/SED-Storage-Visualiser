@@ -143,6 +143,7 @@ function printDetails(){
 
 function printJSON(){
     let outputInfo = devInfo["driveInfo"];
+    delete outputInfo["Discovery 0"]["PSID feature"];
     // This is done here again, because pre-formatting in index.js didn't work
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
