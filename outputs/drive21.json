@@ -3,10 +3,10 @@
   "Version": "1"
 },
 "Identify": {
-  "Serial number": "1913E1F4A86D",
-  "Firmware version": "M3CR023",
-  "Model number": "CT250MX500SSD4",
-  "Serial number long": "CT250MX500SSD4_1913E1F4A86D",
+  "Serial number": "TW0R3CDKLOH0097Q02MP",
+  "Firmware version": "22301111",
+  "Model number": "CL1-3D128-Q11 NVMe LITEON 128GB",
+  "Serial number long": "CL1-3D128-Q11_NVMe_LITEON_128GB_TW0R3CDKLOH0097Q02MP",
   "Source": "udev"
 },
 "Discovery 0": {
@@ -20,46 +20,15 @@
     "Sync Supported": 1
   },
   "Locking Feature": {
-    "Version": 1,
+    "Version": 2,
     "HW Reset for LOR/DOR Supported": 0,
     "MBR Shadowing Not Supported": 0,
     "MBR Done": 0,
     "MBR Enabled": 0,
-    "Media Encryption": 1,
+    "Media Encryption": 0,
     "Locked": 0,
     "Locking Enabled": 0,
     "Locking Supported": 1
-  },
-  "Geometry Feature": {
-    "Version": 1,
-    "ALIGN": 1,
-    "LogicalBlockSize": 512,
-    "AlignmentGranularity": 1,
-    "LowestAlignedLBA": 0
-  },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
-    "Base ComID": 2184,
-    "Number of ComIDs": 1,
-    "Range Crossing Behavior": 0,
-    "Number of Locking SP Admin Authorities Supported": 4,
-    "Number of Locking SP User Authorities Supported": 9,
-    "Initial C_PIN_SID PIN Indicator": 0,
-    "Behavior of C_PIN_SID PIN upon TPer Revert": 0
-  },
-  "Single User Mode Feature": {
-    "Version": 1,
-    "Number of Locking Objects Supported": 9,
-    "Policy": 1,
-    "All": 0,
-    "Any": 0
-  },
-  "DataStore Table Feature": {
-    "Version": 1,
-    "Maximum number of DataStore tables": 10,
-    "Maximum total size of DataStore tables": 10485760,
-    "DataStore table size alignment": 1
   },
   "Block SID Authentication Feature": {
     "Version": 1,
@@ -68,6 +37,30 @@
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0
+  },
+  "Pyrite SSC Feature Descriptor": {
+    "Version": 1,
+    "Base ComID": 2184,
+    "Number of ComIDs": 1,
+    "Initial C_PIN_SID PIN Indicator": 0,
+    "Behavior of C_PIN_SID PIN upon TPer Revert": 0
+  },
+  "Supported Data Removal Mechanism Feature Descriptor": {
+    "Version": 1,
+    "Data Removal Operation Processing": 0,
+    "Supported Data Removal Mechanism": 2,
+    "Data Removal Time Format for Bit 0": 0,
+    "Data Removal Time Format for Bit 1": 1,
+    "Data Removal Time Format for Bit 2": 0,
+    "Data Removal Time Format for Bit 3": 0,
+    "Data Removal Time Format for Bit 4": 0,
+    "Data Removal Time Format for Bit 5": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 0": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 1": 1,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 2": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 3": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 4": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 5": 0
   }},
 "Discovery 1": {
   "Properties": {
@@ -79,7 +72,7 @@
     "MaxSubpackets": "0x00000001",
     "MaxMethods": "0x00000001",
     "MaxSessions": "0x00000001",
-    "MaxAuthentications": "0x0000000e",
+    "MaxAuthentications": "0x00000004",
     "MaxTransactionLimit": "0x00000001",
     "DefSessionTimeout": "0x000493e0",
     "MaxSessionTimeout": "0x00000000",
@@ -275,6 +268,23 @@
         "0x0c": "0x00",
         "0x0d": "0x00",
         "0x0e": "0x00"
+      },
+      "0x0000000100001101": {
+        "0x00": "0x0000000100001101",
+        "0x01": "(DataRemovalMechanism) 0x4461746152656d6f76616c4d656368616e69736d",
+        "0x02": "(DataRemovalMechanism) 0x4461746152656d6f76616c4d656368616e69736d",
+        "0x03": "0x0000000000000000",
+        "0x04": "0x01",
+        "0x05": "0x00",
+        "0x06": "0x00",
+        "0x07": "0x00000000",
+        "0x08": "0x00",
+        "0x09": "0x00",
+        "0x0a": "0x0000000000000000",
+        "0x0b": "0x00",
+        "0x0c": "0x00",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
       }
     },
     "0x0000000200000000": {
@@ -371,20 +381,6 @@
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[]"
       },
-      "0x0000000800000002": {
-        "0x00": "0x0000000800000002",
-        "0x01": "(ACE_Admin) 0x4143455f41646d696e",
-        "0x02": "(ACE_Admin) 0x4143455f41646d696e",
-        "0x03": "[f2a400000c05a80000000900000002f3]",
-        "0x04": "[]"
-      },
-      "0x0000000800030001": {
-        "0x00": "0x0000000800030001",
-        "0x01": "(ACE_Set_Enabled) 0x4143455f5365745f456e61626c6564",
-        "0x02": "(ACE_Set_Enabled) 0x4143455f5365745f456e61626c6564",
-        "0x03": "[f2a400000c05a80000000900000006f3]",
-        "0x04": "[05]"
-      },
       "0x0000000800008c02": {
         "0x00": "0x0000000800008c02",
         "0x01": "(ACE_C_PIN_SID_Get_NOPIN) 0x4143455f435f50494e5f5349445f4765745f4e4f50494e",
@@ -405,13 +401,6 @@
         "0x02": "(ACE_C_PIN_MSID_Get_PIN) 0x4143455f435f50494e5f4d5349445f4765745f50494e",
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0003]"
-      },
-      "0x000000080003a001": {
-        "0x00": "0x000000080003a001",
-        "0x01": "(ACE_C_PIN_Admins_Set_PIN) 0x4143455f435f50494e5f41646d696e735f5365745f50494e",
-        "0x02": "(ACE_C_PIN_Admins_Set_PIN) 0x4143455f435f50494e5f41646d696e735f5365745f50494e",
-        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
-        "0x04": "[03]"
       },
       "0x0000000800030003": {
         "0x00": "0x0000000800030003",
@@ -440,6 +429,13 @@
         "0x02": "(ACE_C_PIN_Get_PSID_NoPIN) 0x4143455f435f50494e5f4765745f505349445f4e6f50494e",
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0004050607]"
+      },
+      "0x0000000800050001": {
+        "0x00": "0x0000000800050001",
+        "0x01": "(ACE_DataRemovalMechanism_Set_ActiveDataRemovalMechanism) 0x4143455f4461746152656d6f76616c4d656368616e69736d5f5365745f4163746976654461746152656d6f76616c4d656368616e69736d",
+        "0x02": "(ACE_DataRemovalMechanism_Set_ActiveDataRemovalMechanism) 0x4143455f4461746152656d6f76616c4d656368616e69736d5f5365745f4163746976654461746152656d6f76616c4d656368616e69736d",
+        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
+        "0x04": "[01]"
       }
     },
     "0x0000000900000000": {
@@ -485,27 +481,6 @@
         "0x11": "0x00",
         "0x12": "0x00"
       },
-      "0x0000000900000003": {
-        "0x00": "0x0000000900000003",
-        "0x01": "(Makers) 0x4d616b657273",
-        "0x02": "(Makers) 0x4d616b657273",
-        "0x03": "0x01",
-        "0x04": "0x0000000000000000",
-        "0x05": "0x01",
-        "0x06": "0x00",
-        "0x07": "0x00",
-        "0x08": "0x00",
-        "0x09": "0x00",
-        "0x0a": "0x0000000000000000",
-        "0x0b": "0x0000000000000000",
-        "0x0c": "0x0000000000000000",
-        "0x0d": "0x00",
-        "0x0e": "0x00",
-        "0x0f": "0x00",
-        "0x10": "0x00",
-        "0x11": "0x00",
-        "0x12": "0x00"
-      },
       "0x0000000900000006": {
         "0x00": "0x0000000900000006",
         "0x01": "(SID) 0x534944",
@@ -518,90 +493,6 @@
         "0x08": "0x00",
         "0x09": "0x01",
         "0x0a": "0x0000000b00000001",
-        "0x0b": "0x0000000000000000",
-        "0x0c": "0x0000000000000000",
-        "0x0d": "0x00",
-        "0x0e": "0x00",
-        "0x0f": "0x00",
-        "0x10": "0x00",
-        "0x11": "0x00",
-        "0x12": "0x00"
-      },
-      "0x0000000900000201": {
-        "0x00": "0x0000000900000201",
-        "0x01": "(Admin1) 0x41646d696e31",
-        "0x02": "(Admin1) 0x41646d696e31",
-        "0x03": "0x00",
-        "0x04": "0x0000000900000002",
-        "0x05": "0x00",
-        "0x06": "0x00",
-        "0x07": "0x00",
-        "0x08": "0x00",
-        "0x09": "0x01",
-        "0x0a": "0x0000000b00000201",
-        "0x0b": "0x0000000000000000",
-        "0x0c": "0x0000000000000000",
-        "0x0d": "0x00",
-        "0x0e": "0x00",
-        "0x0f": "0x00",
-        "0x10": "0x00",
-        "0x11": "0x00",
-        "0x12": "0x00"
-      },
-      "0x0000000900000202": {
-        "0x00": "0x0000000900000202",
-        "0x01": "(Admin2) 0x41646d696e32",
-        "0x02": "(Admin2) 0x41646d696e32",
-        "0x03": "0x00",
-        "0x04": "0x0000000900000002",
-        "0x05": "0x00",
-        "0x06": "0x00",
-        "0x07": "0x00",
-        "0x08": "0x00",
-        "0x09": "0x01",
-        "0x0a": "0x0000000b00000202",
-        "0x0b": "0x0000000000000000",
-        "0x0c": "0x0000000000000000",
-        "0x0d": "0x00",
-        "0x0e": "0x00",
-        "0x0f": "0x00",
-        "0x10": "0x00",
-        "0x11": "0x00",
-        "0x12": "0x00"
-      },
-      "0x0000000900000203": {
-        "0x00": "0x0000000900000203",
-        "0x01": "(Admin3) 0x41646d696e33",
-        "0x02": "(Admin3) 0x41646d696e33",
-        "0x03": "0x00",
-        "0x04": "0x0000000900000002",
-        "0x05": "0x00",
-        "0x06": "0x00",
-        "0x07": "0x00",
-        "0x08": "0x00",
-        "0x09": "0x01",
-        "0x0a": "0x0000000b00000203",
-        "0x0b": "0x0000000000000000",
-        "0x0c": "0x0000000000000000",
-        "0x0d": "0x00",
-        "0x0e": "0x00",
-        "0x0f": "0x00",
-        "0x10": "0x00",
-        "0x11": "0x00",
-        "0x12": "0x00"
-      },
-      "0x0000000900000204": {
-        "0x00": "0x0000000900000204",
-        "0x01": "(Admin4) 0x41646d696e34",
-        "0x02": "(Admin4) 0x41646d696e34",
-        "0x03": "0x00",
-        "0x04": "0x0000000900000002",
-        "0x05": "0x00",
-        "0x06": "0x00",
-        "0x07": "0x00",
-        "0x08": "0x00",
-        "0x09": "0x01",
-        "0x0a": "0x0000000b00000204",
         "0x0b": "0x0000000000000000",
         "0x0c": "0x0000000000000000",
         "0x0d": "0x00",
@@ -639,19 +530,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(crucial_bymicron) 0x6372756369616c5f62796d6963726f6e"
-      },
-      "0x0000000b00000201": {
-
-      },
-      "0x0000000b00000202": {
-
-      },
-      "0x0000000b00000203": {
-
-      },
-      "0x0000000b00000204": {
-
+        "0x03": "(my_MSID_password) 0x6d795f4d5349445f70617373776f7264"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -668,12 +547,12 @@
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x01": "0x00",
-        "0x02": "0x02230008500a0751e1f4a86d",
+        "0x02": "0x022300084238747953657274",
         "0x03": "0x00",
         "0x04": "0x00",
         "0x05": "0x01",
         "0x06": "0x00",
-        "0x07": "(Opal) 0x4f70616c",
+        "0x07": "(Pyrite) 0x507972697465",
         "0x08": "0x00"
       }
     },
@@ -695,13 +574,6 @@
       "0x0000020400000006": {
         "0x00": "0x0000020400000006",
         "0x01": "(Locking) 0x4c6f636b696e67",
-        "0x02": "0x01",
-        "0x03": "0x01",
-        "0x04": "0x01"
-      },
-      "0x0000020400000007": {
-        "0x00": "0x0000020400000007",
-        "0x01": "(Interface_Control) 0x496e746572666163655f436f6e74726f6c",
         "0x02": "0x01",
         "0x03": "0x01",
         "0x04": "0x01"
@@ -728,6 +600,15 @@
         "0x06": "0x08",
         "0x07": "0x00"
       }
+    },
+    "0x0000110100000000": {
+      "0x0000110100000001": {
+        "0x00": "0x0000080200000001",
+        "0x01": "0x02"
+      },
+      "0x0000110100030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      }
     }
   },
   "0x0000020500000002": {
@@ -737,42 +618,43 @@
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x01": "0x00",
-        "0x02": "0x02230008500a0751e1f4a86d",
+        "0x02": "0x022300084238747953657274",
         "0x03": "0x00",
         "0x04": "0x00",
         "0x05": "0x01",
         "0x06": "0x00",
-        "0x07": "(Opal) 0x4f70616c",
+        "0x07": "(Pyrite) 0x507972697465",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-
+        "0x00": "0x0000080200000001",
+        "0x01": "0x02"
   }
 },
 "Random sample": [
   [
-    "c5f323c440c67a8c765d89bbb189d06aa4535ecab7849a64724a0488f5e13200",
-    "806f9b53374899839f4dde99561be91f9c806891de16e7671c0cd898a3645208",
-    "9e5769e2766d13034975b216d1e63c4d7aaa8cb2f57d2db16d07e5100bbfefb2",
-    "b5542c298231a2a830bc4727052ad36848c629928c58d1c1a121a76a79723f75"
+    "5f784d9bf4204989779c97d0b3c56b391678ade09385eaf36501a64d4e93cd3b",
+    "9b1606e4a6fb8d577391f4df10713743e4ae24eb0fecc6dfac2150963ca5f098",
+    "d4d41d6601c04bd9b93b239be20e7f137659b9ecbad37d39a32d4175242c3d3c",
+    "c63e73fdaf652f6482adc3092a955af587272fa31f798da252c9823f05a77d25"
   ],
   [
-    "40c07f11b5b5e948075a850458fd75d4ce69c0f80808d7924ea1793a032aeb23",
-    "e58b7e14e3f5fb6593590fe82a660e0440b02b6249b8e726d558c99b90e46c01",
-    "68101c9b9691015c97587663511dc7fb141dbc5776cb639af0bffc27eeef73b5",
-    "d7a87bbd12e04830f56f902793619211074de2ac1a1876d924ec264ebfa538d3"
+    "c57d2106f5ba28dde2525ac3e2a2de5dd26b5c9498433bf6fd2d790972e4a40b",
+    "1e4b718d1bdf46e1509f0bb52a526c07fb6befe55950e157e0bed8d4d9c87d8a",
+    "f3e936b1c3053971d93dc7bbd7a528e5e45715e8fefd52388d5ce31ea239c543",
+    "2fbc3f9ff9bcdbf4de47151fa53f30a73523fdb26ff0ccf917b44195bec9e781"
   ],
   [
-    "77b2041b063dcc776d94f813eb5f85a56fa5dc9dc68418e48ddd18ab36248034",
-    "556e4cf3b8f69ca99eab0caaf65690a4ec7264bd95951877c0eeef2f592caf7d",
-    "fc840779bc24d2872db54caab159a9fe70bd6ccddf8bad359d904cd11e844caf",
-    "cd257058bb7c03818a8e3be05ac0c4ec8ddd94fb89c794d9910ebf056bcce7b5"
+    "3ac1f9ec2f664c1a419874397dced1179af93a0c227c37b1fa93a230149afc96",
+    "34d1a730c2cef3fa1bafb2f849c22a4eae902120dcb9f76e564189d3bba11d18",
+    "d67944c8dcd6f465302f3dbcd6b509d0cce8faa8a9f542f5787c9b7a5bf1f721",
+    "7ea5d1c632d58275389816c6848d1af2da894157f389ee29c936bc1f099c9e50"
   ],
   [
-    "cb339578cdd71f930a900331801282a7e6b7acd80e868b21214a8e036b05b0a4",
-    "7eca1e333b06b0d8876fd8d01d70aa74e60c315da35ef607dc3d8a5796a7ce27",
-    "bb9aaec581359368a90b1f4647fb0ba7b31ba90137c22d45713ce5810cb4ec00",
-    "91df405bba42abe86197ffcd84204f5f9fbd302689a8e100a19999b2c0216488"
+    "22abef872872719490aad0b0ac01d6a4c43f373eb20b23e832320d77af57ecc3",
+    "7ee7cb3f4fb2bb99fc0290802a4214dcd66c96cc88bec386b88e34c0827ae129",
+    "93f872a9e7304ba9670615b39c8f0c1b79599900344388f17af5b15946b9883d",
+    "5972dde81148dbaf5aec2caf5c8b950a52301d2ac6fa5f2b9474ef484742a182"
   ]
 ]
 }

@@ -1,0 +1,71 @@
+{
+"Metadata": {
+  "Version": "1"
+},
+"Identify": {
+  "Serial number": "1820E13D28CC",
+  "Firmware version": "M3CR020",
+  "Model number": "CT250MX500SSD1",
+  "Serial number long": "CT250MX500SSD1_1820E13D28CC",
+  "Source": "udev"
+},
+"Discovery 0": {
+  "TPer Feature": {
+    "Version": 1,
+    "ComID Mgmt Supported": 0,
+    "Streaming Supported": 1,
+    "Buffer Mgmt Supported": 0,
+    "ACK/NAK Supported": 0,
+    "Async Supported": 0,
+    "Sync Supported": 1
+  },
+  "Locking Feature": {
+    "Version": 1,
+    "HW Reset for LOR/DOR Supported": 0,
+    "MBR Shadowing Not Supported": 0,
+    "MBR Done": 0,
+    "MBR Enabled": 0,
+    "Media Encryption": 1,
+    "Locked": 0,
+    "Locking Enabled": 1,
+    "Locking Supported": 1
+  },
+  "Geometry Feature": {
+    "Version": 1,
+    "ALIGN": 1,
+    "LogicalBlockSize": 512,
+    "AlignmentGranularity": 1,
+    "LowestAlignedLBA": 0
+  },
+  "Opal SSC V2.00 Feature": {
+    "Feature Descriptor Version Number": 1,
+    "SSC Minor Version Number": 0,
+    "Base ComID": 2184,
+    "Number of ComIDs": 1,
+    "Range Crossing Behavior": 0,
+    "Number of Locking SP Admin Authorities Supported": 4,
+    "Number of Locking SP User Authorities Supported": 9,
+    "Initial C_PIN_SID PIN Indicator": 0,
+    "Behavior of C_PIN_SID PIN upon TPer Revert": 0
+  },
+  "Single User Mode Feature": {
+    "Version": 1,
+    "Number of Locking Objects Supported": 9,
+    "Policy": 0,
+    "All": 1,
+    "Any": 1
+  },
+  "DataStore Table Feature": {
+    "Version": 1,
+    "Maximum number of DataStore tables": 10,
+    "Maximum total size of DataStore tables": 10485760,
+    "DataStore table size alignment": 1
+  },
+  "Block SID Authentication Feature": {
+    "Version": 1,
+    "Locking SP Freeze Lock State ": 0,
+    "Locking SP Freeze Lock supported": 0,
+    "SID Authentication Blocked State": 0,
+    "SID Value State": 1,
+    "Hardware Reset": 0
+  }}}

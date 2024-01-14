@@ -39,13 +39,19 @@ function setLockingVersion(device){
 
 function checkPSIDpresence(device){
     let driveCell = document.querySelector(`[id="PSID featurePresent"] .d${device["index"]}`);
-    if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
-        driveCell.innerHTML = "Yes"
-        device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
+    if("Discovery 2" in device["driveInfo"]){
+        if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
+            driveCell.innerHTML = "Yes"
+            device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
+        }
+        else{
+            driveCell.classList.add("redBg");
+            driveCell.innerHTML = `No`;
+        }
     }
     else{
-        driveCell.classList.add("redBg");
-        driveCell.innerHTML = `No`;
+        driveCell.classList.add("orBg");
+        driveCell.innerHTML = `Unknown`;
     }
 }
 
@@ -59,46 +65,52 @@ function setMinorVersions(device){
     let cluesDetected = [];
     let versionDetected = -1;
     if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
-        if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
-            cluesDetected.push(2)
-        }
-        if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
-            cluesDetected.push(1)
-        }
-        if(findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007")){
-            cluesDetected.push(0)
-        }
-        // Normal Opal 2.02
-        if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
-            versionDetected = 2;
-        }
-        // Normal Opal 2.01
-        else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
-            versionDetected = 1;
-        }
-        // Normal Opal 2.00
-        else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
-            versionDetected = 0;
-        }
-        
         let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"];
-        if(minorVerNum != versionDetected){
-            // Conflicts were found, print maximum found version and indicate discrepancy
-            if(versionDetected == -1){
-                versionHTML.innerHTML = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
-                device["SSCCompl"]["isCompliant"] = false;
-                //debugger;
-                if(device["SSCCompl"]["OpalMinorVerConflicts"].length == 0){
-                    device["SSCCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
-                    device["SSCCompl"]["OpalMinorVerConflicts"] = cluesDetected;
+        if("Discovery 2" in device["driveInfo"]){
+            if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
+                cluesDetected.push(2)
+            }
+            if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
+                cluesDetected.push(1)
+            }
+            if(findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007")){
+                cluesDetected.push(0)
+            }
+            // Normal Opal 2.02
+            if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
+                versionDetected = 2;
+            }
+            // Normal Opal 2.01
+            else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
+                versionDetected = 1;
+            }
+            // Normal Opal 2.00
+            else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
+                versionDetected = 0;
+            }
+            
+            if(minorVerNum != versionDetected){
+                // Conflicts were found, print maximum found version and indicate discrepancy
+                if(versionDetected == -1){
+                    versionHTML.innerHTML = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
+                    device["SSCCompl"]["isCompliant"] = false;
+                    //debugger;
+                    if(device["SSCCompl"]["OpalMinorVerConflicts"].length == 0){
+                        device["SSCCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
+                        device["SSCCompl"]["OpalMinorVerConflicts"] = cluesDetected;
+                    }
+                }
+                // Detected version clear, but different from reported version
+                else {
+                    versionHTML.innerHTML = `${minorVerNum} (${versionDetected})`;
+                    device["SSCCompl"]["OpalMinorVerConflicts"] = [];
                 }
             }
-            // Detected version clear, but different from reported version
-            else {
-                versionHTML.innerHTML = `${minorVerNum} (${versionDetected})`;
-                device["SSCCompl"]["OpalMinorVerConflicts"] = [];
-            }
         }
+        else{
+            versionHTML.innerHTML = `${minorVerNum} (unknown)`;
+            device["SSCCompl"]["OpalMinorVerConflicts"] = [];
+        } 
     }
 }
 

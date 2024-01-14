@@ -62,30 +62,35 @@ function getSelectedDev(){
 // TODO change to table
 function printSessionInfo(){
     let TPerElement = document.getElementById("SessionInfo");
-    let SessionInfo = devInfo["driveInfo"]["Discovery 1"]["Properties"];
-    if(typeof SessionInfo == "undefined"){
-        TPerElement.innerHTML += "<p>Discovery 1 is missing</p>";
-        return;
-    }
-    // Discovery 1 check compliance
-    for(field in TPerManFields){
-        if(!field in SessionInfo){
-            TPerElement.innerHTML += `<p class="redBg">${field} : MISSING</p>`;
+    if("Discovery 1" in devInfo["driveInfo"]){
+        let SessionInfo = devInfo["driveInfo"]["Discovery 1"]["Properties"];
+        if(typeof SessionInfo == "undefined"){
+            TPerElement.innerHTML += "<p>Discovery 1 is missing</p>";
+            return;
         }
-        else{
-            if(parseInt(SessionInfo[field] < parseInt(TPerManFields[field]))){
-                TPerElement.innerHTML += `<p class="redBg"">${field} : ${SessionInfo[field]} (Required minimum: ${TPerManFields[field]})</p>`;
+        // Discovery 1 check compliance
+        for(field in TPerManFields){
+            if(!field in SessionInfo){
+                TPerElement.innerHTML += `<p class="redBg">${field} : MISSING</p>`;
             }
-            TPerElement.innerHTML += `<p">${field} : ${SessionInfo[field]}</p>`;
+            else{
+                if(parseInt(SessionInfo[field] < parseInt(TPerManFields[field]))){
+                    TPerElement.innerHTML += `<p class="redBg"">${field} : ${SessionInfo[field]} (Required minimum: ${TPerManFields[field]})</p>`;
+                }
+                TPerElement.innerHTML += `<p">${field} : ${SessionInfo[field]}</p>`;
+            }
+        }
+        TPerElement.innerHTML += `<h3>Optional fields</h3><div id="TPerOptional"></div>`;
+        // Check for additional fields
+        TPerElement = document.getElementById("TPerOptional");
+        for(field in SessionInfo){
+            if(!(field in TPerManFields)){
+                TPerElement.innerHTML += `<p>${field} : ${SessionInfo[field]}</p>`
+            }
         }
     }
-    TPerElement.innerHTML += `<h3>Optional fields</h3><div id="TPerOptional"></div>`;
-    // Check for additional fields
-    TPerElement = document.getElementById("TPerOptional");
-    for(field in SessionInfo){
-        if(!(field in TPerManFields)){
-            TPerElement.innerHTML += `<p>${field} : ${SessionInfo[field]}</p>`
-        }
+    else{
+        TPerElement.innerHTML = `Discovery 1 is missing in the drive's source!`
     }
 }
 

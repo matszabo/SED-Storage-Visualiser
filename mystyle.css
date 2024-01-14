@@ -18,6 +18,10 @@ table, td{
     background-color: red;
 }
 
+.orBg{
+    background-color: orange;
+}
+
 .square{
     float: left;
     height: 15px;

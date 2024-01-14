@@ -3,10 +3,10 @@
   "Version": "1"
 },
 "Identify": {
-  "Serial number": "S6PYNX0T492049W",
-  "Firmware version": "SVT02B6Q",
-  "Model number": "Samsung SSD 870 EVO 500GB",
-  "Serial number long": "Samsung_SSD_870_EVO_500GB_S6PYNX0T492049W",
+  "Serial number": "S35BNX0K309781",
+  "Firmware version": "6L6QCXA7",
+  "Model number": "SAMSUNG MZVKW512HMJP-000L7",
+  "Serial number long": "SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K309781_1",
   "Source": "udev"
 },
 "Discovery 0": {
@@ -147,7 +147,6 @@
         "0x06": "0x01"
       },
       "0x0000000200030001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000300000000": {
@@ -190,10 +189,10 @@
     },
     "0x0000000700000000": {
       "0x0000000700000001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
+        "error": "MSC_TPER_MALFUNCTION (15)"
       },
       "0x0000000700030001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
+        "error": "MSC_TPER_MALFUNCTION (15)"
       }
     },
     "0x0000000800000000": {
@@ -341,10 +340,11 @@
     },
     "0x0000000b00000000": {
       "0x0000000b00000001": {
+
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(WJ6HG0MTR05CE378TJCD8PQX7N4MZRYA) 0x574a364847304d545230354345333738544a434438505158374e344d5a525941"
+        "0x03": "(UUN4RH9H9PE1BMV89R9HXNQPMYNPC8VL) 0x55554e345248394839504531424d563839523948584e51504d594e504338564c"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -354,16 +354,16 @@
         "0x07": "0x00"
       },
       "0x0000000b00000201": {
+
       }
     },
     "0x0000020100000000": {
       "0x0000020100000001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x484f3131",
+        "0x04": "0x484f3030",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
@@ -409,39 +409,38 @@
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x484f3131",
+        "0x04": "0x484f3030",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "c83dba6922ac3b899573be542817f861156f1ad213077282e40bcd427f9ea78c",
-    "227ba5d9aab2916246030d445faa3dd8e42e1710b06d233ca314b6c9c0f71e1d",
-    "728ba9f828e6becac87435079bb583952ceb82e5db51092e50475dfe9a24875f",
-    "3f5bb7e779310e40c7554cb9f1fe9e2efaa7fbef2a6bcf7a2817bdc99481c62b"
+    "9b7f72e58095839c1d1f677b2aeb9da3d47e8e2c97881070572f740db4a1cce6",
+    "5906e4d37910a788f01c31777fed1e7d03b603d34a24eacd7ed9699316759826",
+    "6a3e897dc5a888c2d6580d6b8f19855b6641d4571d12102217b0dcb07f2972d3",
+    "921970dd8d8582f987f52314fa1669d0142de4356488354051f48e7c1166845e"
   ],
   [
-    "c29943e626bf0406134064477a1be36a23659cf1534e65907a0067ad2ae6fd34",
-    "dc2f75c2fec61a5cc81d4c241fb65639b967b3c9a6ff0eda4fb1c5f42e697139",
-    "ba8b5357094a9b26e3b8e0cbda31e7d4ac37cca4d4a025a2329d20eff161e386",
-    "3308447db65016e23415e619a88cfc30b08b591e836c5e7064758376c6baa46a"
+    "b459f9807a6ccdfbbfab1caaf2e440a39565f84d6012f977ad3694dad26c2914",
+    "1f40b746467f70eedfa28a6a5978adb5fc0bbcdf9d6f3d9645ea97419c1052b2",
+    "065ddf00f7142b5d91c82636ab4b496c796f9a1199dfb8875cf4d3fc17030423",
+    "02a0fde96294d01d61c548f3f7c98be9e05133ef7e665bfa5dfbadd28ebac81d"
   ],
   [
-    "3a3f75127f07ace989a6b640c6740811b2c94690b8a6064b21c4433f44815ba9",
-    "4d3c4f7a5c29e891f60aefed5d3e322bb91f4df6aaf47742eb24db59f9be1885",
-    "933eea46898e737bcb778691a4e4f632a6bb63c7687a45ec64d4c010d72e2c26",
-    "feb16f55eec15dc7951c33abeb7438f2bdf4a01ca75e07ab74e1a00d0f24bbbb"
+    "d94247a7e65c37aad3d4d44fe39c538d2e3e3a39187fee5e78e4d800294dc1c4",
+    "9d1788ca5ecce20ad37dac214c5e22365da07c101ecde4be2c247baa19b7623a",
+    "149e5113f0d0bae7d0f5e531751d8bf8d9233486dbceab3a44766c2bb2e0a070",
+    "521702648f2dcb3c83183efde721af131ead0e8d8cd35db0f94759a644de80e9"
   ],
   [
-    "01fd977e4254428f95e03ba6cbece4b8f6d4282d85d980c40a558d70836250ef",
-    "771def9419fbc0a8d8bf8fde091c35c497d7fea6def2bbe794cfb7ca7b0ba0f6",
-    "ac8051502e33c5eedfb054302b1a49f38367403bd7d0f88513de54cfe26d9a70",
-    "f63337ab5add3b701d61e754ccc11476e5de6e536bd1bb89a6d6df8edfc2ef7e"
+    "ac16c4e4624f60040cf0a9b63b9e2185ea84f17b9ad57a3c51e9a78cb89703b5",
+    "1dd03aad0281901b4c5b957c3a907c27f04c686efef72fb6b555ecf9a851854d",
+    "c722da9ad70584567227b389c37caaf4d33f21d3e9a84860a953c5305b5f3190",
+    "ab16fa7543980da0b79de2ca78436f60acee8b3f2f74c201832aea2da21543d9"
   ]
 ]
 }

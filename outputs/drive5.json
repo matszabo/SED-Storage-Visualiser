@@ -3,10 +3,10 @@
   "Version": "1"
 },
 "Identify": {
-  "Serial number": "S5GCNS0R912014W",
-  "Firmware version": "RVT24B6Q",
-  "Model number": "Samsung SSD 860 EVO M.2 500GB",
-  "Serial number long": "Samsung_SSD_860_EVO_M.2_500GB_S5GCNS0R912014W",
+  "Serial number": "S64DNL0T752297R",
+  "Firmware version": "2B4QFXO7",
+  "Model number": "Samsung SSD 980 500GB",
+  "Serial number long": "Samsung_SSD_980_500GB_S64DNL0T752297R",
   "Source": "udev"
 },
 "Discovery 0": {
@@ -53,13 +53,21 @@
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
+  },
+  "Block SID Authentication Feature": {
+    "Version": 1,
+    "Locking SP Freeze Lock State ": 0,
+    "Locking SP Freeze Lock supported": 0,
+    "SID Authentication Blocked State": 0,
+    "SID Value State": 0,
+    "Hardware Reset": 0
   }},
 "Discovery 1": {
   "Properties": {
-    "MaxComPacketSize": "0x010200",
-    "MaxResponseComPacketSize": "0x010200",
-    "MaxPacketSize": "0x0101ec",
-    "MaxIndTokenSize": "0x010004",
+    "MaxComPacketSize": "0x803c",
+    "MaxResponseComPacketSize": "0x803c",
+    "MaxPacketSize": "0x8028",
+    "MaxIndTokenSize": "0x8004",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
@@ -344,7 +352,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(A2N414FMLSZ74F695F6QL7U021PGA8T1) 0x41324e343134464d4c535a3734463639354636514c3755303231504741385431"
+        "0x03": "(CB584ARKRB1J6QGJP73HDZZKWTCTKNX0) 0x434235383441524b5242314a3651474a50373348445a5a4b575443544b4e5830"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -420,28 +428,28 @@
 },
 "Random sample": [
   [
-    "5a1af60e2f866c46327649b6fcf5f2bca2d6a2be956f8139fc6db4355510e45d",
-    "cfc61a0e400c30b53898c44ed8d77325ac589671f81a0309b25ffa7ab472e196",
-    "cdd6c53b4eed58bb97cb9fa2a943ef1bdc8ab3d470b13e9a252781edba72570e",
-    "bfb3860219e9769bc8e5646c7d3829b8861713adbfc6b3522c97140a4a4da561"
+    "44d6d7de7bdeab37d1e9443ec61ddbab26dd417c15485136b604b90f85300aad",
+    "a31654ec0858085ebfa5022639b86215f6f2491947faea385ae74de0a0430744",
+    "7e0bec72cab50b1c42f39bffc78ff8077d077b2df312845e191c991850dd224b",
+    "eed54a65bf8046a9e657fcd059b8666c7a2189c4094487ca7745574fe6e9fa16"
   ],
   [
-    "9568c1b95c603af51e5a43fa051329ece4317990aee5356e86e67660df401a0d",
-    "349db581d449d0b98e8dbae61d5244d5ed2c5657fc9738d40c03000932080e23",
-    "f69a7a2a1bfcb104bdee52d751e2d501f906050323c97494ac768a90939b5430",
-    "8970948741ac59d9d9f612fb4005b5e2fa48df181e2b97ba911bcf0412e2c183"
+    "5db5cc1c5ac7b785448ab85ffeaa8d79f01838672c6d4db0c8343bdc525857c9",
+    "f90f718040c7a2b2a774677083ddfb6c74839125d9bdaed2197abc0f7db260b7",
+    "40b18af8840f7c3c3436afa326a1acdc14ba191207df2d0ab9d1ec0c97dc668e",
+    "def7a2aba31037a9c46b2c4a714a7c954576b93eb3d7652a3050d5434aebde6b"
   ],
   [
-    "9729e06c2b799c67765be812e3a9b08c31bca8eb7ca2b7a8f12f883c0745db23",
-    "73c9de97a298e0b6c8d4e67d8b5d0aefd35e20404f6c9787e764cca4375d62cf",
-    "55adb3d88bd9e837795c0defa6bc2b114de1f147f2c9dffef717b0c77fde1e8b",
-    "00b599ca9e84cfb4886a5b6f2e835d8548c49bd4f71a52f7a2b03abdb61879ca"
+    "e74d657ab8cd21b41b1a88e4f1f6ec0589a10de3f33c1ada477973b2ee77fca4",
+    "a5f4333394ce71a8a1e53af331cb9787ee1f2e9ec53aa785bc087386857cb728",
+    "8392aac043925ef2c539e5671ce6566323b9d1fce53daaebab7ad2bc98602e0a",
+    "0ba8d9b0f1a23504efdb0a37241ad1debefd710a583a33fcd19f2c835b1e7115"
   ],
   [
-    "10c204757859140a432c40a6c34a3cb07614fa85aa7b456e743f55bafddc7cf0",
-    "6424b711c3c36efb1f6d983a298d909d64913e75dd0cfca4d9814068ee70cf2c",
-    "25766868a9bd03fd4adffa42b1105e5001f8a14859425e053aa77a8cd07c37b4",
-    "526da733b56c47a2c7bbefc330fc4f784df34acc57da9205c8b3c9b9c9892306"
+    "d43e23ef03480510f341584f9ef2baf44ed3b0988039d40d1aabda7db85f4215",
+    "15044c31edbe48fff8e01f0c46aca4e665fb68440fa4dbf5fec3b2e92df699c6",
+    "a4da0eea9f0cbb0f4b60d60919949c4a1ab4a9193a179dc0f98897fc226e9cae",
+    "5b0062e5c5e975bacf51eb2ec2605e8ee59ff5efae855111bc89bf1b42ec022e"
   ]
 ]
 }
