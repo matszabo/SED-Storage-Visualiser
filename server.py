@@ -29,6 +29,24 @@ def saveJSON(clientJSON):
     with open("./outputs/drive" + str(count) + ".json", "x") as fd:
         json.dump(obj=clientJSON, fp=fd, ensure_ascii=False, indent=4)
 
+def saveMetadata(clientJSON : object):
+    #TODO Check if file already exists and then dump inside
+    if(f"drive{clientJSON['index']}.json" in os.listdir("./metadata")):
+        data = {}
+        with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
+            # Strore read data and clear the file so that we can overwrite it
+            data = json.load(fd)
+            fd.truncate(0)
+        with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
+            for item in clientJSON["metadata"]:
+                data[item] = clientJSON["metadata"][item]
+            json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+    else:
+        # File doesn't exist yet
+        with open("./metadata/drive" + str(clientJSON["index"]) + ".json", "x") as fd:
+            json.dump(obj=clientJSON["metadata"], fp=fd, ensure_ascii=False, indent=4)
+            print("New metadata file for drive" + str(clientJSON["index"]) + " was created")
+
 
 # Default routing of files
 @get('/')
@@ -61,14 +79,22 @@ def fetchSSCs():
 @post('/')
 def receiveUpdate():
     clientJSON = request.json
-    if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
+    action = clientJSON["action"]
+    if(action == "metadata"):
+        saveMetadata(clientJSON)
         response.status = 202
+    elif(action == "disk"):
+        if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
+            response.status = 202
+        else:
+            try:
+                saveJSON(clientJSON)
+            except:
+                print("Failed to save given JSON")
+                response.status = 400
     else:
-        try:
-            saveJSON(clientJSON)
-        except:
-            print("Failed to save given JSON")
-            response.status = 400
+        response.status = 400
+   
     return response
         
 run(host='localhost', port=8000, debug=True)

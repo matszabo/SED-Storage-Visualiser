@@ -154,7 +154,19 @@ function printJSON(){
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
 
-function saveToStore(filename, metadata){
+function saveToServer(mdJSON){  
+    fetch(
+        window.location.origin,
+        {
+            method : "POST", 
+            headers: {"Content-Type": "application/json"},
+            body : JSON.stringify({"index" : devInfo["index"], action : "metadata", "metadata" : mdJSON})
+    }
+    )
+    // TODO add success check
+}
+
+function saveToStore(filename, metadata, save){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("metadata", "readwrite");
         const store = transaction.objectStore("metadata");
@@ -169,10 +181,12 @@ function saveToStore(filename, metadata){
                 }
                 entries[filename] = metadata;
                 cursor.update(entries);
+                if(save) saveToServer({[filename] : metadata});
                 resolve()
             }
             else{
                 let addReq = store.add({[filename] : metadata}, devInfo["index"]);
+                if(save) saveToServer({[filename] : metadata});
                 addReq.onsuccess = () =>{
                     console.log(`Added metadata to ${filename} successfully`);
                     resolve();
@@ -184,7 +198,7 @@ function saveToStore(filename, metadata){
             }
         }
         request.onerror = (reason) => {
-            console.error(`Failed to fetch metadata in saveToStore() for device d${devInfo["index"]}\n${reason}`);
+            console.error(`Failed to store metadata in saveToStore() for device d${devInfo["index"]}\n${reason}`);
             reject();
         }
     });
@@ -220,10 +234,10 @@ function saveMetadata(input){
         let reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
-            saveToStore(file.name, reader.result).then(() => {
+            saveToStore(file.name, reader.result, true).then(() => {
                 // TODO save metadata to server
-                resolve();
                 printMetadata();
+                resolve();
             })
         } 
         
@@ -234,10 +248,38 @@ function saveMetadata(input){
     });
 }
 
+function fetchMetadata(){
+    return new Promise((resolve, reject) => {
+        // Here a try-catch blocked is used instead of a promise catch because fetch() rejects only due to a type error, not due to a 400
+        try {
+            fetch(`./metadata/drive${devInfo["index"]}.json`)
+            .then((response) => {
+                if(!response.ok){
+                    resolve();
+                }
+                else{
+                    response.json().then((data) => {
+                        let storePromises = [];
+                        Object.entries(data).forEach(([filename, metadata]) => {
+                            storePromises.push(saveToStore(filename, metadata, false)) 
+                        })
+                        Promise.all(storePromises).then(() => {
+                            resolve();
+                        })
+                    });
+                }
+            })
+        } catch (error) {
+            console.log(`No metadata fetched from server, browser message:\n${error}`);
+            resolve();
+        }
+    });
+}
+
 getSelectedDev().then(() => {
     printDetails();
     printJSON();
-    // TODO Fetch metadata from server
-    // TODO print metadata
-    printMetadata();
+    fetchMetadata().then(() => {
+        printMetadata();
+    })
 });
