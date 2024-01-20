@@ -34,6 +34,7 @@ function getSelectedDev(){
         dbReq.onupgradeneeded = ((event) => {
             db = dbReq.result;
             const store = db.createObjectStore("drives", {keyPath : "index"});
+            const metadata = db.createObjectStore("metadata");
             store.createIndex("indexCursor", ["index"], {unique : true});
         });
     
@@ -153,7 +154,90 @@ function printJSON(){
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
 
+function saveToStore(filename, metadata){
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("metadata", "readwrite");
+        const store = transaction.objectStore("metadata");
+
+        const request = store.openCursor(devInfo["index"]);
+        request.onsuccess = (event) => {
+            let cursor = event.target.result;
+            if(cursor){
+                let entries = cursor.value;
+                if(filename in entries){
+                    console.log(`Rewriting metadata for ${filename}`);
+                }
+                entries[filename] = metadata;
+                cursor.update(entries);
+                resolve()
+            }
+            else{
+                let addReq = store.add({[filename] : metadata}, devInfo["index"]);
+                addReq.onsuccess = () =>{
+                    console.log(`Added metadata to ${filename} successfully`);
+                    resolve();
+                }
+                addReq.onerror = (reason) => {
+                    console.error(`Failed to add metadata for ${filename}\n${reason}`);
+                    reject();
+                }
+            }
+        }
+        request.onerror = (reason) => {
+            console.error(`Failed to fetch metadata in saveToStore() for device d${devInfo["index"]}\n${reason}`);
+            reject();
+        }
+    });
+}
+
+function printMetadata(){
+    let mdHTML = document.getElementById("metadataDiv")
+    mdHTML.innerHTML = "";
+
+    const transaction = db.transaction("metadata", "readwrite");
+    const store = transaction.objectStore("metadata");
+
+    const request = store.openCursor(devInfo["index"]);
+    request.onsuccess = (event) => {
+        let cursor = event.target.result;
+        if(cursor){
+            let entries = cursor.value;
+            Object.entries(entries).forEach(([filename, content]) => {
+                mdHTML.innerHTML += `<h3>${filename}</h3>`;
+                mdHTML.innerHTML += `<pre>${content}</pre>`;
+            });
+        }
+    }
+    request.onerror = (reason) => {
+        console.error(`Failed to fetch metadata in printMetadata() for device d${devInfo["index"]}\n${reason}`);
+    }
+}
+
+function saveMetadata(input){
+    return new Promise((resolve, reject) => {
+        let file = input.files[0];
+
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            saveToStore(file.name, reader.result).then(() => {
+                // TODO save metadata to server
+                resolve();
+                printMetadata();
+            })
+        } 
+        
+        reader.onerror = () => {
+            console.error(`Failed to read uploaded file, reason:\n${reader.result}`);
+            reject()
+        }
+    });
+}
+
 getSelectedDev().then(() => {
     printDetails();
     printJSON();
+    // TODO Fetch metadata from server
+    // TODO print metadata
+    printMetadata();
 });

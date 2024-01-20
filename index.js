@@ -524,6 +524,7 @@ function openDB(){
     dbReq.onupgradeneeded = ((event) => {
         db = dbReq.result;
         const store = db.createObjectStore("drives", {keyPath : "index"});
+        const metadata = db.createObjectStore("metadata");
         store.createIndex("indexCursor", ["index"], {unique : true});
     });
 
