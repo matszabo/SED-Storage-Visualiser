@@ -47,6 +47,21 @@ def saveMetadata(clientJSON : object):
             json.dump(obj=clientJSON["metadata"], fp=fd, ensure_ascii=False, indent=4)
             print("New metadata file for drive" + str(clientJSON["index"]) + " was created")
 
+def removeMetadata(index, filename):
+    if(f"drive{index}.json" in os.listdir("./metadata")):
+        data = {}
+        with open(f"./metadata/drive{index}.json", "r+") as fd:
+            # Strore read data and clear the file so that we can overwrite it
+            data = json.load(fd)
+            fd.truncate(0)
+        with open(f"./metadata/drive{index}.json", "r+") as fd:
+            del data[filename]
+            json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+    else:
+        # File doesn't exist
+        pass
+        print("File to be removed doesn't exist")
+
 
 # Default routing of files
 @get('/')
@@ -80,9 +95,12 @@ def fetchSSCs():
 def receiveUpdate():
     clientJSON = request.json
     action = clientJSON["action"]
-    if(action == "metadata"):
+    if(action == "addMetadata"):
         saveMetadata(clientJSON)
         response.status = 202
+    elif(action == "remMetadata"):
+        removeMetadata(clientJSON["index"], clientJSON["filename"])
+        print(f"Removed {clientJSON['filename']} metadata from disk d{clientJSON['index']}")
     elif(action == "disk"):
         if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
             response.status = 202

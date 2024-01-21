@@ -160,10 +160,41 @@ function saveToServer(mdJSON){
         {
             method : "POST", 
             headers: {"Content-Type": "application/json"},
-            body : JSON.stringify({"index" : devInfo["index"], action : "metadata", "metadata" : mdJSON})
+            body : JSON.stringify({"index" : devInfo["index"], action : "addMetadata", "metadata" : mdJSON})
     }
     )
     // TODO add success check
+}
+
+function removeFromServer(filename){
+    fetch(
+        window.location.origin,
+        {
+            method : "POST", 
+            headers: {"Content-Type": "application/json"},
+            body : JSON.stringify({"index" : devInfo["index"], action : "remMetadata", "filename" : filename})
+    }
+    )
+}
+
+function removeMetadata(filename){
+    let confirmation = confirm(`Are you sure you want to delete ${filename} ?`)
+    if(confirmation){
+        const transaction = db.transaction("metadata", "readwrite");
+        const store = transaction.objectStore("metadata");
+
+        const request = store.openCursor(devInfo["index"]);
+        request.onsuccess = (event) => {
+            let cursor = event.target.result;
+            if(cursor){
+                let entries = cursor.value;
+                delete entries[filename]
+                cursor.update(entries);
+                removeFromServer(filename);
+                printMetadata();
+            }
+        }
+    }
 }
 
 function saveToStore(filename, metadata, save){
@@ -217,7 +248,7 @@ function printMetadata(){
         if(cursor){
             let entries = cursor.value;
             Object.entries(entries).forEach(([filename, content]) => {
-                mdHTML.innerHTML += `<h3>${filename}</h3>`;
+                mdHTML.innerHTML += `<h3>${filename}</h3><button onclick=removeMetadata("${filename}")>Remove</button>`;
                 mdHTML.innerHTML += `<pre>${content}</pre>`;
             });
         }
