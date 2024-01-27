@@ -34,7 +34,7 @@ function getSelectedDev(){
         dbReq.onupgradeneeded = ((event) => {
             db = dbReq.result;
             const store = db.createObjectStore("drives", {keyPath : "index"});
-            const metadata = db.createObjectStore("metadata");
+            const metadata = db.createObjectStore("metadata", {autoIncrement : true});
             store.createIndex("indexCursor", ["index"], {unique : true});
         });
     
@@ -166,19 +166,19 @@ function saveToServer(mdJSON){
     // TODO add success check
 }
 
-function removeFromServer(filename){
+function removeFromServer(mdIndex){
     fetch(
         window.location.origin,
         {
             method : "POST", 
             headers: {"Content-Type": "application/json"},
-            body : JSON.stringify({"index" : devInfo["index"], action : "remMetadata", "filename" : filename})
+            body : JSON.stringify({"index" : devInfo["index"], action : "remMetadata", "mdIndex" : `${mdIndex}`})
     }
     )
 }
 
-function removeMetadata(filename){
-    let confirmation = confirm(`Are you sure you want to delete ${filename} ?`)
+function removeMetadata(mdIndex){
+    let confirmation = confirm(`Are you sure you want to delete this metadata?`)
     if(confirmation){
         const transaction = db.transaction("metadata", "readwrite");
         const store = transaction.objectStore("metadata");
@@ -188,16 +188,16 @@ function removeMetadata(filename){
             let cursor = event.target.result;
             if(cursor){
                 let entries = cursor.value;
-                delete entries[filename]
+                delete entries[mdIndex]
                 cursor.update(entries);
-                removeFromServer(filename);
+                removeFromServer(mdIndex);
                 printMetadata();
             }
         }
     }
 }
 
-function saveToStore(filename, metadata, save){
+function saveToStore(metadata, save){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("metadata", "readwrite");
         const store = transaction.objectStore("metadata");
@@ -207,19 +207,28 @@ function saveToStore(filename, metadata, save){
             let cursor = event.target.result;
             if(cursor){
                 let entries = cursor.value;
-                if(filename in entries){
-                    console.log(`Rewriting metadata for ${filename}`);
+                let newIndex = (entries.length == 0) ? 0 : Math.max(...Object.keys(entries)) + 1;
+                newIndex = `${parseInt(newIndex)}`
+                if("mdIndex" in metadata){
+                    if(metadata["mdIndex"] in entries){
+                        console.log(`Rewriting metadata for ${metadata["mdIndex"]}`);
+                    }
+                    entries[metadata["mdIndex"]] = metadata;
                 }
-                entries[filename] = metadata;
+                else{
+                    metadata["mdIndex"] = `${newIndex}`;
+                    entries[`${newIndex}`] = metadata;
+                }
                 cursor.update(entries);
-                if(save) saveToServer({[filename] : metadata});
+                if(save) saveToServer(metadata);
                 resolve()
             }
             else{
-                let addReq = store.add({[filename] : metadata}, devInfo["index"]);
-                if(save) saveToServer({[filename] : metadata});
+                let addReq = store.add({"0" : metadata}, devInfo["index"]);
                 addReq.onsuccess = () =>{
-                    console.log(`Added metadata to ${filename} successfully`);
+                    metadata["mdIndex"] = "0";
+                    console.log(`Added metadata with index ${addReq.result} successfully`);
+                    if(save) saveToServer(metadata);
                     resolve();
                 }
                 addReq.onerror = (reason) => {
@@ -247,9 +256,14 @@ function printMetadata(){
         let cursor = event.target.result;
         if(cursor){
             let entries = cursor.value;
-            Object.entries(entries).forEach(([filename, content]) => {
-                mdHTML.innerHTML += `<h3>${filename}</h3><button onclick=removeMetadata("${filename}")>Remove</button>`;
-                mdHTML.innerHTML += `<pre>${content}</pre>`;
+            Object.entries(entries).forEach(([index, content]) => {
+                mdHTML.innerHTML += `<button id="remMDBut" onclick=removeMetadata(${index})>Remove</button>`
+                if(content["notes"]) mdHTML.innerHTML += `<p>Notes: ${content["notes"]}</p>`
+                if(content["url"]) mdHTML.innerHTML += `<a href="${content["url"]}">URL: ${content["url"]}</a>`
+                if(content["filename"]){
+                    mdHTML.innerHTML += `<p>Filename: ${content["filename"]}</p>`;
+                    mdHTML.innerHTML += `<pre>Filename: ${content["content"]}</pre>`;
+                }
             });
         }
     }
@@ -258,24 +272,44 @@ function printMetadata(){
     }
 }
 
-function saveMetadata(input){
+function saveMetadata(){
     return new Promise((resolve, reject) => {
-        let file = input.files[0];
-
-        let reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = () => {
-            saveToStore(file.name, reader.result, true).then(() => {
+        let inputFile = document.getElementById("mdFile");
+        let note = document.getElementById("mdText").value;
+        let urlContent = document.getElementById("mdUrl").value;
+        if(inputFile.files.length > 0){
+            let file = inputFile.files[0];
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = () => {
+                saveToStore({
+                    notes : note,
+                    url : urlContent,
+                    filename : file.name,
+                    content : reader.result
+                }, true).then(() => {
+                    // TODO save metadata to server
+                    printMetadata();
+                    resolve();
+                })
+            }
+            reader.onerror = () => {
+                console.error(`Failed to read uploaded file, reason:\n${reader.result}`);
+                reject()
+            }
+        }
+        else{
+            saveToStore({
+                notes : note,
+                url : urlContent,
+                filename : null,
+                content : null
+            }, true).then(() => {
                 // TODO save metadata to server
                 printMetadata();
                 resolve();
             })
-        } 
-        
-        reader.onerror = () => {
-            console.error(`Failed to read uploaded file, reason:\n${reader.result}`);
-            reject()
-        }
+        }   
     });
 }
 
@@ -292,7 +326,7 @@ function fetchMetadata(){
                     response.json().then((data) => {
                         let storePromises = [];
                         Object.entries(data).forEach(([filename, metadata]) => {
-                            storePromises.push(saveToStore(filename, metadata, false)) 
+                            storePromises.push(saveToStore(metadata, false)) 
                         })
                         Promise.all(storePromises).then(() => {
                             resolve();

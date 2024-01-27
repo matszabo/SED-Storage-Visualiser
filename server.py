@@ -38,16 +38,18 @@ def saveMetadata(clientJSON : object):
             data = json.load(fd)
             fd.truncate(0)
         with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
-            for item in clientJSON["metadata"]:
-                data[item] = clientJSON["metadata"][item]
+            data[clientJSON["metadata"]["mdIndex"]] = clientJSON["metadata"]
             json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
     else:
         # File doesn't exist yet
         with open("./metadata/drive" + str(clientJSON["index"]) + ".json", "x") as fd:
-            json.dump(obj=clientJSON["metadata"], fp=fd, ensure_ascii=False, indent=4)
+            json.dump(obj={
+                clientJSON["metadata"]["mdIndex"] : clientJSON["metadata"]
+                }, 
+                fp=fd, ensure_ascii=False, indent=4)
             print("New metadata file for drive" + str(clientJSON["index"]) + " was created")
 
-def removeMetadata(index, filename):
+def removeMetadata(index, mdIndex):
     if(f"drive{index}.json" in os.listdir("./metadata")):
         data = {}
         with open(f"./metadata/drive{index}.json", "r+") as fd:
@@ -55,7 +57,7 @@ def removeMetadata(index, filename):
             data = json.load(fd)
             fd.truncate(0)
         with open(f"./metadata/drive{index}.json", "r+") as fd:
-            del data[filename]
+            del data[mdIndex]
             json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
     else:
         # File doesn't exist
@@ -99,8 +101,9 @@ def receiveUpdate():
         saveMetadata(clientJSON)
         response.status = 202
     elif(action == "remMetadata"):
-        removeMetadata(clientJSON["index"], clientJSON["filename"])
-        print(f"Removed {clientJSON['filename']} metadata from disk d{clientJSON['index']}")
+        removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
+        print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
+        pass
     elif(action == "disk"):
         if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
             response.status = 202
