@@ -137,6 +137,31 @@ function checkDataRemovalMech(device){
     let mechanismsSupported = [];
     if(("Supported Data Removal Mechanism Feature Descriptor" in device["driveInfo"]["Discovery 0"])){
         let dis0value = parseInt(device["driveInfo"]["Discovery 0"]["Supported Data Removal Mechanism Feature Descriptor"]["Supported Data Removal Mechanism"]);
+        switch (SSC) {
+            case "Opal":
+                if(dis0value & 4){ // Mandatory
+                }
+                // Just mark the cell as red because this is mandatory value
+                else{
+                    device["SSCCompl"]["isCompliant"] = false;
+                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
+                    cell.title = "Data Removal Mechanism - Cryptographic erase must be supported"
+                    cell.classList.add("missingBg");
+                }
+                break;
+            case "Pyrite":
+                if((dis0value & 2) || (dis0value & 1)){ // Mandatory
+                }
+                else{
+                    device["SSCCompl"]["isCompliant"] = false;
+                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
+                    cell.title = "Data Removal Mechanism - Overwrite Data Erase or Block Erase must be supported"
+                    cell.classList.add("missingBg");
+                }
+                break;
+            default:
+                break;
+        }
         // Check supported mechanisms
         if(dis0value & 1){
             mechanismsSupported.push("0 (Overwrite Data Erase)");
@@ -148,13 +173,6 @@ function checkDataRemovalMech(device){
 
         if(dis0value & 4){ // Mandatory
             mechanismsSupported.push("2 (Crypto Erase)");
-        }
-        // Just mark the cell as red because this is mandatory value
-        else{
-            device["SSCCompl"]["isCompliant"] = false;
-            device["SSCCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
-            let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
-            cell.classList.add("missingBg");
         }
 
         if(dis0value & 32){
@@ -236,8 +254,15 @@ function setFsetAttrValue(device, fsetName, attrName, requiredValue){
         return;
     }
     if(requiredValue !== null){
+        let requiredVal;
         // Parse required value into operator and value
-        let requiredVal = requiredValue.split(" ");
+        try {
+            requiredVal = requiredValue.split(" ");
+        } catch (error) {
+            console.error(`Error while parsing required SSC value. Check if the format in SSC definition is as follows: "atribute" : "operator value"`)
+            return;
+        }
+        
         let op = requiredVal[0]
         if(operators[op](parseInt(devValue), parseInt(requiredVal[1]))){
             HTMLitem.innerHTML = `${devValue}`;
@@ -444,7 +469,10 @@ async function checkDevCompliance(device){
             setMinorVersions(device);
         case "Opal 2.01":
             break;
-        case "Opal 2.00": 
+        case "Opal 2.00":
+            break;
+        case "Pyrite 2.01":
+            break;
         default:
             console.error(`Unknown SSC encountered in checkDevCompliance(): ${String(selectedSSC)}`);
             break;

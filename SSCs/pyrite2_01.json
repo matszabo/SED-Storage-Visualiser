@@ -1,0 +1,67 @@
+{
+    "SSC" : "Pyrite",
+    "SSC name" : "Pyrite 2.01",
+    "SSC fset" : "Pyrite SSC Feature Descriptor",  
+    "mandatory" : {
+        "TPer Feature": [
+            "Version",
+            "ComID Mgmt Supported",
+            {"Streaming Supported" : "= 1"},
+            "Buffer Mgmt Supported",
+            "ACK/NAK Supported",
+            "Async Supported",
+            {"Sync Supported" : "= 1"}
+        ],
+        "Locking Feature": [
+            {"Version" : ">= 2"},
+            "MBR Shadowing Not Supported",
+            "MBR Done",
+            "MBR Enabled",
+            {"Media Encryption" : "= 0"},
+            "Locked",
+            "Locking Enabled",
+            {"Locking Supported" : "= 1"}
+        ],
+        "Pyrite SSC Feature Descriptor": [
+            {"Version": ">= 1"},
+            "Base ComID",
+            {"Number of ComIDs": ">= 1"},
+            {"Initial C_PIN_SID PIN Indicator" : "= 0"},
+            {"Behavior of C_PIN_SID PIN upon TPer Revert" : "= 0"}
+        ],
+        "Block SID Authentication Feature": [
+            {"Version" : ">= 1"},
+            "SID Authentication Blocked State",
+            "SID Value State",
+            "Hardware Reset"
+        ],
+        "Supported Data Removal Mechanism Feature Descriptor": [
+            {"Version" :">= 1"},
+            "Supported Data Removal Mechanism",
+            "Data Removal Time Format for Bit 0",
+            "Data Removal Time for Supported Data Removal Mechanism Bit 0",
+            "Data Removal Time Format for Bit 1",
+            "Data Removal Time for Supported Data Removal Mechanism Bit 1"
+        ],
+        "PSID feature" :[
+
+        ]
+    },
+
+    "optional" : {
+        "Geometry Feature": [
+            "Version",
+            "ALIGN",
+            "LogicalBlockSize",
+            "AlignmentGranularity",
+            "LowestAlignedLBA"
+        ], 
+        "Single User Mode Feature": [
+            "Version",
+            "Number of Locking Objects Supported",
+            "Policy",
+            "All",
+            "Any"
+        ]
+    }
+}
