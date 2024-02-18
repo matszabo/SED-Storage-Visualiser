@@ -1,18 +1,61 @@
 /* SPDX-License-Identifier: MIT */
 
-table, td{
-    border: 1px solid;
-    border-collapse: collapse; 
+*{
+    font-family: "Times New Roman", Times, serif;
 }
 
+table{
+    border-collapse: collapse;
+    text-align: center;
+    border: 1px solid;
+}
+
+#manTab, #optTab{
+    border-collapse: separate;
+}
+
+td{
+    white-space: normal;
+    min-width: 80px;
+}
+
+th{
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+}
+
+.cellType{
+    border: 1px solid;
+}
+
+#manTab .missingBg{
+    background-color: red;
+}
+
+#optTab .missingBg{
+    background-color: lightcoral;
+}
+
+.mainTab td{
+    border-collapse: collapse; 
+    padding: 10px;
+}
+
+.driveHeader{
+    background-color: lightgrey;
+}
+
+body{
+    margin: 20px;
+}
 
 .darkCol{
     background-color: darkgrey;
 }
 
-.fsetRow{
+/*.fsetRow{
     border: 3px solid;
-}
+}*/
 
 .redBg{
     background-color: red;
@@ -54,4 +97,13 @@ a:hover{
 
 .deselectedButton{
     border: 1px solid black;
+}
+
+.tiles{
+    display: inline-block;
+}
+
+.tile{
+    float: left;
+    margin: 20px;
 }

@@ -12,40 +12,75 @@
     <p>This site aims to collect information about capabilities of allegedly Opal compliant disks.<br>
     Information is gathered using <a href="ttps://github.com/mbroz/opal-toolset">a tool</a></p>
     <h2>List of devices</h2>
-    <div id="devList">
-    </div>
-    <h2>Shown feature sets</h2>
-    <h3>Mandatory</h3>
-    <div id="fSetManList">
-        
-    </div>
+    <input type="search" id="searchDev" onblur=filterDevs()>
+    <div id="devList"></div>
 
-    <h3>Optional</h3>
-    <div id="fSetOptList">
-        
+    <h2>Filter</h2>
+    <div class="tiles">
+        <div class="tile">
+            <div id="SSCbuttons">
+                <h2>SSCs</h2>
+            </div>
+        </div>
+        <div class="tile">
+            <div class="tiles">
+                <h2>Feature sets</h2>
+                <div class="tile">
+                    <h3>Mandatory</h3>
+                    <div id="fSetManList"></div>                    
+                </div>
+                <div class="tile">
+                    <h3>Optional</h3>
+                    <div id="fSetOptList"></div>                    
+                </div>
+            </div>
+        </div>
+        <div class="tile">
+            <h2></h2>
+        </div>
     </div>
 
     <h2>Legend</h2>
-    <p>() - this means that internal heuristics determined the number reported by the device to be incorrect
-        f.e. device reports feature version 3 while still having features removed in previous versions.
-        ! behind the number means that there were conflicting clues, more info can be found on details page
-    </p>
-    <div class="square redBg"></div><p> - this means a mandatory value is missing</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Cell type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="cellType">number</td>
+                <td>The value should be compliant with selected SSC</td>
+            </tr>
+            <tr>
+                <td class="redBg cellType">number/Missing</td>
+                <td>The mandatory value doesn't match the required value by the SSC or wasn't found.</td>
+            </tr>
+            <tr>
+                <td class="redBg cellType" style="background-color: lightcoral">number/Missing</td>
+                <td>The optional value doesn't match the required value by the SSC or wasn't found.</td>
+            </tr>
+            <tr>
+                <td class="cellType">number (number)</td>
+                <td>The reported value may not be correct based on found clues. The "actual" value in brackets is suggested by this tool.</td>
+            </tr>
+            <tr>
+                <td class="orBg cellType">Unknown</td>
+                <td>Field with said value wasn't found because the entire category of data is missing (f.e. Discovery 1 or 2 missing)</td>
+            </tr>
+        </tbody>
+    </table>
 
-    </div>
-    <h2>Detected feature sets and their values</h2>
-    <div id="SSCbuttons">
-        <h3>Available SSCs</h3>
-    </div>
     <h3>Mandatory</h3>
-    <table id="manTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
+    <table class="mainTab" id="manTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
         <tbody id = "manFeatures">
         </tbody>
     </table>
 
     <h3>Optional</h3>
 
-    <table id="optTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
+    <table class="mainTab" id="optTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
         <tbody id = "optFeatures">
         </tbody>
     </table>

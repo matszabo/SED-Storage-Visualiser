@@ -15,6 +15,7 @@ var numofDevs = 0;
 var selectedSSC = "";
 var dis0ManFsets = {};
 var dis0optFsets = {};
+var SSC = "";
 
 // For easier check of required values when filling TBody
 var operators = {
@@ -37,6 +38,24 @@ function setLockingVersion(device){
     }   
 }
 
+function filterDevs(){
+    let value = document.getElementById("searchDev").value
+    if(!value) return;
+    let allCbox = document.getElementById("allDevsCbox");
+    if(allCbox.checked) allCbox.click();
+    let refs = document.getElementsByClassName("devRef");
+    for(let ref of refs){
+        if(ref.textContent.toLowerCase().includes(value.toLowerCase())){
+            let cbox = document.querySelector(`[id="${ref.id}"]`);
+            if(!cbox.checked) cbox.click();
+        }
+        else{
+            let cbox = document.querySelector(`[id="${ref.id}"]`);
+            if(cbox.checked) cbox.click();
+        }
+    }
+}
+
 function checkPSIDpresence(device){
     let driveCell = document.querySelector(`[id="PSID featurePresent"] .d${device["index"]}`);
     if("Discovery 2" in device["driveInfo"]){
@@ -45,7 +64,7 @@ function checkPSIDpresence(device){
             device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
         }
         else{
-            driveCell.classList.add("redBg");
+            driveCell.classList.add("missingBg");
             driveCell.innerHTML = `No`;
         }
     }
@@ -135,7 +154,7 @@ function checkDataRemovalMech(device){
             device["SSCCompl"]["isCompliant"] = false;
             device["SSCCompl"]["complBreaches"].push("Data Removal Mechanism - Cryptographic erase not supported");
             let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
-            cell.classList.add("redBg");
+            cell.classList.add("missingBg");
         }
 
         if(dis0value & 32){
@@ -168,7 +187,7 @@ function populateDevList(){
             
             if(cursor){
                 let device = cursor.value;
-                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
+                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
                 cursor.continue();
             }
             else{
@@ -213,7 +232,7 @@ function setFsetAttrValue(device, fsetName, attrName, requiredValue){
         devValue = device["driveInfo"]["Discovery 0"][fsetName][attrName];
     } catch{
         HTMLitem.innerHTML = `Missing`;
-        HTMLitem.classList.add("redBg");
+        HTMLitem.classList.add("missingBg");
         return;
     }
     if(requiredValue !== null){
@@ -225,9 +244,9 @@ function setFsetAttrValue(device, fsetName, attrName, requiredValue){
         }
         else{
             device["SSCCompl"]["isCompliant"] = false;
-            device["SSCCompl"]["complBreaches"].push(`${fsetName}: value of ${attrName} isn't ${op} ${requiredVal[1]}`);
+            HTMLitem.title = `${fsetName}: value of ${attrName} should be ${op} ${requiredVal[1]}`;
             HTMLitem.innerHTML = `${devValue}`;
-            HTMLitem.classList.add("redBg");
+            HTMLitem.classList.add("missingBg");
         }
     }
     else{
@@ -355,7 +374,7 @@ function fillDevices(HTMLitem){
         indexCursor.onsuccess = ((event) => {
             const cursor = event.target.result;
             if(cursor){
-                HTMLitem += `<td class="d${cursor.value["index"]}">d${cursor.value["index"]}</td>`;
+                HTMLitem += `<td class="d${cursor.value["index"]} driveHeader">d${cursor.value["index"]}</td>`;
                 cursor.continue();
             }
             else {
@@ -406,8 +425,17 @@ async function generateTbody(tableName, featureSet){
     }   
 }
 
+function hideDrive(index){
+    let cbox = document.querySelector(`[id="d${index}"]`);
+    if(cbox.checked) cbox.click(); 
+}
+
 async function checkDevCompliance(device){
     device["SSCCompl"]["complBreaches"] = [];
+    //if(!(device["devInfo"]))
+    if((!Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
+        hideDrive(device["index"]);
+    }
     await populateTbody(device, dis0ManFsets);
     await populateTbody(device, dis0optFsets);
 
@@ -466,6 +494,7 @@ async function regenerateSSC(SSCname){
     let SSCjson = JSON.parse(SSCtext);
 
     selectedSSC = SSCjson["SSC name"];
+    SSC = SSCjson["SSC"];
     dis0ManFsets = SSCjson["mandatory"];
     dis0optFsets = SSCjson["optional"];
 
@@ -498,6 +527,7 @@ async function fetchDevices(){
     }
     SSCjson = JSON.parse(localStorage.getItem(SSCfilenames[0]));
     selectedSSC = SSCjson["SSC name"];
+    SSC = SSCjson["SSC"];
     dis0ManFsets = SSCjson["mandatory"];
     dis0optFsets = SSCjson["optional"];
 
@@ -506,12 +536,12 @@ async function fetchDevices(){
 
     await prepareDrives(filenames);
     await populateDevList();
+    renderCBoxes();
 
     await generateTbody("manFeatures", dis0ManFsets);
     await generateTbody("optFeatures", dis0optFsets);
 
     await populateTables();
-    renderCBoxes();
 }
 
 function openDB(){
