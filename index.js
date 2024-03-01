@@ -82,18 +82,23 @@ function checkPSIDpresence(device){
 function setMinorVersions(device){
     let versionHTML = document.querySelector(`[id="Opal SSC V2.00 FeatureSSC Minor Version Number"] .d${device["index"]}`);
     let cluesDetected = [];
+    let textHint = [];
     let versionDetected = -1;
     if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
         let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"];
         if("Discovery 2" in device["driveInfo"]){
+            // newlines are on the beginning because when you put array into HTML title, it will append commas to the string
             if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
                 cluesDetected.push(2)
+                textHint.push("\nBlock SID Auth. Feature detected (mandatory since .02)")
             }
             if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
                 cluesDetected.push(1)
+                textHint.push("\nPSID Authority detected (mandatory since .01)")
             }
             if(findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007")){
                 cluesDetected.push(0)
+                textHint.push("\nInterface control template detected (removed in .01)")
             }
             // Normal Opal 2.02
             if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
@@ -113,22 +118,20 @@ function setMinorVersions(device){
                 if(versionDetected == -1){
                     versionHTML.innerHTML = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
                     device["SSCCompl"]["isCompliant"] = false;
-                    //debugger;
-                    if(device["SSCCompl"]["OpalMinorVerConflicts"].length == 0){
-                        device["SSCCompl"]["complBreaches"].push("SSC Minor Version conflicting (see below)");
-                        device["SSCCompl"]["OpalMinorVerConflicts"] = cluesDetected;
-                    }
+                    versionHTML.title += "\nSSC Minor Version conflicting:\n";
+                    versionHTML.title += textHint;
                 }
                 // Detected version clear, but different from reported version
                 else {
                     versionHTML.innerHTML = `${minorVerNum} (${versionDetected})`;
-                    device["SSCCompl"]["OpalMinorVerConflicts"] = [];
+                    versionHTML.title += `\nMinor version could be ${versionDetected} based on following hints:\n`
+                    versionHTML.title += textHint
                 }
             }
         }
         else{
             versionHTML.innerHTML = `${minorVerNum} (unknown)`;
-            device["SSCCompl"]["OpalMinorVerConflicts"] = [];
+            versionHTML.title += `\nVersion couldn't be properly guessed because Discovery 2 is missing in the device's analysis`
         } 
     }
 }
@@ -171,8 +174,16 @@ function checkDataRemovalMech(device){
             mechanismsSupported.push("1 (Block Erase)");
         }
 
-        if(dis0value & 4){ // Mandatory
+        if(dis0value & 4){
             mechanismsSupported.push("2 (Crypto Erase)");
+        }
+
+        if(dis0value & 8){
+            mechanismsSupported.push("3 (Unmap)");
+        }
+
+        if(dis0value & 16){
+            mechanismsSupported.push("4 (Reset Write Pointers)");
         }
 
         if(dis0value & 32){

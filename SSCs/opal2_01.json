@@ -47,7 +47,7 @@
 
     "optional" : {
         "Block SID Authentication Feature": [
-            {"Version" : ">= 2"},
+            "Version",
             "Locking SP Freeze Lock State ",
             "Locking SP Freeze Lock supported",
             "SID Authentication Blocked State",

@@ -41,7 +41,7 @@
             {"DataStore table size alignment" : ">= 1"}
         ],
         "Block SID Authentication Feature": [
-            {"Version" : ">= 2"},
+            {"Version" : ">= 1"},
             "Locking SP Freeze Lock State ",
             "Locking SP Freeze Lock supported",
             "SID Authentication Blocked State",

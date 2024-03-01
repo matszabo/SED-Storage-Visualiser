@@ -122,16 +122,14 @@ function checkOpalMinorVer(){
     }
 }
 
-function printSSCBreaches(){
-    let SSCHTML = document.getElementById("SSCCompl");
-    if(devInfo["SSCCompl"]["isCompliant"]){
-        SSCHTML.innerHTML += "<p>The device is compliant with its SSC</p>";
-    }
-    else{
-        SSCHTML.innerHTML += "<p>The device isn't compliant with its SSC for the following reasons:</p>";
-        for(reason in devInfo["SSCCompl"]["complBreaches"]){
-            SSCHTML.innerHTML += `<p>${devInfo["SSCCompl"]["complBreaches"][reason]}</p>`;
+function printDataRemMech(){
+    if(devInfo["dataRemMechs"].length > 0){
+        let sessionHTML = document.getElementById("SessionInfo");
+        let info = `<h2>Detected Data Removal Mechanisms</h2>\n`
+        for(let mechanism of devInfo["dataRemMechs"]){
+            info += `<p>${mechanism}</p>\n`
         }
+        sessionHTML.insertAdjacentHTML("afterend", info);
     }
 }
 
@@ -144,7 +142,7 @@ function printDetails(){
     if(("Opal SSC V2.00 Feature" in devInfo["driveInfo"]["Discovery 0"])){
         checkOpalMinorVer();
     }
-    printSSCBreaches();
+    printDataRemMech();
 }
 
 function printJSON(){
