@@ -11,9 +11,12 @@
     <h1>Opal Logger</h1>
     <p>This site aims to collect information about capabilities of allegedly Opal compliant disks.<br>
     Information is gathered using <a href="https://github.com/crocs-muni/opal-toolset">a tool</a></p>
+    <button id="loginBut" onclick=login()>Login</button>
+    <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
     <h2>List of devices</h2>
     <input type="search" id="searchDev" onblur=filterDevs()>
     <div id="devList"></div>
+    <button class="authorized" id="addDevBut" style="display: none;">Add device</button>
 
     <h2>Filter</h2>
     <div class="tiles">
@@ -21,6 +24,7 @@
             <div id="SSCbuttons">
                 <h2>SSCs</h2>
             </div>
+            <button class="authorized" id="addSSC" style="display: none;">Add SSC</button>
         </div>
         <div class="tile">
             <div class="tiles">

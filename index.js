@@ -216,7 +216,8 @@ function populateDevList(){
             
             if(cursor){
                 let device = cursor.value;
-                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a><br>`;
+                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
+                devList.innerHTML += `<button class="authorized" id="d${device["index"]}" style="display: none;">X</button><br>`
                 cursor.continue();
             }
             else{
@@ -581,6 +582,7 @@ async function fetchDevices(){
     await generateTbody("optFeatures", dis0optFsets);
 
     await populateTables();
+    checkAuthStatus()
 }
 
 function openDB(){
@@ -601,6 +603,71 @@ function openDB(){
         db = dbReq.result;
         fetchDevices(db);
     });
+}
+
+function credentialsArePresent(){
+    if(localStorage.getItem("username") && localStorage.getItem("password")){
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+/**
+ * TODO: Check for stored token
+ * store token
+ */
+
+function login(){
+    let username, password
+    if(credentialsArePresent()){
+        username = localStorage.getItem("username")
+        password = localStorage.getItem("password")
+    }
+    else{
+        username = prompt("Enter your username:", "")
+        password = prompt("Enter your password:", "")
+        if((password == null || password == "") || (username == null || username == "")){
+            console.log("Credentials prompt cancelled");
+        }
+        else{
+            localStorage.setItem("password", password);
+            localStorage.setItem("username", username);
+        }
+    }
+    let headers = new Headers();
+    headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
+    fetch(`./login`, {
+        method:"POST",
+        headers: headers})
+    .then((response) => {
+        if(response.status == 401){
+            alert("Failed")
+        }
+        else if(response.status == 200){
+            document.getElementById("loginBut").style.display = "none"
+            let authorizedContent = document.querySelectorAll(".authorized");
+            authorizedContent.forEach((element) => {
+                element.style.display = ""
+            })
+        }
+    })
+    .catch(() => {
+        alert("Failed")
+    })
+}
+
+function logout(){
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+    window.location.reload();
+}
+
+function checkAuthStatus(){
+    if(credentialsArePresent()){
+        login()
+    }
 }
 
 window.onload = openDB();

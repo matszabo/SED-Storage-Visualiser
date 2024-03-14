@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: MIT
 
 """ TODO 
-    - licence for Bottle?
     - add checks of signing
     - add logging?
 """
 
-from bottle import run, static_file, get, post, request, response
+from flask import Flask, request, send_from_directory, render_template, make_response
 import os
 import json
+
+app = Flask(__name__)
 
 absRootPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -66,16 +67,16 @@ def removeMetadata(index, mdIndex):
 
 
 # Default routing of files
-@get('/')
+@app.get('/')
 def defaultRoute():
-    return static_file(filename="index.html", root=absRootPath)
+    return send_from_directory("./", "index.html")
 
-@get('/<filepath:path>')
-def returnFile(filepath):
-    print(filepath)
-    return static_file(filename=filepath, root=absRootPath)
+@app.get('/<path:path>')
+def returnFile(path):
+    print(path)
+    return send_from_directory("./", path)
 
-@get('/names')
+@app.get('/names')
 def fetchFilenames():
     savedFiles = os.listdir("./outputs")
     returnString = ""
@@ -84,7 +85,7 @@ def fetchFilenames():
     returnString = returnString[:-1] # remove last ,
     return returnString
 
-@get('/SSCs')
+@app.get('/SSCs')
 def fetchSSCs():
     savedFiles = os.listdir("./SSCs")
     returnString = ""
@@ -93,29 +94,39 @@ def fetchSSCs():
     returnString = returnString[:-1] # remove last ,
     return returnString
 
-@post('/')
+@app.post('/login')
+def login():
+    auth = request.authorization
+    if not auth:
+        return '', 401
+    else:
+        if(auth.username == "mbroz" and auth.password == "temp"):
+            return '', 200
+        else:
+            return '', 401
+        
+
+@app.post('/')
 def receiveUpdate():
     clientJSON = request.json
     action = clientJSON["action"]
     if(action == "addMetadata"):
         saveMetadata(clientJSON)
-        response.status = 202
+        return '', 202
     elif(action == "remMetadata"):
         removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
         print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
-        pass
+        return '', 200
     elif(action == "disk"):
         if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
-            response.status = 202
+            return '', 202
         else:
             try:
                 saveJSON(clientJSON)
+                return '', 200
             except:
                 print("Failed to save given JSON")
-                response.status = 400
+                return '', 400
     else:
-        response.status = 400
-   
-    return response
-        
-run(host='localhost', port=8000, debug=True)
+        return '', 400
+           
