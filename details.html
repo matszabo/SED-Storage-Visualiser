@@ -7,6 +7,9 @@
     </head>
     <body>
 
+        <button id="loginBut" onclick=login()>Login</button>
+        <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+
         <h1>Device details</h1>
 
         <h2>Device Identification</h2>
@@ -16,8 +19,8 @@
         <div id="SessionInfo"></div>
 
         <h2>Stored metadata</h2>
-        <h3>Add metadata:</h3>
-        <div id="metadataInfo">
+        <h3 style="display: none;" class="authorized">Add metadata:</h3>
+        <div style="display: none;" class="authorized" id="metadataInfo">
             Notes: <input type="text" name="" id="mdText"><br>
             URL to metadata: <input type="text" name="" id="mdUrl"><br>
             <input type="file" id="mdFile"><br>

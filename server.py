@@ -5,11 +5,15 @@
     - add logging?
 """
 
-from flask import Flask, request, send_from_directory, render_template, make_response
+from flask import Flask, request, send_from_directory, render_template, make_response, session
+from datetime import timedelta
 import os
 import json
 
 app = Flask(__name__)
+
+# This will be removed after debugging
+app.secret_key = b'8550266053751a1a3a2cf6e6f78cf9fc3028bf53a43dd3382fbae3b92ecc3330'
 
 absRootPath = os.path.dirname(os.path.abspath(__file__))
 
@@ -65,6 +69,12 @@ def removeMetadata(index, mdIndex):
         pass
         print("File to be removed doesn't exist")
 
+def isAuthorized():
+    if('user' in session):
+        return True
+    else:
+        return False
+
 
 # Default routing of files
 @app.get('/')
@@ -73,7 +83,6 @@ def defaultRoute():
 
 @app.get('/<path:path>')
 def returnFile(path):
-    print(path)
     return send_from_directory("./", path)
 
 @app.get('/names')
@@ -101,32 +110,42 @@ def login():
         return '', 401
     else:
         if(auth.username == "mbroz" and auth.password == "temp"):
+            session['user'] = auth.username
+            session.permanent = True
+            app.permanent_session_lifetime = timedelta(hours=8)
             return '', 200
         else:
             return '', 401
         
+@app.post('/logout')
+def logout():
+    session.pop('user', None)
+    return '', 200
 
 @app.post('/')
 def receiveUpdate():
-    clientJSON = request.json
-    action = clientJSON["action"]
-    if(action == "addMetadata"):
-        saveMetadata(clientJSON)
-        return '', 202
-    elif(action == "remMetadata"):
-        removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
-        print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
-        return '', 200
-    elif(action == "disk"):
-        if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
-            return '', 202
-        else:
-            try:
-                saveJSON(clientJSON)
-                return '', 200
-            except:
-                print("Failed to save given JSON")
-                return '', 400
+    if(not (isAuthorized())):
+        return '', 401
     else:
-        return '', 400
+        clientJSON = request.json
+        action = clientJSON["action"]
+        if(action == "addMetadata"):
+            saveMetadata(clientJSON)
+            return '', 202
+        elif(action == "remMetadata"):
+            removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
+            print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
+            return '', 200
+        elif(action == "disk"):
+            if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
+                return '', 202
+            else:
+                try:
+                    saveJSON(clientJSON)
+                    return '', 200
+                except:
+                    print("Failed to save given JSON")
+                    return '', 400
+        else:
+            return '', 400
            

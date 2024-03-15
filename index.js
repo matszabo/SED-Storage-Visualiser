@@ -614,10 +614,6 @@ function credentialsArePresent(){
     }
 }
 
-/**
- * TODO: Check for stored token
- * store token
- */
 
 function login(){
     let username, password
@@ -661,7 +657,19 @@ function login(){
 function logout(){
     localStorage.removeItem("username");
     localStorage.removeItem("password");
-    window.location.reload();
+    fetch(`./logout`, {
+        method:"POST"})
+    .then((response) => {
+        if(response.status != 200){
+            alert("Somehow managed to fail logout")
+        }
+        else{
+            window.location.reload();
+        }
+    })
+    .catch(() => {
+        alert("Failed")
+    })
 }
 
 function checkAuthStatus(){
