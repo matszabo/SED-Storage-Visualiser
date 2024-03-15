@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BSD-3-Clause
 
 /**
  * Treat onupgradeneeded() here as error, because database should already be created by index.js
