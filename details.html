@@ -7,8 +7,20 @@
     </head>
     <body>
 
-        <button id="loginBut" onclick=login()>Login</button>
+        <button id="loginBut" onclick=showprompt()>Login</button>
         <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+        <div class="modal" id="loginPrompt">
+            <div class="modal-content">
+                <h3>Login</h3>
+                <p>username:</p>
+                <input type="text" id="unameInput">
+                <p>password:</p>
+                <input type="password" id="pwdInput">
+                <br>
+                <button onclick=closePrompt()>Cancel</button>
+                <button onclick=loginFromPrompt()>Login</button>
+            </div>
+        </div>
 
         <h1>Device details</h1>
 

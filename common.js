@@ -10,21 +10,9 @@ function credentialsArePresent(){
 
 function login(){
     let username, password
-    if(credentialsArePresent()){
-        username = localStorage.getItem("username")
-        password = localStorage.getItem("password")
-    }
-    else{
-        username = prompt("Enter your username:", "")
-        password = prompt("Enter your password:", "")
-        if((password == null || password == "") || (username == null || username == "")){
-            console.log("Credentials prompt cancelled");
-        }
-        else{
-            localStorage.setItem("password", password);
-            localStorage.setItem("username", username);
-        }
-    }
+    username = localStorage.getItem("username")
+    password = localStorage.getItem("password")
+
     let headers = new Headers();
     headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
     fetch(`./login`, {
@@ -32,7 +20,9 @@ function login(){
         headers: headers})
     .then((response) => {
         if(response.status == 401){
-            alert("Failed")
+            localStorage.removeItem("username");
+            localStorage.removeItem("password");
+            alert("Failed to login to the server. Please log in and enter your credentials again")
         }
         else if(response.status == 200){
             document.getElementById("loginBut").style.display = "none"
@@ -43,7 +33,7 @@ function login(){
         }
     })
     .catch(() => {
-        alert("Failed")
+        alert("Failed to send request to the server")
     })
 }
 
@@ -69,4 +59,21 @@ function checkAuthStatus(){
     if(credentialsArePresent()){
         login()
     }
+}
+
+function loginFromPrompt(){
+    let username = document.getElementById("unameInput").value
+    let password = document.getElementById("pwdInput").value
+    localStorage.setItem("password", password);
+    localStorage.setItem("username", username);
+    login()
+    closePrompt();
+}
+
+function closePrompt(){
+    document.getElementById("loginPrompt").classList.remove("show")
+}
+
+function showprompt(){
+    document.getElementById("loginPrompt").classList.add("show")
 }

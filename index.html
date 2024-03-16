@@ -11,8 +11,20 @@
     <h1>Opal Logger</h1>
     <p>This site aims to collect information about capabilities of allegedly Opal compliant disks.<br>
     Information is gathered using <a href="https://github.com/crocs-muni/opal-toolset">a tool</a></p>
-    <button id="loginBut" onclick=login()>Login</button>
+    <button id="loginBut" onclick=showprompt()>Login</button>
     <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+    <div class="modal" id="loginPrompt">
+        <div class="modal-content">
+            <h3>Login</h3>
+            <p>username:</p>
+            <input type="text" id="unameInput">
+            <p>password:</p>
+            <input type="password" id="pwdInput">
+            <br>
+            <button onclick=closePrompt()>Cancel</button>
+            <button onclick=loginFromPrompt()>Login</button>
+        </div>
+    </div>
     <h2>List of devices</h2>
     <input type="search" id="searchDev" onblur=filterDevs()>
     <div id="devList"></div>

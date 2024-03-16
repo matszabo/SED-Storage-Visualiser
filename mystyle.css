@@ -53,9 +53,29 @@ body{
     background-color: darkgrey;
 }
 
-/*.fsetRow{
-    border: 3px solid;
-}*/
+.modal{
+    position: fixed;
+    top: 0pt;
+    right: 0pt;
+    left: 0pt;
+    bottom: 0pt;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}
+
+.modal-content{
+    padding: 20px;
+    background-color: gainsboro;
+    border-radius: 3px;
+}
+
+.modal.show{
+    opacity: 1;
+    z-index: 20;
+}
 
 .redBg{
     background-color: red;
