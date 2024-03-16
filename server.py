@@ -122,10 +122,10 @@ def logout():
     session.pop('user', None)
     return '', 200
 
-@app.post('/')
-def receiveUpdate():
+@app.post('/metadata')
+def metadataActions():
     if(not (isAuthorized())):
-        return '', 401
+            return '', 401
     else:
         clientJSON = request.json
         action = clientJSON["action"]
@@ -136,7 +136,15 @@ def receiveUpdate():
             removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
             print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
             return '', 200
-        elif(action == "disk"):
+        
+@app.post('/outputs')
+def outputAction():
+    if(not (isAuthorized())):
+        return '', 401
+    else:
+        clientJSON = request.json
+        action = clientJSON["action"]
+        if(action == "disk"):
             if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
                 return '', 202
             else:
@@ -148,4 +156,3 @@ def receiveUpdate():
                     return '', 400
         else:
             return '', 400
-           

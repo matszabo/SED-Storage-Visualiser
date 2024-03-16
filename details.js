@@ -154,7 +154,7 @@ function printJSON(){
 
 function saveToServer(mdJSON){  
     fetch(
-        window.location.origin,
+        `${window.location.origin}/metadata`,
         {
             method : "POST", 
             headers: {"Content-Type": "application/json"},
@@ -166,7 +166,7 @@ function saveToServer(mdJSON){
 
 function removeFromServer(mdIndex){
     fetch(
-        window.location.origin,
+        `${window.location.origin}/metadata`,
         {
             method : "POST", 
             headers: {"Content-Type": "application/json"},
