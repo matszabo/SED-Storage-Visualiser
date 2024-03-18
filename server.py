@@ -35,24 +35,26 @@ def saveJSON(clientJSON):
         json.dump(obj=clientJSON, fp=fd, ensure_ascii=False, indent=4)
 
 def saveMetadata(clientJSON : object):
-    #TODO Check if file already exists and then dump inside
-    if(f"drive{clientJSON['index']}.json" in os.listdir("./metadata")):
-        data = {}
-        with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
-            # Strore read data and clear the file so that we can overwrite it
+    if(not(f"drive{clientJSON['index']}.json" in os.listdir("./metadata"))):
+        with open(f"./metadata/drive{clientJSON['index']}.json", "x") as fd:
+            pass
+    data = {}
+    with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
+        # Strore read data and clear the file so that we can overwrite it
+        if(len(fd.readlines()) == 0):
+            mdIndex = "0"
+        else:
+            fd.seek(0) # to account for the readlines()
             data = json.load(fd)
             fd.truncate(0)
-        with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
-            data[clientJSON["metadata"]["mdIndex"]] = clientJSON["metadata"]
-            json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
-    else:
-        # File doesn't exist yet
-        with open("./metadata/drive" + str(clientJSON["index"]) + ".json", "x") as fd:
-            json.dump(obj={
-                clientJSON["metadata"]["mdIndex"] : clientJSON["metadata"]
-                }, 
-                fp=fd, ensure_ascii=False, indent=4)
-            print("New metadata file for drive" + str(clientJSON["index"]) + " was created")
+            # convert string keys to int
+            indexes = [int(k) for k in data]
+            mdIndex = max(indexes) + 1
+            mdIndex = f"{mdIndex}"
+    with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
+        data[mdIndex] = clientJSON["metadata"]
+        json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+        return mdIndex
 
 def removeMetadata(index, mdIndex):
     if(f"drive{index}.json" in os.listdir("./metadata")):
@@ -60,6 +62,9 @@ def removeMetadata(index, mdIndex):
         with open(f"./metadata/drive{index}.json", "r+") as fd:
             # Strore read data and clear the file so that we can overwrite it
             data = json.load(fd)
+            if(not mdIndex in data):
+                print(f"Metadata with index {mdIndex} not found")
+                return
             fd.truncate(0)
         with open(f"./metadata/drive{index}.json", "r+") as fd:
             del data[mdIndex]
@@ -130,8 +135,8 @@ def metadataActions():
         clientJSON = request.json
         action = clientJSON["action"]
         if(action == "addMetadata"):
-            saveMetadata(clientJSON)
-            return '', 202
+            mdIndex = saveMetadata(clientJSON)
+            return mdIndex, 202
         elif(action == "remMetadata"):
             removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
             print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")

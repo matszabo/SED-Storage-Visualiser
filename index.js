@@ -378,7 +378,12 @@ function storeDrive(drive, indexNum){
 // Fetches a drive and returns promise for its storage
 async function fetchDrive(filePath, index){
     let request = await fetch(filePath);
+    if(!request.ok){
+        console.error(`Failed to fetch drive from ${filePath} with index ${index}`);
+        return
+    }
     let driveJSON = await request.json();
+
     return storeDrive(driveJSON, index);
 }
 
@@ -546,12 +551,19 @@ async function regenerateSSC(SSCname){
     await generateTbody("optFeatures", dis0optFsets);
 
     populateTables();
+    showAuthorizedContent();
 }
 
 async function fetchDevices(){
     let files = await fetch(`./names`);
+    if(!files.ok){
+        console.error("Failed to fetch names of present drives");
+    }
     let filenames = await files.text();
     let SSCfiles = await fetch(`./SSCs`);
+    if(!SSCfiles.ok){
+        console.error("Failed to fetch list of present SSCs")
+    }
     let SSCfilenames = await SSCfiles.text();
 
     SSCfilenames =  SSCfilenames.split(',');
@@ -559,11 +571,16 @@ async function fetchDevices(){
     let i;
     for(i in SSCfilenames){
         let response = await fetch(`./SSCs/${SSCfilenames[i]}`);
-        let SSCstring = await response.text();
-        SSCjson = JSON.parse(SSCstring);
-        localStorage.setItem(SSCfilenames[i], SSCstring);
-        // the filename is used here because using the SSC name was proving troublesome due to unexpected behaviour of the string
-        document.getElementById("SSCbuttons").innerHTML += `<button onclick=regenerateSSC("${SSCfilenames[i]}") id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
+        if(!response.ok){
+            console.error(`Failed to fetch SSC from: ./SSCs/${SSCfilenames[i]}`)
+        }
+        else{
+            let SSCstring = await response.text();
+            SSCjson = JSON.parse(SSCstring);
+            localStorage.setItem(SSCfilenames[i], SSCstring);
+            // the filename is used here because using the SSC name was proving troublesome due to unexpected behaviour of the string
+            document.getElementById("SSCbuttons").innerHTML += `<button onclick=regenerateSSC("${SSCfilenames[i]}") id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
+        }
     }
     SSCjson = JSON.parse(localStorage.getItem(SSCfilenames[0]));
     selectedSSC = SSCjson["SSC name"];

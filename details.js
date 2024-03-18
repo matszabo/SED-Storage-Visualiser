@@ -152,50 +152,76 @@ function printJSON(){
     document.getElementById("JSONdump").innerHTML += JSON.stringify(outputInfo, null, 4);
 }
 
-function saveToServer(mdJSON){  
-    fetch(
-        `${window.location.origin}/metadata`,
-        {
-            method : "POST", 
-            headers: {"Content-Type": "application/json"},
-            body : JSON.stringify({"index" : devInfo["index"], action : "addMetadata", "metadata" : mdJSON})
-    }
-    )
-    // TODO add success check
+function saveToServer(mdJSON){
+    return new Promise((resolve, reject) => {
+        fetch(
+            `${window.location.origin}/metadata`,
+            {
+                method : "POST", 
+                headers: {"Content-Type": "application/json"},
+                body : JSON.stringify({"index" : devInfo["index"], action : "addMetadata", "metadata" : mdJSON})
+        }
+        ).then((response) =>{
+            if(!response.ok){
+                console.error(`Failed to save metadata for drive d${devInfo["index"]}`)
+                reject()
+            }
+            else{
+                response.text().then((mdIndex) => {
+                    resolve(mdIndex)
+                })
+            }
+        })
+    })
+
 }
 
 function removeFromServer(mdIndex){
-    fetch(
-        `${window.location.origin}/metadata`,
-        {
-            method : "POST", 
-            headers: {"Content-Type": "application/json"},
-            body : JSON.stringify({"index" : devInfo["index"], action : "remMetadata", "mdIndex" : `${mdIndex}`})
-    }
-    )
+    return new Promise((resolve, reject) => {
+        fetch(
+            `${window.location.origin}/metadata`,
+            {
+                method : "POST", 
+                headers: {"Content-Type": "application/json"},
+                body : JSON.stringify({"index" : devInfo["index"], action : "remMetadata", "mdIndex" : `${mdIndex}`})
+        }
+        ).then((response) => {
+            if(!response.ok){
+                console.error(`Failed to remove metadata with index ${mdIndex} from server`)
+                reject()
+            }
+            else{
+                resolve()
+            }
+        })
+    })
 }
 
 function removeMetadata(mdIndex){
     let confirmation = confirm(`Are you sure you want to delete this metadata?`)
     if(confirmation){
-        const transaction = db.transaction("metadata", "readwrite");
-        const store = transaction.objectStore("metadata");
-
-        const request = store.openCursor(devInfo["index"]);
-        request.onsuccess = (event) => {
-            let cursor = event.target.result;
-            if(cursor){
-                let entries = cursor.value;
-                delete entries[mdIndex]
-                cursor.update(entries);
-                removeFromServer(mdIndex);
-                printMetadata();
+        removeFromServer(mdIndex).then(() => {
+            const transaction = db.transaction("metadata", "readwrite");
+            const store = transaction.objectStore("metadata");
+    
+            const request = store.openCursor(devInfo["index"]);
+            request.onsuccess = (event) => {
+                let cursor = event.target.result;
+                if(cursor){
+                    let entries = cursor.value;
+                    delete entries[mdIndex]
+                    cursor.update(entries);
+                    printMetadata();
+                }
             }
-        }
+        })
+        .catch(()=> {
+            alert("Failed to remove metadata from server")
+        })
     }
 }
 
-function saveToStore(metadata, save){
+function saveToStore(metadata, mdIndex){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("metadata", "readwrite");
         const store = transaction.objectStore("metadata");
@@ -205,28 +231,17 @@ function saveToStore(metadata, save){
             let cursor = event.target.result;
             if(cursor){
                 let entries = cursor.value;
-                let newIndex = (entries.length == 0) ? 0 : Math.max(...Object.keys(entries)) + 1;
-                newIndex = `${parseInt(newIndex)}`
-                if("mdIndex" in metadata){
-                    if(metadata["mdIndex"] in entries){
-                        console.log(`Rewriting metadata for ${metadata["mdIndex"]}`);
-                    }
-                    entries[metadata["mdIndex"]] = metadata;
+                if(mdIndex in entries){
+                    console.log(`Rewriting metadata for ${mdIndex}`);
                 }
-                else{
-                    metadata["mdIndex"] = `${newIndex}`;
-                    entries[`${newIndex}`] = metadata;
-                }
+                entries[mdIndex] = metadata;
                 cursor.update(entries);
-                if(save) saveToServer(metadata);
                 resolve()
             }
             else{
-                let addReq = store.add({"0" : metadata}, devInfo["index"]);
+                let addReq = store.add({mdIndex : metadata}, devInfo["index"]);
                 addReq.onsuccess = () =>{
-                    metadata["mdIndex"] = "0";
                     console.log(`Added metadata with index ${addReq.result} successfully`);
-                    if(save) saveToServer(metadata);
                     resolve();
                 }
                 addReq.onerror = (reason) => {
@@ -261,8 +276,10 @@ function printMetadata(){
                 if(content["filename"]){
                     mdHTML.innerHTML += `<p>Filename: ${content["filename"]}</p>`;
                     mdHTML.innerHTML += `<pre>Filename: ${content["content"]}</pre>`;
+                    
                 }
             });
+            showAuthorizedContent();
         }
     }
     request.onerror = (reason) => {
@@ -280,15 +297,17 @@ function saveMetadata(){
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = () => {
-                saveToStore({
+                let data = {
                     notes : note,
                     url : urlContent,
                     filename : file.name,
                     content : reader.result
-                }, true).then(() => {
-                    // TODO save metadata to server
-                    printMetadata();
-                    resolve();
+                }
+                saveToServer(data).then((mdIndex) => {
+                    saveToStore(data, mdIndex).then(() => {
+                        printMetadata();
+                        resolve();
+                    })
                 })
             }
             reader.onerror = () => {
@@ -297,15 +316,17 @@ function saveMetadata(){
             }
         }
         else{
-            saveToStore({
+            let data = {
                 notes : note,
                 url : urlContent,
                 filename : null,
                 content : null
-            }, true).then(() => {
-                // TODO save metadata to server
-                printMetadata();
-                resolve();
+            }
+            saveToServer(data).then((mdIndex) => {
+                saveToStore(data, mdIndex).then(() => {
+                    printMetadata();
+                    resolve();
+                })
             })
         }   
     });
@@ -318,16 +339,20 @@ function fetchMetadata(){
             fetch(`./metadata/drive${devInfo["index"]}.json`)
             .then((response) => {
                 if(!response.ok){
+                    console.error(`Failed to fetch ./metadata/drive${devInfo["index"]}.json`)
                     resolve();
                 }
                 else{
                     response.json().then((data) => {
                         let storePromises = [];
-                        Object.entries(data).forEach(([filename, metadata]) => {
-                            storePromises.push(saveToStore(metadata, false)) 
+                        Object.entries(data).forEach(([mdIndex, metadata]) => {
+                            storePromises.push(saveToStore(metadata, mdIndex)) 
                         })
                         Promise.all(storePromises).then(() => {
                             resolve();
+                        })
+                        .catch(() => {
+                            console.error(`Failed during fetching of metadata`)
                         })
                     });
                 }
@@ -344,6 +369,8 @@ getSelectedDev().then(() => {
     printJSON();
     fetchMetadata().then(() => {
         printMetadata();
+    })
+    .finally(() => {
         checkAuthStatus();
     })
 });

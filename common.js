@@ -7,6 +7,14 @@ function credentialsArePresent(){
     }
 }
 
+function showAuthorizedContent(){
+    if(credentialsArePresent()){
+        let authorizedContent = document.querySelectorAll(".authorized");
+        authorizedContent.forEach((element) => {
+            element.style.display = ""
+        })
+    }
+}
 
 function login(){
     let username, password
@@ -26,10 +34,7 @@ function login(){
         }
         else if(response.status == 200){
             document.getElementById("loginBut").style.display = "none"
-            let authorizedContent = document.querySelectorAll(".authorized");
-            authorizedContent.forEach((element) => {
-                element.style.display = ""
-            })
+            showAuthorizedContent();
         }
     })
     .catch(() => {
