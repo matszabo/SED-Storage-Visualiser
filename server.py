@@ -7,15 +7,21 @@
 
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
+from dotenv import load_dotenv
+import bcrypt
 import os
 import json
 
 app = Flask(__name__)
 
-# This will be removed after debugging
-app.secret_key = b'8550266053751a1a3a2cf6e6f78cf9fc3028bf53a43dd3382fbae3b92ecc3330'
-
 absRootPath = os.path.dirname(os.path.abspath(__file__))
+
+load_dotenv(f"{absRootPath}.env")
+
+app.secret_key = os.environ.get("SECRET_KEY")
+admin_name = os.environ.get("ADMIN_NAME")
+salt = os.environ.get("SALT").encode('utf-8')
+pwd = os.environ.get("PASSWORD").encode('utf-8')
 
 def isDrivePresent(serialNumber: str, firmwareVersion: str):
     filesSaved = os.listdir("./outputs")
@@ -46,11 +52,14 @@ def saveMetadata(clientJSON : object):
         else:
             fd.seek(0) # to account for the readlines()
             data = json.load(fd)
-            fd.truncate(0)
-            # convert string keys to int
-            indexes = [int(k) for k in data]
-            mdIndex = max(indexes) + 1
-            mdIndex = f"{mdIndex}"
+            # if metadata were removed to the point of only brackets remaining
+            if(not(data == {})):
+                fd.truncate(0)
+                # convert string keys to int
+                indexes = [int(k) for k in data]
+                mdIndex = max(indexes) + 1
+                mdIndex = f"{mdIndex}"
+            return mdIndex            
     with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
         data[mdIndex] = clientJSON["metadata"]
         json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
@@ -114,7 +123,9 @@ def login():
     if not auth:
         return '', 401
     else:
-        if(auth.username == "mbroz" and auth.password == "temp"):
+        username = auth.username
+        password = auth.password.encode('utf-8')
+        if((username == admin_name) and (bcrypt.checkpw(password, pwd))):
             session['user'] = auth.username
             session.permanent = True
             app.permanent_session_lifetime = timedelta(hours=8)
