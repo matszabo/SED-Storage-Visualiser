@@ -16,6 +16,7 @@ var selectedSSC = "";
 var dis0ManFsets = {};
 var dis0optFsets = {};
 var SSC = "";
+var selectedSupSSCs = []
 
 // For easier check of required values when filling TBody
 var operators = {
@@ -194,13 +195,71 @@ function checkDataRemovalMech(device){
     device["dataRemMechs"] = mechanismsSupported;
 }
 
-function findMissingFsets(device){
+function findSupportedFsets(device){
+    device["SSCCompl"]["foundFsets"] = []
     for(fset in dis0ManFsets){
-        if(!(fset in device["driveInfo"]["Discovery 0"])){
-            device["SSCCompl"]["isCompliant"] = false;
-            device["SSCCompl"]["complBreaches"].push(`${fset} missing`);
+        if((fset in device["driveInfo"]["Discovery 0"])){
+            device["SSCCompl"]["foundFsets"].push(fset);
         }
     }
+    for(fset in dis0optFsets){
+        if((fset in device["driveInfo"]["Discovery 0"])){
+            device["SSCCompl"]["foundFsets"].push(fset);
+        }
+    }
+}
+
+function filterBySupportedSSC(checkbox){
+   // if checked then add to SSC array, else remove from SSC array
+    let fset = checkbox["dataset"]["fset"]
+    if(checkbox.checked) {
+        selectedSupSSCs.push(fset)
+    }
+    else {
+        let index = selectedSupSSCs.indexOf(fset)
+        selectedSupSSCs.splice(index, 1)
+    }
+
+    // open db
+    const transaction = db.transaction("drives", "readonly");
+    const store = transaction.objectStore("drives");
+    
+    const request = store.openCursor();
+    request.onsuccess = ((event) => {
+        const cursor = event.target.result;
+        if(cursor){
+            let device = cursor.value;
+            let devCbox = document.getElementById(`d${device["index"]}`)
+            if(selectedSupSSCs.length != 0) {
+                // if not all fsets from SSC aray in drive then hide by drive, also check for currently selected SSC
+                if(selectedSupSSCs.every(set => device["SSCCompl"]["foundFsets"].includes(set)) &&
+                Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))) {
+                    if(!devCbox.checked) {
+                        devCbox.click()
+                    }
+                }
+                else {
+                    
+                    if(devCbox.checked) {
+                        devCbox.click()
+                    }    
+                }
+            }
+            else {
+                if(Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))){
+                    if(!devCbox.checked) {
+                        devCbox.click()
+                    }
+                }
+                else {
+                    if(devCbox.checked) {
+                        devCbox.click()
+                    }
+                }
+            }
+            cursor.continue()
+        }
+    })
 }
 
 function populateDevList(){
@@ -223,16 +282,24 @@ function populateDevList(){
             else{
                 // Adding listeners to "All" Cboxes has to happen AFTER all of the device CBoxes were created
                 let fSetList = document.getElementById("fSetManList");
+                let fSetSupList = document.getElementById("fSetManSupList");
                 fSetList.innerHTML = `<input type="checkbox" class="manFsetCbox" name="allDevs" checked="true" id="allManFsetCbox">All<br>`;
+                fSetSupList.innerHTML = `<input type="checkbox" class="manFsetSupCbox" id="allManFsetSupCbox">All<br>`;
                 Object.entries(dis0ManFsets).forEach(([fsetName, values]) => {
                     fSetList.innerHTML += `<input class="fSetCBox manFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+                    fSetSupList.innerHTML += `<input class="manFsetSupCbox" data-fset="${fsetName}" type="checkbox" onclick=filterBySupportedSSC(this)>${fsetName}</input><br>`
                 });
+
                 fSetList = document.getElementById("fSetOptList");
+                fSetSupList = document.getElementById("fSetOptSupList");
                 fSetList.innerHTML = `<input type="checkbox" class="optFsetCbox" name="allDevs" checked="true" id="allOptFsetCbox">All<br>`;
+                fSetSupList.innerHTML = `<input type="checkbox" class="optFsetSupCbox" id="allOptFsetSupCbox">All<br>`;
                 Object.entries(dis0optFsets).forEach(([fsetName, values]) => {
                     fSetList.innerHTML += `<input class="fSetCBox optFsetCbox" id="${fsetName}" type="checkbox" checked="true">${fsetName}</input><br>`
+                    fSetSupList.innerHTML += `<input class="optFsetSupCbox" data-fset="${fsetName}" type="checkbox" onclick=filterBySupportedSSC(this)>${fsetName}</input><br>`
                 });
-                let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox"];
+
+                let allCboxes = ["allDevsCbox", "allManFsetCbox", "allOptFsetCbox", "allManFsetSupCbox", "allOptFsetSupCbox"];
                 allCboxes.forEach((allBox) => {
                     let allBoxEl = document.getElementById(allBox);
                     allBoxEl.onchange = () => {
@@ -258,41 +325,48 @@ function populateDevList(){
 function setFsetAttrValue(device, fsetName, attrName, requiredValue){
     let devValue;
     let HTMLitem = document.querySelector(`[id="${fsetName}${attrName}"] .d${device["index"]}`);
-    try {
-        devValue = device["driveInfo"]["Discovery 0"][fsetName][attrName];
-    } catch{
+    if(!(device["SSCCompl"]["foundFsets"].includes(fsetName))) {
         HTMLitem.innerHTML = `Missing`;
         HTMLitem.classList.add("missingBg");
-        return;
+        return;        
     }
-    if(requiredValue !== null){
-        let requiredVal;
-        // Parse required value into operator and value
-        try {
-            requiredVal = requiredValue.split(" ");
-        } catch (error) {
-            console.error(`Error while parsing required SSC value. Check if the format in SSC definition is as follows: "atribute" : "operator value"`)
+    else {
+        if(!(attrName in device["driveInfo"]["Discovery 0"][fsetName])) {
+            HTMLitem.innerHTML = `Missing`;
+            HTMLitem.classList.add("missingBg");
             return;
         }
-        
-        let op = requiredVal[0]
-        if(operators[op](parseInt(devValue), parseInt(requiredVal[1]))){
-            HTMLitem.innerHTML = `${devValue}`;
+        else {
+            devValue = device["driveInfo"]["Discovery 0"][fsetName][attrName];
+            if(requiredValue !== null){
+                let requiredVal;
+                // Parse required value into operator and value
+                try {
+                    requiredVal = requiredValue.split(" ");
+                } catch (error) {
+                    console.error(`Error while parsing required SSC value. Check if the format in SSC definition is as follows: "atribute" : "operator value"`)
+                    return;
+                }
+                
+                let op = requiredVal[0]
+                if(operators[op](parseInt(devValue), parseInt(requiredVal[1]))){
+                    HTMLitem.innerHTML = `${devValue}`;
+                }
+                else{
+                    HTMLitem.title = `${fsetName}: value of ${attrName} should be ${op} ${requiredVal[1]}`;
+                    HTMLitem.innerHTML = `${devValue}`;
+                    HTMLitem.classList.add("missingBg");
+                }
+            }
+            else{
+                HTMLitem.innerHTML = `${devValue}`;        
+            }
         }
-        else{
-            device["SSCCompl"]["isCompliant"] = false;
-            HTMLitem.title = `${fsetName}: value of ${attrName} should be ${op} ${requiredVal[1]}`;
-            HTMLitem.innerHTML = `${devValue}`;
-            HTMLitem.classList.add("missingBg");
-        }
-    }
-    else{
-        HTMLitem.innerHTML = `${devValue}`;        
     }
 }
 
 // Populating body of the Feature sets table
-async function populateTbody(device, featureSet){
+function populateTbody(device, featureSet){
     let requiredVal;
     let attributes;
     // Print feature set name
@@ -478,8 +552,11 @@ async function checkDevCompliance(device){
     if((!Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
         hideDrive(device["index"]);
     }
-    await populateTbody(device, dis0ManFsets);
-    await populateTbody(device, dis0optFsets);
+    checkDataRemovalMech(device);
+    checkPSIDpresence(device);
+    findSupportedFsets(device);
+    populateTbody(device, dis0ManFsets);
+    populateTbody(device, dis0optFsets);
 
     switch (String(selectedSSC)) {
         case "Opal 2.02":
@@ -495,10 +572,7 @@ async function checkDevCompliance(device){
             break;
     }
 
-    checkDataRemovalMech(device);
-    checkPSIDpresence(device);
     setLockingVersion(device);
-    findMissingFsets(device);
 }
 
 function populateTables(){
