@@ -16,7 +16,102 @@ var selectedSSC = "";
 var dis0ManFsets = {};
 var dis0optFsets = {};
 var SSC = "";
-var selectedSupSSCs = []
+
+var filtrationCriteria = {
+    name : "",
+    SSC : "",
+    supportedFsets : []
+}
+
+function filterPromise(index) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readonly");
+        const store = transaction.objectStore("drives");
+        const request = store.get(index)
+        request.onsuccess = ((event) => {
+            let device = event.target.result
+            if(filtrationCriteria.supportedFsets.length != 0) {
+                //if(index == )
+                // if not all fsets from SSC aray in drive then hide by drive, also check for currently selected SSC
+                if(!(filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set)) &&
+                Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))) {
+                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\nSupported Fset present: ${filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set))}`)
+                    resolve(false)
+                }
+                else {
+                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\nSupported Fset present: ${filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set))}`)
+                    resolve(true)
+                }
+            }
+            else {
+                if(!(Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
+                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\n`)
+                    resolve(false)
+                }
+                else {
+                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\n`)
+                    resolve(true)
+                }
+            }
+        })
+        request.onerror = ((reason) => {
+            console.error(reason)
+            resolve(false)
+        })
+    })
+}
+
+async function filterBySSCandFsets(filteredDrives) {
+    let deepCopy = [...filteredDrives] // A deep copy is done here so that we don't slice an array over which we're looping
+    for(let drive of filteredDrives) {
+        let index = parseInt(/\d+$/i.exec(drive)[0])  
+        let result = await filterPromise(index)
+        if(!result) {
+            let driveIndex = deepCopy.indexOf(drive)
+            deepCopy.splice(driveIndex, 1)
+            
+        }
+    }
+    return deepCopy
+}
+
+async function filterByCriteria() {
+    let filteredDrives = []
+    // by name, fill array with devs
+    let value = document.getElementById("searchDev").value
+    if(value) {
+        let allCbox = document.getElementById("allDevsCbox");
+        if(allCbox.checked) allCbox.click();
+        let refs = document.getElementsByClassName("devRef");
+        for(let ref of refs){
+            if((ref.textContent.toLowerCase().includes(value.toLowerCase()))){
+                filteredDrives.push(ref.id)
+            }
+        }
+    }
+    else {
+        let refs = document.getElementsByClassName("devRef");
+        for(let ref of refs){
+            filteredDrives.push(ref.id)
+        }
+    }
+    // by SSC and supported Fset
+    filterBySSCandFsets(filteredDrives).then((list) => {
+        for(let cbox of document.querySelectorAll(".devCBox")) {
+        
+            if(list.includes(cbox.id)){
+                if(!cbox.checked){
+                    cbox.click()
+                }
+            }
+            else {
+                if(cbox.checked) {
+                    cbox.click()
+                }
+            }
+        }
+    })
+}
 
 // For easier check of required values when filling TBody
 var operators = {
@@ -40,21 +135,7 @@ function setLockingVersion(device){
 }
 
 function filterDevs(){
-    let value = document.getElementById("searchDev").value
-    if(!value) return;
-    let allCbox = document.getElementById("allDevsCbox");
-    if(allCbox.checked) allCbox.click();
-    let refs = document.getElementsByClassName("devRef");
-    for(let ref of refs){
-        if(ref.textContent.toLowerCase().includes(value.toLowerCase())){
-            let cbox = document.querySelector(`[id="${ref.id}"]`);
-            if(!cbox.checked) cbox.click();
-        }
-        else{
-            let cbox = document.querySelector(`[id="${ref.id}"]`);
-            if(cbox.checked) cbox.click();
-        }
-    }
+    filterByCriteria()
 }
 
 function checkPSIDpresence(device){
@@ -213,53 +294,14 @@ function filterBySupportedSSC(checkbox){
    // if checked then add to SSC array, else remove from SSC array
     let fset = checkbox["dataset"]["fset"]
     if(checkbox.checked) {
-        selectedSupSSCs.push(fset)
+        filtrationCriteria.supportedFsets.push(fset)
     }
     else {
-        let index = selectedSupSSCs.indexOf(fset)
-        selectedSupSSCs.splice(index, 1)
+        let index = filtrationCriteria.supportedFsets.indexOf(fset)
+        filtrationCriteria.supportedFsets.splice(index, 1)
     }
-
+    filterByCriteria()
     // open db
-    const transaction = db.transaction("drives", "readonly");
-    const store = transaction.objectStore("drives");
-    
-    const request = store.openCursor();
-    request.onsuccess = ((event) => {
-        const cursor = event.target.result;
-        if(cursor){
-            let device = cursor.value;
-            let devCbox = document.getElementById(`d${device["index"]}`)
-            if(selectedSupSSCs.length != 0) {
-                // if not all fsets from SSC aray in drive then hide by drive, also check for currently selected SSC
-                if(selectedSupSSCs.every(set => device["SSCCompl"]["foundFsets"].includes(set)) &&
-                Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))) {
-                    if(!devCbox.checked) {
-                        devCbox.click()
-                    }
-                }
-                else {
-                    
-                    if(devCbox.checked) {
-                        devCbox.click()
-                    }    
-                }
-            }
-            else {
-                if(Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))){
-                    if(!devCbox.checked) {
-                        devCbox.click()
-                    }
-                }
-                else {
-                    if(devCbox.checked) {
-                        devCbox.click()
-                    }
-                }
-            }
-            cursor.continue()
-        }
-    })
 }
 
 function populateDevList(){
