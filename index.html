@@ -28,8 +28,13 @@
     <h2>List of devices</h2>
     <input type="search" id="searchDev" onblur=filterDevs()>
     <div id="devList"></div>
-    <button class="authorized" id="addDevBut" style="display: none;">Add device</button>
 
+    <div name="addDevPrompt" style="display: none;" class="authorized">
+        <h4>Add device:</h4>
+        <input type="file" id="devFile"><br>
+        <button onclick=addDevice()>Submit</button>
+    </div>
+    
     <h2>Filter</h2>
     <div class="tiles">
         <div class="tile">

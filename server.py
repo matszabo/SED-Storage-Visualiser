@@ -83,6 +83,14 @@ def removeMetadata(index, mdIndex):
         pass
         print("File to be removed doesn't exist")
 
+def removeDrive(index):
+    try:
+        os.remove(f"{absRootPath}/outputs/drive{index}.json")
+        return True
+    except OSError as error:
+        print(error)
+        return False
+    
 def isAuthorized():
     if('user' in session):
         return True
@@ -154,21 +162,28 @@ def metadataActions():
             return '', 200
         
 @app.post('/outputs')
-def outputAction():
+def addDrive():
     if(not (isAuthorized())):
         return '', 401
     else:
         clientJSON = request.json
-        action = clientJSON["action"]
-        if(action == "disk"):
-            if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
-                return '', 202
-            else:
-                try:
-                    saveJSON(clientJSON)
-                    return '', 200
-                except:
-                    print("Failed to save given JSON")
-                    return '', 400
+        if(isDrivePresent(clientJSON["Identify"]["Serial number"], clientJSON["Identify"]["Firmware version"])):
+            return '', 202
         else:
-            return '', 400
+            try:
+                saveJSON(clientJSON)
+                return '', 200
+            except:
+                print("Failed to save given JSON")
+                return '', 400
+            
+@app.delete('/outputs')
+def outputDelete():
+    if(not (isAuthorized())):
+        return '', 401
+    else:
+        clientJSON = request.json
+        if(removeDrive(clientJSON["index"])):
+            return '', 200
+        else:
+            return 'Failed to remove drive', 400

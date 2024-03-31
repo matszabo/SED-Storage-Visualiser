@@ -318,7 +318,7 @@ function populateDevList(){
             if(cursor){
                 let device = cursor.value;
                 devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
-                devList.innerHTML += `<button class="authorized" id="d${device["index"]}" style="display: none;">X</button><br>`
+                devList.innerHTML += `<button class="authorized" id="d${device["index"]}" style="display: none;" onclick=removeDevice(${device["index"]})>X</button><br>`
                 cursor.continue();
             }
             else{
@@ -492,12 +492,14 @@ function storeDrive(drive, indexNum){
 }
 
 // Fetches a drive and returns promise for its storage
-async function fetchDrive(filePath, index){
+async function fetchDrive(filePath){
     let request = await fetch(filePath);
     if(!request.ok){
-        console.error(`Failed to fetch drive from ${filePath} with index ${index}`);
+        console.error(`Failed to fetch drive from ${filePath}`);
         return
     }
+    let index = parseInt(/.*drive(\d+)\.json$/.exec(filePath)[1])
+    //debugger
     let driveJSON = await request.json();
 
     return storeDrive(driveJSON, index);
@@ -512,12 +514,11 @@ async function prepareDrives(filenames){
         devFiles.push(filename);
     });
     let responses = []; // A promise array
-    let index = 0;
     devFiles.forEach((filename) => {
-        responses.push(fetchDrive(`./outputs/${filename}`, index));
-        index += 1;
+        responses.push(fetchDrive(`./outputs/${filename}`));
+        numofDevs++
     });
-    numofDevs = index;
+    
     await Promise.all(responses);
     return;
 }
@@ -668,6 +669,83 @@ async function regenerateSSC(SSCname){
 
     populateTables();
     showAuthorizedContent();
+}
+
+function addDevice(){
+    let inputFile = document.getElementById("devFile");
+    if(inputFile.files.length > 0){
+        let file = inputFile.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            fetch(
+                `${window.location.origin}/outputs`,
+                {
+                    method : "POST", 
+                    headers: {"Content-Type": "application/json"},
+                    body : reader.result
+            }
+            ).then((response) =>{
+                if(!response.ok){
+                    console.error(`Failed to save new drive`)
+                }
+                else {
+                    if(response.status == 202) {
+                        console.log("Drive already exists")
+                    }
+                    else {
+                        console.log("Drive added successfully")
+                    }
+                    window.location.reload()
+                }
+            })
+        }
+    }
+}
+
+function removeDriveFromStorage(index) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readwrite");
+        const store = transaction.objectStore("drives");
+
+        const request = store.delete(index)
+        request.onsuccess = (event) => {
+            console.log(`Drive d${index} deleted from IndexedDb`)
+            resolve()
+        }
+        request.onerror = (reason) => {
+            console.error(reason)
+            reject()
+        }
+    })
+}
+
+function removeDevice(index){
+    let confirmation = confirm(`Are you sure you want to remove drive d${index}?`)
+    if(confirmation) {
+        fetch(
+            `${window.location.origin}/outputs`,
+            {
+                method : "DELETE", 
+                headers: {"Content-Type": "application/json"},
+                body : JSON.stringify({"index" : index})
+        })
+        .then((response) => {
+            if(!response.ok) {
+                alert(`Failed to remove drive d${index}`)
+            }
+            else {
+                console.log(`Disk d${index} removed successfully from server`)
+                removeDriveFromStorage(index).then(() => {
+                    window.location.reload()
+                })
+                .catch(() => {
+                    alert("Failed to remove drive from internal database, but succceeded in deletion from server.\nPlease delete local database and refresh page")
+                })
+            }
+        })
+    }
+
 }
 
 async function fetchDevices(){
