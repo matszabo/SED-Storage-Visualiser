@@ -796,6 +796,37 @@ async function fetchDevices(){
     checkAuthStatus()
 }
 
+function refetchhDB() {
+    let confirmation = confirm("Are you sure you want to re-fetch all drives from the server?\nThis won't affect the server data, but may take some time to complete")
+
+    if(confirmation) {
+        const driveTransaction = db.transaction("drives", "readwrite");
+        const driveStore = driveTransaction.objectStore("drives");
+
+        const driveRequest = driveStore.clear()
+        driveRequest.onsuccess = () => {
+            console.log("Succesfully cleared all items from Indexddb drives store")
+            const metadataTransaction = db.transaction("metadata", "readwrite");
+            const metadataStore = metadataTransaction.objectStore("metadata");
+
+            const metadataRequest = metadataStore.clear()
+
+            metadataRequest.onsuccess = () => {
+                console.log("Succesfully cleared all items from Indexddb metadata store")
+                window.location.reload()
+            }
+            
+            metadataRequest.onerror = () => {
+                alert("Failed to delete all items from the browser's database. Please try reloading the page")
+            }
+        }
+
+        driveRequest.onerror = () => {
+            alert("Failed to delete all items from the browser's database. Please try reloading the page")
+        }
+    }
+}
+
 function openDB(){
     const dbReq = indexedDB.open("storageDevs", 1);
 
