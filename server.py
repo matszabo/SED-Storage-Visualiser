@@ -139,6 +139,13 @@ def fetchSSCs():
     returnString = returnString[:-1] # remove last ,
     return returnString
 
+@app.post('/token')
+def verifyToken():
+    if(isAuthorized()):
+        return '', 200
+    else:
+        return '', 401
+
 @app.post('/login')
 def login():
     auth = request.authorization

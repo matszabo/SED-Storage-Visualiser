@@ -668,7 +668,7 @@ async function regenerateSSC(SSCname){
     await generateTbody("optFeatures", dis0optFsets);
 
     populateTables();
-    showAuthorizedContent();
+    checkAuthStatus()
 }
 
 function addDevice(){
@@ -817,3 +817,7 @@ function openDB(){
 }
 
 window.onload = openDB();
+document.getElementById("loginPrompt").addEventListener('submit', (event) => {
+    event.preventDefault();
+    loginFromPrompt()
+})

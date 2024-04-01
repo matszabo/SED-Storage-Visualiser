@@ -13,7 +13,7 @@
     Information is gathered using <a href="https://github.com/crocs-muni/opal-toolset">a tool</a></p>
     <button id="loginBut" onclick=showprompt()>Login</button>
     <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
-    <div class="modal" id="loginPrompt">
+    <form class="modal" id="loginPrompt">
         <div class="modal-content">
             <h3>Login</h3>
             <p>username:</p>
@@ -24,7 +24,7 @@
             <button onclick=closePrompt()>Cancel</button>
             <button onclick=loginFromPrompt()>Login</button>
         </div>
-    </div>
+    </form>
     <h2>List of devices</h2>
     <input type="search" id="searchDev" onblur=filterDevs()>
     <div id="devList"></div>
