@@ -1,16 +1,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 """ TODO 
-    - add checks of signing
     - add logging?
 """
 
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
 from dotenv import load_dotenv
-import bcrypt
-import os
-import json
+import bcrypt, os, json, shutil
 
 app = Flask(__name__)
 
@@ -49,21 +46,38 @@ def saveMetadata(clientJSON : object):
         # Strore read data and clear the file so that we can overwrite it
         if(len(fd.readlines()) == 0):
             mdIndex = "0"
+            json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=False, indent=4)
+            return mdIndex
         else:
-            fd.seek(0) # to account for the readlines()
-            data = json.load(fd)
-            # if metadata were removed to the point of only brackets remaining
-            if(not(data == {})):
-                fd.truncate(0)
-                # convert string keys to int
-                indexes = [int(k) for k in data]
-                mdIndex = max(indexes) + 1
-                mdIndex = f"{mdIndex}"
-            return mdIndex            
-    with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
-        data[mdIndex] = clientJSON["metadata"]
-        json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
-        return mdIndex
+            shutil.copy(f"./metadata/drive{clientJSON['index']}.json", f"./metadata/drive{clientJSON['index']}.tmp")
+            try:
+                fd.seek(0) # to account for the readlines()
+                data = json.load(fd)
+                fd.seek(0)
+                # if metadata were removed to the point of only brackets remaining
+                if(not(data == {})):
+                    # create a temporary file in case of error
+                    fd.truncate(0)
+                    # convert string keys to int
+                    indexes = [int(k) for k in data]
+                    mdIndex = max(indexes) + 1
+                    mdIndex = f"{mdIndex}"
+                    data[mdIndex] = clientJSON["metadata"]
+                    json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+                    os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+                    return mdIndex
+                else:
+                    fd.truncate(0)
+                    mdIndex = "0"
+                    json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=False, indent=4)
+                    os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+                    return mdIndex
+            except Exception as error:
+                print(error)
+                os.remove(f"./metadata/drive{clientJSON['index']}.json")
+                shutil.copy(f"./metadata/drive{clientJSON['index']}.tmp", f"./metadata/drive{clientJSON['index']}.json")
+                os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+            
 
 def removeMetadata(index, mdIndex):
     if(f"drive{index}.json" in os.listdir("./metadata")):
