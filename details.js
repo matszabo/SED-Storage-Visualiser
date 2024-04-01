@@ -279,7 +279,6 @@ function printMetadata(){
                     
                 }
             });
-            showAuthorizedContent();
         }
     }
     request.onerror = (reason) => {

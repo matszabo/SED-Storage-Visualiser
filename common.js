@@ -1,26 +1,32 @@
-function credentialsArePresent(){
-    if(localStorage.getItem("username") && localStorage.getItem("password")){
-        return true
-    }
-    else {
-        return false
-    }
+function checkToken(){
+    return new Promise((resolve, reject) => {
+        fetch(`./token`, {method : "POST"})
+        .then((response) => {
+            if(!response.ok) {
+                reject()
+            }
+            else {
+                resolve()
+            }
+        })
+        .catch((reason) => {
+            console.error(reason)
+            alert("Failed token check")
+            reject()
+        })
+    })
+
 }
 
 function showAuthorizedContent(){
-    if(credentialsArePresent()){
-        let authorizedContent = document.querySelectorAll(".authorized");
-        authorizedContent.forEach((element) => {
-            element.style.display = ""
-        })
-    }
+    let authorizedContent = document.querySelectorAll(".authorized");
+    authorizedContent.forEach((element) => {
+        element.style.display = ""
+    })
+    document.getElementById("loginBut").style.display = "none"
 }
 
-function login(){
-    let username, password
-    username = localStorage.getItem("username")
-    password = localStorage.getItem("password")
-
+function login(username, password){
     let headers = new Headers();
     headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
     fetch(`./login`, {
@@ -28,12 +34,9 @@ function login(){
         headers: headers})
     .then((response) => {
         if(response.status == 401){
-            localStorage.removeItem("username");
-            localStorage.removeItem("password");
             alert("Failed to login to the server. Please log in and enter your credentials again")
         }
         else if(response.status == 200){
-            document.getElementById("loginBut").style.display = "none"
             showAuthorizedContent();
         }
     })
@@ -43,8 +46,6 @@ function login(){
 }
 
 function logout(){
-    localStorage.removeItem("username");
-    localStorage.removeItem("password");
     fetch(`./logout`, {
         method:"POST"})
     .then((response) => {
@@ -61,17 +62,15 @@ function logout(){
 }
 
 function checkAuthStatus(){
-    if(credentialsArePresent()){
-        login()
-    }
+    checkToken().then(() => {
+        showAuthorizedContent()
+    })
 }
 
 function loginFromPrompt(){
     let username = document.getElementById("unameInput").value
     let password = document.getElementById("pwdInput").value
-    localStorage.setItem("password", password);
-    localStorage.setItem("username", username);
-    login()
+    login(username, password)
     closePrompt();
 }
 
