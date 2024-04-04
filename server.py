@@ -13,6 +13,8 @@ app = Flask(__name__)
 
 absRootPath = os.path.dirname(os.path.abspath(__file__))
 
+app.permanent_session_lifetime = timedelta(hours=8)
+
 load_dotenv(f"{absRootPath}.env")
 
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -157,7 +159,6 @@ def login():
         if((username == admin_name) and (bcrypt.checkpw(password, pwd))):
             session['user'] = auth.username
             session.permanent = True
-            app.permanent_session_lifetime = timedelta(hours=8)
             return '', 200
         else:
             return '', 401
