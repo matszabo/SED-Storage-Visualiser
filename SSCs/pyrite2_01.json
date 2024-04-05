@@ -1,7 +1,7 @@
 {
     "SSC" : "Pyrite",
     "SSC name" : "Pyrite 2.01",
-    "SSC fset" : "Pyrite SSC Feature Descriptor",  
+    "SSC fset" : "Pyrite SSC V2 Feature",  
     "mandatory" : {
         "TPer Feature": [
             "Version",
@@ -22,7 +22,7 @@
             "Locking Enabled",
             {"Locking Supported" : "= 1"}
         ],
-        "Pyrite SSC Feature Descriptor": [
+        "Pyrite SSC V2 Feature": [
             {"Version": ">= 1"},
             "Base ComID",
             {"Number of ComIDs": ">= 1"},
@@ -35,7 +35,7 @@
             "SID Value State",
             "Hardware Reset"
         ],
-        "Supported Data Removal Mechanism Feature Descriptor": [
+        "Supported Data Removal Mechanism Feature": [
             {"Version" :">= 1"},
             "Supported Data Removal Mechanism",
             "Data Removal Time Format for Bit 0",

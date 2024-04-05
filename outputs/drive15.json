@@ -1,18 +1,23 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "1309815501245",
-  "Firmware version": "2.5.0412",
-  "Model number": "LENSE30256GMSP34MEAT3TA",
-  "Serial number long": "LENSE30256GMSP34MEAT3TA_1309815501245",
+  "Serial number": "21520A806794",
+  "Firmware version": "21106000",
+  "Model number": "WDC PC SN530 SDBPNPZ-256G-1002",
+  "Serial number long": "WDC_PC_SN530_SDBPNPZ-256G-1002_21520A806794",
+  "Size bytes": 256060514304,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
   "TPer Feature": {
     "Version": 1,
-    "ComID Mgmt Supported": 1,
+    "ComID Mgmt Supported": 0,
     "Streaming Supported": 1,
     "Buffer Mgmt Supported": 0,
     "ACK/NAK Supported": 0,
@@ -20,110 +25,414 @@
     "Sync Supported": 1
   },
   "Locking Feature": {
-    "Version": 1,
-    "HW Reset for LOR/DOR Supported": 0,
+    "Version": 2,
+    "HW Reset for LOR/DOR Supported": 1,
     "MBR Shadowing Not Supported": 0,
     "MBR Done": 0,
     "MBR Enabled": 0,
-    "Media Encryption": 1,
+    "Media Encryption": 0,
     "Locked": 0,
     "Locking Enabled": 0,
     "Locking Supported": 1
   },
-  "Geometry Feature": {
-    "Version": 1,
-    "ALIGN": 1,
-    "LogicalBlockSize": 512,
-    "AlignmentGranularity": 16,
-    "LowestAlignedLBA": 0
-  },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
-    "Base ComID": 4100,
-    "Number of ComIDs": 1,
-    "Range Crossing Behavior": 0,
-    "Number of Locking SP Admin Authorities Supported": 4,
-    "Number of Locking SP User Authorities Supported": 8,
-    "Initial C_PIN_SID PIN Indicator": 0,
-    "Behavior of C_PIN_SID PIN upon TPer Revert": 0
-  },
-  "Opal SSC V1.00 Feature Descriptor": {
-    "Version": 1,
-    "Base ComID": 4100,
-    "Number of ComIDs": 1,
-    "Range Crossing": 0
-  },
-  "DataStore Table Feature": {
-    "Version": 1,
-    "Maximum number of DataStore tables": 1,
-    "Maximum total size of DataStore tables": 10485760,
-    "DataStore table size alignment": 512
-  },
   "Block SID Authentication Feature": {
     "Version": 1,
-    "Locking SP Freeze Lock State ": 0,
-    "Locking SP Freeze Lock supported": 0,
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0
+  },
+  "Pyrite SSC V2 Feature": {
+    "Version": 1,
+    "Base ComID": 32766,
+    "Number of ComIDs": 1,
+    "Initial C_PIN_SID PIN Indicator": 0,
+    "Behavior of C_PIN_SID PIN upon TPer Revert": 0
+  },
+  "Supported Data Removal Mechanism Feature": {
+    "Version": 1,
+    "Data Removal Operation Processing": 0,
+    "Supported Data Removal Mechanism": 2,
+    "Data Removal Time Format for Bit 0": 0,
+    "Data Removal Time Format for Bit 1": 0,
+    "Data Removal Time Format for Bit 2": 0,
+    "Data Removal Time Format for Bit 3": 0,
+    "Data Removal Time Format for Bit 4": 0,
+    "Data Removal Time Format for Bit 5": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 0": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 1": 30,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 2": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 3": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 4": 0,
+    "Data Removal Time for Supported Data Removal Mechanism Bit 5": 0
   }},
 "Discovery 1": {
   "Properties": {
-    "MaxComPacketSize": "0x00010200",
-    "MaxResponseComPacketSize": "0x00010200",
-    "MaxPacketSize": "0x000101ec",
-    "MaxIndTokenSize": "0x00010004",
-    "MaxPackets": "0x00000001",
-    "MaxSubpackets": "0x00000001",
-    "MaxMethods": "0x00000001",
-    "MaxAuthentications": "0x00000005",
-    "MaxSessions": "0x00000001",
-    "MaxTransactionLimit": "0x00000001",
-    "DefSessionTimeout": "0x00000000"
+    "MaxComPacketSize": "0x4200",
+    "MaxResponseComPacketSize": "0x4200",
+    "MaxPacketSize": "0x41ec",
+    "MaxIndTokenSize": "0x4004",
+    "MaxPackets": "0x01",
+    "MaxSubpackets": "0x01",
+    "MaxMethods": "0x01",
+    "MaxSessions": "0x01",
+    "MaxAuthentications": "0x02",
+    "MaxTransactionLimit": "0x01",
+    "DefSessionTimeout": "0x03a980",
+    "ContinuedTokens": "0x00",
+    "SequenceNumbers": "0x00",
+    "AckNak": "0x00",
+    "Asynchronous": "0x00"
   }
 },
 "Discovery 2": {
+  "0x0000020500000001": {
+    "0x0000000100000000": {
+      "0x0000000100000001": {
+        "0x00": "0x0000000100000001",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000002": {
+        "0x00": "0x0000000100000002",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000003": {
+        "0x00": "0x0000000100000003",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000006": {
+        "0x00": "0x0000000100000006",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000007": {
+        "0x00": "0x0000000100000007",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000008": {
+        "0x00": "0x0000000100000008",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000009": {
+        "0x00": "0x0000000100000009",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x000000010000000b": {
+        "0x00": "0x000000010000000b",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000201": {
+        "0x00": "0x0000000100000201",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000204": {
+        "0x00": "0x0000000100000204",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100000205": {
+        "0x00": "0x0000000100000205",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      },
+      "0x0000000100001101": {
+        "0x00": "0x0000000100001101",
+        "0x04": "0x01",
+        "0x0d": "0x00",
+        "0x0e": "0x00"
+      }
+    },
+    "0x0000000200000000": {
+      "0x0000000200000001": {
+        "0x00": "0x0000000200000001",
+        "0x01": "0x0000020500000001",
+        "0x06": "0x01"
+      },
+      "0x0000000200030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      }
+    },
+    "0x0000000300000000": {
+      "0x0000000300000001": {
+        "0x00": "0x0000000300000001",
+        "0x01": "0x0000020400000001",
+        "0x03": "0x00000002"
+      },
+      "0x0000000300000002": {
+        "0x00": "0x0000000300000002",
+        "0x01": "0x0000020400000002",
+        "0x03": "0x00000002"
+      }
+    },
+    "0x0000000600000000": {
+      "0x0000000600000008": {
+        "0x00": "0x0000000600000008"
+      },
+      "0x000000060000000d": {
+        "0x00": "0x000000060000000d"
+      },
+      "0x0000000600000016": {
+        "0x00": "0x0000000600000016"
+      },
+      "0x0000000600000017": {
+        "0x00": "0x0000000600000017"
+      },
+      "0x000000060000001c": {
+        "0x00": "0x000000060000001c"
+      },
+      "0x0000000600000202": {
+        "0x00": "0x0000000600000202"
+      },
+      "0x0000000600000203": {
+        "0x00": "0x0000000600000203"
+      },
+      "0x0000000600000601": {
+        "0x00": "0x0000000600000601"
+      }
+    },
+    "0x0000000700000000": {
+      "0x0000000700000001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      },
+      "0x0000000700030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      }
+    },
+    "0x0000000800000000": {
+      "0x0000000800000001": {
+        "0x00": "0x0000000800000001",
+        "0x03": "[f2a400000c05a80000000900000001f3]",
+        "0x04": "[]"
+      },
+      "0x0000000800008c02": {
+        "0x00": "0x0000000800008c02",
+        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
+        "0x04": "[0004050607]"
+      },
+      "0x0000000800008c03": {
+        "0x00": "0x0000000800008c03",
+        "0x03": "[f2a400000c05a80000000900000006f3]",
+        "0x04": "[03]"
+      },
+      "0x0000000800008c04": {
+        "0x00": "0x0000000800008c04",
+        "0x03": "[f2a400000c05a80000000900000001f3]",
+        "0x04": "[0003]"
+      },
+      "0x00000008000100e0": {
+        "0x00": "0x00000008000100e0",
+        "0x03": "[f2a400000c05a8000000090001ff01f3]",
+        "0x04": "[]"
+      },
+      "0x00000008000100e1": {
+        "0x00": "0x00000008000100e1",
+        "0x03": "[f2a400000c05a80000000900000001f3]",
+        "0x04": "[0004050607]"
+      },
+      "0x0000000800030002": {
+        "0x00": "0x0000000800030002",
+        "0x03": "[f2a400000c05a80000000900000006f3]",
+        "0x04": "[]"
+      },
+      "0x0000000800030003": {
+        "0x00": "0x0000000800030003",
+        "0x03": "[f2a400000c05a80000000900000006f3]",
+        "0x04": "[08]"
+      },
+      "0x0000000800050001": {
+        "0x00": "0x0000000800050001",
+        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
+        "0x04": "[01]"
+      }
+    },
+    "0x0000000900000000": {
+      "0x0000000900000001": {
+        "0x00": "0x0000000900000001",
+        "0x02": "() 0x20",
+        "0x03": "0x00",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x01",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x00",
+        "0x0a": "0x0000000000000000",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
+      },
+      "0x0000000900000002": {
+        "0x00": "0x0000000900000002",
+        "0x02": "() 0x20",
+        "0x03": "0x01",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x01",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x00",
+        "0x0a": "0x0000000000000000",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
+      },
+      "0x0000000900000006": {
+        "0x00": "0x0000000900000006",
+        "0x02": "() 0x20",
+        "0x03": "0x00",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x01",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x01",
+        "0x0a": "0x0000000b00000001",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
+      },
+      "0x000000090001ff01": {
+        "0x00": "0x000000090001ff01",
+        "0x02": "(PhysicalDriveOwner) 0x506879736963616c44726976654f776e6572",
+        "0x03": "0x00",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x01",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x01",
+        "0x0a": "0x0000000b0001ff01",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
+      }
+    },
+    "0x0000000b00000000": {
+      "0x0000000b00000001": {
 
+      },
+      "0x0000000b00008402": {
+        "0x00": "0x0000000b00008402",
+        "0x03": "(MSIDMSIDMSIDMSIDMSIDMSIDMSIDMSID) 0x4d5349444d5349444d5349444d5349444d5349444d5349444d5349444d534944"
+      },
+      "0x0000000b0001ff01": {
+        "0x00": "0x0000000b0001ff01",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x05",
+        "0x06": "0x00",
+        "0x07": "0x00"
+      }
+    },
+    "0x0000020100000000": {
+      "0x0000020100000001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      },
+      "0x0000020100030001": {
+        "0x00": "0x0000020100030001",
+        "0x02": "0x022300085001b44020202020",
+        "0x04": "0x01",
+        "0x05": "0x01",
+        "0x07": "[a6507972697465]",
+        "0x08": "0x00"
+      }
+    },
+    "0x0000020400000000": {
+      "0x0000020400000001": {
+        "0x00": "0x0000020400000001",
+        "0x02": "0x01",
+        "0x03": "0x02",
+        "0x04": "0x02"
+      },
+      "0x0000020400000002": {
+        "0x00": "0x0000020400000002",
+        "0x02": "0x01",
+        "0x03": "0x01",
+        "0x04": "0x01"
+      },
+      "0x0000020400000006": {
+        "0x00": "0x0000020400000006",
+        "0x02": "0x01",
+        "0x03": "0x01",
+        "0x04": "0x01"
+      }
+    },
+    "0x0000020500000000": {
+      "0x0000020500000001": {
+        "0x00": "0x0000020500000001",
+        "0x06": "0x09",
+        "0x07": "0x00"
+      },
+      "0x0000020500000002": {
+        "0x00": "0x0000020500000002",
+        "0x06": "0x08",
+        "0x07": "0x00"
+      }
+    },
+    "0x0000110100000000": {
+      "0x0000110100000001": {
+        "0x00": "0x0000110100000001",
+        "0x01": "0x01"
+      },
+      "0x0000110100030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
+      }
+    }
+  },
+  "0x0000020500000002": {
+    }
 },
 "Discovery 2 manual": {
   "0x0000020100030001": {
-        "0x00": "0x00",
-        "0x00": "0x00",
-        "0x000000000000ff06": "[84000000018400001001]",
-        "0x00": "0x00"
+        "0x00": "0x0000020100030001",
+        "0x02": "0x022300085001b44020202020",
+        "0x04": "0x01",
+        "0x05": "0x01",
+        "0x07": "[a6507972697465]",
+        "0x08": "0x00"
   },
   "0x0000110100000001": {
-        "0x00": "0x00",
-        "0x00": "0x00",
-        "0x000000000000ff06": "[84000000018400001001]",
-        "0x00": "0x00"
+        "0x00": "0x0000110100000001",
+        "0x01": "0x01"
   }
 },
 "Random sample": [
   [
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    "18f56443ffb993565b5f449de4790b44291cf6ee1b719c81bb972dbc8a2712ac",
+    "746c05b941badc4c4d8795f6fe1255bef0136802052446986e25714b687fe73f",
+    "21a457eb7678cd54f16b49e9788b0bffdff030c15ad09af511291ac082b5e986",
+    "cc780e0f5acb466c20ff7b66d205c0fa817ee358a9e51a36950d52e01f596753"
   ],
   [
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    "25f973e97e649c451564cddde3982ce5279ddc6f07761e33170f217976925ca0",
+    "c8cc9210454defc1509d51f092d52d1af0d41f2247282dc3499b1e6b9c08eed4",
+    "00bac8609a137302d41ecef50ee67ed2d4853a45a3d86fc96712ce23de74e8bb",
+    "35ca9277479a463c7a47f30e340b74d5ead6e1d28a5ebb173f6df321b4816a52"
   ],
   [
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    "4ea210f3b558a5af2588c3421f9ec78473e4b4c616d63a6d0c9bed2d57f576bd",
+    "e96590267d8c7ab31c24b60a37c148772671a170a0854aeafe767f54bda60347",
+    "9748fcb7a0add23e683c89a92362d1a922de8f00f0fae89f6b403040b18bc604",
+    "27e427846a9e0e502a833a0eead06bd2f4e0302986779498f9488e78e15c5d4a"
   ],
   [
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    "5e77e3bdcd8b144470b390fe58bdcb02f303e46a698fe0349e7ca8cab0ac2365",
+    "840cde327cf75161da9eb597e24b5a8089ef1441a99634bff0982e67ed23a7fa",
+    "123b05498d1e9028e455a2e86cdad0279012d6091ad7b36fa7655ee00295eaa2",
+    "7655588e9df2cea384e4b2ca94755c888abc1d08d8d842b2ce6f5ff9135e92bc"
   ]
 ]
 }

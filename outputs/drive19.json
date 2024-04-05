@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "dc796dd241603dc1"
 },
 "Identify": {
-  "Serial number": "19256A800119",
-  "Firmware version": "X6104106",
-  "Model number": "SanDisk SD9TB8W-512G-1006",
-  "Serial number long": "SanDisk_SD9TB8W-512G-1006_19256A800119",
+  "Serial number": "22073P441109",
+  "Firmware version": "11170101",
+  "Model number": "WDC PC SN730 SDBQNTY-256G-1001",
+  "Serial number long": "WDC_PC_SN730_SDBQNTY-256G-1001_22073P441109_1",
+  "Size bytes": 256060514304,
+  "HW sector bytes": 4096,
+  "Logical block bytes": 4096,
+  "Physical block bytes": 4096,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -32,14 +37,14 @@
   },
   "Geometry Feature": {
     "Version": 1,
-    "ALIGN": 0,
-    "LogicalBlockSize": 512,
+    "ALIGN": 1,
+    "LogicalBlockSize": 4096,
     "AlignmentGranularity": 1,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 32766,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -48,33 +53,39 @@
     "Initial C_PIN_SID PIN Indicator": 0,
     "Behavior of C_PIN_SID PIN upon TPer Revert": 0
   },
+  "Single User Mode Feature": {
+    "Version": 1,
+    "Number of Locking Objects Supported": 9,
+    "Policy": 1,
+    "All": 0,
+    "Any": 0
+  },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
   },
   "Block SID Authentication Feature": {
     "Version": 1,
-    "Locking SP Freeze Lock State ": 0,
-    "Locking SP Freeze Lock supported": 0,
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0
   }},
 "Discovery 1": {
   "Properties": {
-    "MaxComPacketSize": "0x4000",
-    "MaxResponseComPacketSize": "0x4000",
-    "MaxPacketSize": "0x3fec",
-    "MaxIndTokenSize": "0x3fc8",
+    "MaxComPacketSize": "0x4200",
+    "MaxResponseComPacketSize": "0x4200",
+    "MaxPacketSize": "0x41ec",
+    "MaxIndTokenSize": "0x4004",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
     "MaxSessions": "0x01",
     "MaxAuthentications": "0x02",
     "MaxTransactionLimit": "0x01",
-    "DefSessionTimeout": "0x01d4c0",
+    "DefSessionTimeout": "0x03a980",
     "ContinuedTokens": "0x00",
     "SequenceNumbers": "0x00",
     "AckNak": "0x00",
@@ -87,77 +98,66 @@
       "0x0000000100000001": {
         "0x00": "0x0000000100000001",
         "0x04": "0x01",
-        "0x07": "0x0c",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000002": {
         "0x00": "0x0000000100000002",
         "0x04": "0x01",
-        "0x07": "0x01",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000003": {
         "0x00": "0x0000000100000003",
         "0x04": "0x01",
-        "0x07": "0x02",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000006": {
         "0x00": "0x0000000100000006",
         "0x04": "0x01",
-        "0x07": "0x09",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000007": {
         "0x00": "0x0000000100000007",
         "0x04": "0x01",
-        "0x07": "0x50",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000008": {
         "0x00": "0x0000000100000008",
         "0x04": "0x01",
-        "0x07": "0x0d",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000009": {
         "0x00": "0x0000000100000009",
         "0x04": "0x01",
-        "0x07": "0x07",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x000000010000000b": {
         "0x00": "0x000000010000000b",
         "0x04": "0x01",
-        "0x07": "0x05",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000201": {
         "0x00": "0x0000000100000201",
         "0x04": "0x01",
-        "0x07": "0x01",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000204": {
         "0x00": "0x0000000100000204",
         "0x04": "0x01",
-        "0x07": "0x03",
         "0x0d": "0x00",
         "0x0e": "0x00"
       },
       "0x0000000100000205": {
         "0x00": "0x0000000100000205",
         "0x04": "0x01",
-        "0x07": "0x02",
         "0x0d": "0x00",
         "0x0e": "0x00"
       }
@@ -169,7 +169,7 @@
         "0x06": "0x01"
       },
       "0x0000000200030001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000300000000": {
@@ -212,10 +212,10 @@
     },
     "0x0000000700000000": {
       "0x0000000700000001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000000700030001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000800000000": {
@@ -382,11 +382,11 @@
     },
     "0x0000020100000000": {
       "0x0000020100000001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
-        "0x02": "0x02230008015048b4a5b8c2a6",
+        "0x02": "0x022300085001b44020202020",
         "0x04": "0x01",
         "0x05": "0x01",
         "0x07": "[a44f70616c]",
@@ -432,40 +432,40 @@
 "Discovery 2 manual": {
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
-        "0x02": "0x02230008015048b4a5b8c2a6",
+        "0x02": "0x022300085001b44020202020",
         "0x04": "0x01",
         "0x05": "0x01",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-
+    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "f8d1c9e5505574b1457666176164b6a7b866fba8dc4e6da67750e17be9911141",
-    "7840296487335eddc9e9da8099a220caaf0292631dc98bd67139e9f90441cf21",
-    "dc36c30455794d21389756763c374c2f335537553fd63da9384f2917470e31bf",
-    "faea2bd63c8428a716ccf9c88291f84b8d761d6ed686e584c90a3458fd94a6d7"
+    "9cad1135036fb559ffd1c4077f080aa1efa57cd8abd453fce3eb8610870a1a65",
+    "fce3459cd17d0d24fbe4ee3d76f36771576be0c8601981ac0d23c0df07c39c55",
+    "e107d17741d0591b1829f92ef77aa82620fa0244db35e65c63ed48f2460f56ec",
+    "ae0569cbb6f73276fdd4f1a58e119e4f917e6cc8168aa741f6a51d3221e27988"
   ],
   [
-    "2bf1c0a349dc4b4256a101560ff3032399e4d9bb5a62d3a4a1bf1cd66e473d71",
-    "e91d5bdeec6ad051a2cfb5d01ccc3715b940226f1f8baf34add2b152c7d902cb",
-    "476d7b27929ff916dad6eb2a1ac970d70b9aad1ba28222f15ac6b3c96161a011",
-    "c7685bb7095ced2512c7b1c7fbc79c244cd73ba610128cafddc6fc2ac50ec0e8"
+    "d38c0fda25e4f05c505c7311a1bbc14ec42c280c0a4ea93d4ca286029ddc6e10",
+    "8cdb14b38cfa322b7d1c5959a7af874712129337b39a3057dfe709f95a0a8c9a",
+    "caab7fbc34213f45704773d449a0b34d1b41cecac410d6278eca5881f7c93cce",
+    "e011c5ccc6f6c6c6f8ceaec86bd7800e2c1e5aee098ed66d6533c9c9b2f45813"
   ],
   [
-    "3928ba9a498ae4dc381bcf213c9a41f5e5edf32db0d71908cf1f0ee0a945db89",
-    "6ec731960017ed3725dd51d805aa1aaeb1b8056f3147ee649ec51c88a8c99a0e",
-    "94ba7c5dbc58feb1592062b99277f7a27f7484ca0dedae8574c23f0a5598942e",
-    "8c4191a3fbd06777b4cbc79343e4f8cb6953deda4ca1354afaee1281738518a9"
+    "a152a41b2ca77976245b5a996a71de8c01089d2dfc5fc8c6135f822fd24dd9b4",
+    "be09c061d848d83725f8490344b7b5cf9b06a53b3a860497f4a45c7ab80f14d1",
+    "ebda982973eeb0ef169692428386e9fb59e706e5511a70620fa2499058a1fb33",
+    "09445aeb55c75b6a1d62c43895db9b033df55b0a50d337a01934ff3c88de4fdf"
   ],
   [
-    "3ac712cf632382a49ee10717fe2e3f5450c8da06e32c5cf4a775852d00ff6547",
-    "f09f2fe6526aba11343c1e431a4d057da37e5cd0e1bd4fee9dc7d10ca38e762d",
-    "eba294c8865e39a22f3081a097794b2d2b87115ddfc19eb199af99163c00944e",
-    "727fb102adea8beb0f03fd304190a0551f513c72dc4786d58cba96510650f86d"
+    "1c367a0ef2983e7a2297f47cd9d14d81ff7ef3c4ef707ee022caa9b8f412742e",
+    "88e24ccc04a51c931f816a2c15c3ed0d79715b90e6fa269a1b58e8ef39a9ed60",
+    "a47641c52088bb98777531d31581026351ecd471cf78ad48bef4c07f40ec341d",
+    "e476ea868c0fa2c887afba56803559bcad4f094d1a9c6c5a002e03c462d99d7f"
   ]
 ]
 }

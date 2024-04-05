@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "1179255400231",
-  "Firmware version": "2.8.8341",
+  "Serial number": "FBFB180408C0002556",
+  "Firmware version": "2.6.8341",
   "Model number": "LENSE20256GMSP34MEAT2TA",
-  "Serial number long": "LENSE20256GMSP34MEAT2TA_1179255400231_1",
+  "Serial number long": "LENSE20256GMSP34MEAT2TA_FBFB180408C0002556",
+  "Size bytes": 256060514304,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -37,9 +42,9 @@
     "AlignmentGranularity": 16,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -48,7 +53,7 @@
     "Initial C_PIN_SID PIN Indicator": 0,
     "Behavior of C_PIN_SID PIN upon TPer Revert": 0
   },
-  "Opal SSC V1.00 Feature Descriptor": {
+  "Opal SSC V1 Feature": {
     "Version": 1,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
@@ -56,14 +61,13 @@
   },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 1,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 512
   },
   "Block SID Authentication Feature": {
     "Version": 1,
-    "Locking SP Freeze Lock State ": 0,
-    "Locking SP Freeze Lock supported": 0,
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0

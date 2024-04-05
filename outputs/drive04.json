@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "dc796dd241603dc1"
 },
 "Identify": {
-  "Serial number": "1913E1F4A86D",
-  "Firmware version": "M3CR023",
-  "Model number": "CT250MX500SSD4",
-  "Serial number long": "CT250MX500SSD4_1913E1F4A86D",
+  "Serial number": "50026B7784B01ACE",
+  "Firmware version": "S4800105",
+  "Model number": "KINGSTON SKC600512G",
+  "Serial number long": "KINGSTON_SKC600512G_50026B7784B01ACE",
+  "Size bytes": 512110190592,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 4096,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -37,9 +42,9 @@
     "AlignmentGranularity": 1,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 2184,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -57,14 +62,13 @@
   },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 10,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
   },
   "Block SID Authentication Feature": {
     "Version": 1,
-    "Locking SP Freeze Lock State ": 0,
-    "Locking SP Freeze Lock supported": 0,
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0
@@ -357,10 +361,10 @@
     },
     "0x0000000700000000": {
       "0x0000000700000001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000000700030001": {
-
+        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000800000000": {
@@ -639,7 +643,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(crucial_bymicron) 0x6372756369616c5f62796d6963726f6e"
+        "0x03": "(1234567890ABCDEF) 0x31323334353637383930414243444546"
       },
       "0x0000000b00000201": {
 
@@ -668,7 +672,7 @@
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x01": "0x00",
-        "0x02": "0x02230008500a0751e1f4a86d",
+        "0x02": "0x0223000850026b7784b01ace",
         "0x03": "0x00",
         "0x04": "0x00",
         "0x05": "0x01",
@@ -737,7 +741,7 @@
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x01": "0x00",
-        "0x02": "0x02230008500a0751e1f4a86d",
+        "0x02": "0x0223000850026b7784b01ace",
         "0x03": "0x00",
         "0x04": "0x00",
         "0x05": "0x01",
@@ -746,33 +750,33 @@
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-
+    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "c5f323c440c67a8c765d89bbb189d06aa4535ecab7849a64724a0488f5e13200",
-    "806f9b53374899839f4dde99561be91f9c806891de16e7671c0cd898a3645208",
-    "9e5769e2766d13034975b216d1e63c4d7aaa8cb2f57d2db16d07e5100bbfefb2",
-    "b5542c298231a2a830bc4727052ad36848c629928c58d1c1a121a76a79723f75"
+    "65b48b9e3bffc02eb72c86315826d68aece6892c8b126d5e296f5b79b525b586",
+    "421217a6f266a948083034797700ae75d13274711954b2b9752cadcd576406bd",
+    "61fb6e18adb8eb3ef07fd825b67191048207e4ef52ecb2814823a49d75e25921",
+    "715624fae684984500f0ef9ab558a9ade288fb58ef54dbc0f1893ce5d55d01aa"
   ],
   [
-    "40c07f11b5b5e948075a850458fd75d4ce69c0f80808d7924ea1793a032aeb23",
-    "e58b7e14e3f5fb6593590fe82a660e0440b02b6249b8e726d558c99b90e46c01",
-    "68101c9b9691015c97587663511dc7fb141dbc5776cb639af0bffc27eeef73b5",
-    "d7a87bbd12e04830f56f902793619211074de2ac1a1876d924ec264ebfa538d3"
+    "fb7218273d1d94eb5290c76c7e73dd39efc885e9ed0c76b6e002ecb947079bed",
+    "a0b85bad962ed397831b0b3cebfc6284995680b108c8802ea15c0b9ca8e0b5d7",
+    "c8e290c56da9441a431fd60424f0d8020a42e535de866a26811dd63f467d691c",
+    "ed63bb888779658c77724916ef26297ce5b4d7abc09ecc366ca8c62e6ca65776"
   ],
   [
-    "77b2041b063dcc776d94f813eb5f85a56fa5dc9dc68418e48ddd18ab36248034",
-    "556e4cf3b8f69ca99eab0caaf65690a4ec7264bd95951877c0eeef2f592caf7d",
-    "fc840779bc24d2872db54caab159a9fe70bd6ccddf8bad359d904cd11e844caf",
-    "cd257058bb7c03818a8e3be05ac0c4ec8ddd94fb89c794d9910ebf056bcce7b5"
+    "42b9740107c2021a1bd9e85be8d4ddef04c1eaa0509fcb2fca350ecadf37887c",
+    "4211b0fbf59fcc522738b82070a1e023ee0b887c0968d893e7ecf07003d833fb",
+    "eb371e8feb7d37bb96b97a0a91a916b54fbf4bf9b9a485ddb16b817a94a5d5ed",
+    "032286a45166694ea432f5553ca2cf648dceee4a64691fc30c90515aab2d9a4d"
   ],
   [
-    "cb339578cdd71f930a900331801282a7e6b7acd80e868b21214a8e036b05b0a4",
-    "7eca1e333b06b0d8876fd8d01d70aa74e60c315da35ef607dc3d8a5796a7ce27",
-    "bb9aaec581359368a90b1f4647fb0ba7b31ba90137c22d45713ce5810cb4ec00",
-    "91df405bba42abe86197ffcd84204f5f9fbd302689a8e100a19999b2c0216488"
+    "002b2e6d70abcb65ecbf2de6322eace5bcf822b0287be21a1bf4b051170ed9f0",
+    "4fc99ce6e8c45cd4061b0be35b347cc390d595fc660dc16783e28ad8f77caa28",
+    "cf641b973d02eb2e87c867c25971836fd4814565ae42dfc4382af17ad6fcd395",
+    "11df0f49022b2e3a0f6af3e9017a13569456d1c489e7ac65c14034d565491fba"
   ]
 ]
 }

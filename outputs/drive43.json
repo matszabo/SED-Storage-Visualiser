@@ -4,11 +4,11 @@
   "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "214760803583",
-  "Firmware version": "21113012",
-  "Model number": "PC SN530 NVMe WDC 256GB",
-  "Serial number long": "PC_SN530_NVMe_WDC_256GB_214760803583",
-  "Size bytes": 256060514304,
+  "Serial number": "S3ESNX0JB01550D",
+  "Firmware version": "2B7QCXE7",
+  "Model number": "Samsung SSD 960 EVO 250GB",
+  "Serial number long": "Samsung_SSD_960_EVO_250GB_S3ESNX0JB01550D",
+  "Size bytes": 250059350016,
   "HW sector bytes": 512,
   "Logical block bytes": 512,
   "Physical block bytes": 512,
@@ -25,63 +25,54 @@
     "Sync Supported": 1
   },
   "Locking Feature": {
-    "Version": 2,
-    "HW Reset for LOR/DOR Supported": 1,
+    "Version": 1,
+    "HW Reset for LOR/DOR Supported": 0,
     "MBR Shadowing Not Supported": 0,
     "MBR Done": 0,
     "MBR Enabled": 0,
-    "Media Encryption": 0,
+    "Media Encryption": 1,
     "Locked": 0,
     "Locking Enabled": 0,
     "Locking Supported": 1
   },
-  "Block SID Authentication Feature": {
+  "Geometry Feature": {
     "Version": 1,
-    "SID Authentication Blocked State": 0,
-    "SID Value State": 0,
-    "Hardware Reset": 0
+    "ALIGN": 1,
+    "LogicalBlockSize": 512,
+    "AlignmentGranularity": 8,
+    "LowestAlignedLBA": 0
   },
-  "Pyrite SSC V2 Feature": {
+  "Opal SSC V2 Feature": {
     "Version": 1,
-    "Base ComID": 32766,
+    "Minor Version": 0,
+    "Base ComID": 4100,
     "Number of ComIDs": 1,
+    "Range Crossing Behavior": 0,
+    "Number of Locking SP Admin Authorities Supported": 4,
+    "Number of Locking SP User Authorities Supported": 9,
     "Initial C_PIN_SID PIN Indicator": 0,
     "Behavior of C_PIN_SID PIN upon TPer Revert": 0
   },
-  "Supported Data Removal Mechanism Feature": {
+  "DataStore Table Feature": {
     "Version": 1,
-    "Data Removal Operation Processing": 0,
-    "Supported Data Removal Mechanism": 2,
-    "Data Removal Time Format for Bit 0": 0,
-    "Data Removal Time Format for Bit 1": 0,
-    "Data Removal Time Format for Bit 2": 0,
-    "Data Removal Time Format for Bit 3": 0,
-    "Data Removal Time Format for Bit 4": 0,
-    "Data Removal Time Format for Bit 5": 0,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 0": 0,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 1": 30,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 2": 0,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 3": 0,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 4": 0,
-    "Data Removal Time for Supported Data Removal Mechanism Bit 5": 0
+    "Minor Version": 0,
+    "Maximum number of DataStore tables": 9,
+    "Maximum total size of DataStore tables": 10485760,
+    "DataStore table size alignment": 1
   }},
 "Discovery 1": {
   "Properties": {
-    "MaxComPacketSize": "0x4200",
-    "MaxResponseComPacketSize": "0x4200",
-    "MaxPacketSize": "0x41ec",
-    "MaxIndTokenSize": "0x4004",
+    "MaxComPacketSize": "0x010200",
+    "MaxResponseComPacketSize": "0x010200",
+    "MaxPacketSize": "0x0101ec",
+    "MaxIndTokenSize": "0x010004",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
+    "MaxAuthentications": "0x05",
     "MaxSessions": "0x01",
-    "MaxAuthentications": "0x02",
     "MaxTransactionLimit": "0x01",
-    "DefSessionTimeout": "0x03a980",
-    "ContinuedTokens": "0x00",
-    "SequenceNumbers": "0x00",
-    "AckNak": "0x00",
-    "Asynchronous": "0x00"
+    "DefSessionTimeout": "0x00"
   }
 },
 "Discovery 2": {
@@ -90,80 +81,75 @@
       "0x0000000100000001": {
         "0x00": "0x0000000100000001",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000002": {
         "0x00": "0x0000000100000002",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000003": {
         "0x00": "0x0000000100000003",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000006": {
         "0x00": "0x0000000100000006",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000007": {
         "0x00": "0x0000000100000007",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000008": {
         "0x00": "0x0000000100000008",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000009": {
         "0x00": "0x0000000100000009",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x000000010000000b": {
         "0x00": "0x000000010000000b",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000201": {
         "0x00": "0x0000000100000201",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000204": {
         "0x00": "0x0000000100000204",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       },
       "0x0000000100000205": {
         "0x00": "0x0000000100000205",
         "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
-      },
-      "0x0000000100001101": {
-        "0x00": "0x0000000100001101",
-        "0x04": "0x01",
-        "0x0d": "0x00",
-        "0x0e": "0x00"
+        "0x0d": "0x00000000",
+        "0x0e": "0x00000000"
       }
     },
     "0x0000000200000000": {
       "0x0000000200000001": {
         "0x00": "0x0000000200000001",
         "0x01": "0x0000020500000001",
+        "0x05": "0x00000000",
         "0x06": "0x01"
       },
       "0x0000000200030001": {
@@ -222,6 +208,16 @@
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[]"
       },
+      "0x0000000800000002": {
+        "0x00": "0x0000000800000002",
+        "0x03": "[f2a400000c05a80000000900000002f3]",
+        "0x04": "[]"
+      },
+      "0x0000000800030001": {
+        "0x00": "0x0000000800030001",
+        "0x03": "[f2a400000c05a80000000900000006f3]",
+        "0x04": "[05]"
+      },
       "0x0000000800008c02": {
         "0x00": "0x0000000800008c02",
         "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
@@ -237,30 +233,30 @@
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0003]"
       },
-      "0x00000008000100e0": {
-        "0x00": "0x00000008000100e0",
-        "0x03": "[f2a400000c05a8000000090001ff01f3]",
-        "0x04": "[]"
+      "0x000000080003a001": {
+        "0x00": "0x000000080003a001",
+        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
+        "0x04": "[03]"
       },
       "0x00000008000100e1": {
         "0x00": "0x00000008000100e1",
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0004050607]"
       },
-      "0x0000000800030002": {
-        "0x00": "0x0000000800030002",
-        "0x03": "[f2a400000c05a80000000900000006f3]",
-        "0x04": "[]"
-      },
       "0x0000000800030003": {
         "0x00": "0x0000000800030003",
         "0x03": "[f2a400000c05a80000000900000006f3]",
         "0x04": "[08]"
       },
-      "0x0000000800050001": {
-        "0x00": "0x0000000800050001",
-        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
-        "0x04": "[01]"
+      "0x0000000800030002": {
+        "0x00": "0x0000000800030002",
+        "0x03": "[f2a400000c05a80000000900000006f3]",
+        "0x04": "[]"
+      },
+      "0x00000008000100e0": {
+        "0x00": "0x00000008000100e0",
+        "0x03": "[f2a400000c05a8000000090001ff01f3]",
+        "0x04": "[]"
       }
     },
     "0x0000000900000000": {
@@ -280,6 +276,20 @@
       },
       "0x0000000900000002": {
         "0x00": "0x0000000900000002",
+        "0x02": "() 0x20",
+        "0x03": "0x01",
+        "0x04": "0x0000000000000000",
+        "0x05": "0x01",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x00",
+        "0x0a": "0x0000000000000000",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
+      },
+      "0x0000000900000003": {
+        "0x00": "0x0000000900000003",
         "0x02": "() 0x20",
         "0x03": "0x01",
         "0x04": "0x0000000000000000",
@@ -319,6 +329,20 @@
         "0x0a": "0x0000000b0001ff01",
         "0x0b": "0x0000000000000000",
         "0x0c": "0x0000000000000000"
+      },
+      "0x0000000900000201": {
+        "0x00": "0x0000000900000201",
+        "0x02": "() 0x20",
+        "0x03": "0x00",
+        "0x04": "0x0000000900000002",
+        "0x05": "0x00",
+        "0x06": "0x00",
+        "0x07": "0x00",
+        "0x08": "0x00",
+        "0x09": "0x01",
+        "0x0a": "0x0000000b00000201",
+        "0x0b": "0x0000000000000000",
+        "0x0c": "0x0000000000000000"
       }
     },
     "0x0000000b00000000": {
@@ -327,14 +351,17 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(MSIDMSIDMSIDMSIDMSIDMSIDMSIDMSID) 0x4d5349444d5349444d5349444d5349444d5349444d5349444d5349444d534944"
+        "0x03": "(VRN8R6M5PTUZWPVEHX8K66ETRG8KH053) 0x56524e3852364d355054555a575056454858384b363645545247384b48303533"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
         "0x04": "0x0000000000000000",
-        "0x05": "0x05",
-        "0x06": "0x00",
+        "0x05": "0x00000005",
+        "0x06": "0x00000000",
         "0x07": "0x00"
+      },
+      "0x0000000b00000201": {
+
       }
     },
     "0x0000020100000000": {
@@ -343,31 +370,31 @@
       },
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
-        "0x02": "0x022300085001b44020202020",
-        "0x04": "0x01",
-        "0x05": "0x01",
-        "0x07": "[a6507972697465]",
+        "0x02": "0x022300085000000000000000",
+        "0x04": "0x484f3030",
+        "0x05": "0x00000001",
+        "0x07": "[a44f70616c]",
         "0x08": "0x00"
       }
     },
     "0x0000020400000000": {
       "0x0000020400000001": {
         "0x00": "0x0000020400000001",
-        "0x02": "0x01",
-        "0x03": "0x02",
-        "0x04": "0x02"
+        "0x02": "0x00000001",
+        "0x03": "0x0000",
+        "0x04": "0x0000"
       },
       "0x0000020400000002": {
         "0x00": "0x0000020400000002",
-        "0x02": "0x01",
-        "0x03": "0x01",
-        "0x04": "0x01"
+        "0x02": "0x00000001",
+        "0x03": "0x0001",
+        "0x04": "0x0001"
       },
       "0x0000020400000006": {
         "0x00": "0x0000020400000006",
-        "0x02": "0x01",
-        "0x03": "0x01",
-        "0x04": "0x01"
+        "0x02": "0x00000001",
+        "0x03": "0x0001",
+        "0x04": "0x0001"
       }
     },
     "0x0000020500000000": {
@@ -381,15 +408,6 @@
         "0x06": "0x08",
         "0x07": "0x00"
       }
-    },
-    "0x0000110100000000": {
-      "0x0000110100000001": {
-        "0x00": "0x0000110100000001",
-        "0x01": "0x01"
-      },
-      "0x0000110100030001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
-      }
     }
   },
   "0x0000020500000002": {
@@ -398,41 +416,40 @@
 "Discovery 2 manual": {
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
-        "0x02": "0x022300085001b44020202020",
-        "0x04": "0x01",
-        "0x05": "0x01",
-        "0x07": "[a6507972697465]",
+        "0x02": "0x022300085000000000000000",
+        "0x04": "0x484f3030",
+        "0x05": "0x00000001",
+        "0x07": "[a44f70616c]",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-        "0x00": "0x0000110100000001",
-        "0x01": "0x01"
+    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "57eb773ac1dbc5cbd3729fad6ed673788b56487385ba314439aab3f3a48821bb",
-    "14e15184c2e8feb9c9dfe8a86df77e93ce09cb9844c2dc1c02e8abb8d371a643",
-    "db0434830448e14f42048934cff9a72228e07ea64e1b27c2b510d0ad10e66c2c",
-    "0982f982f40b4f9e23a74e26cd527848b1c5b095ccddbba92f501bd5069b6349"
+    "b59e19d35b2021b193ff863f204ad526242045a740de47fdbecdff0a1ff81a03",
+    "6ecc926a841c598d66413c47fbc14d0b1f762a258d7a8f2f45e4499a8bd0b492",
+    "a5f2873bf63351b11405e406a0cdf2b0d5c348f59941212bb7989566e316156b",
+    "87c1406c86e745ac83bc90ceef5f573313fb058b286a9f492bc3311721fb31fb"
   ],
   [
-    "eaa5a55db02668195b69e718b5be286fd555e7a375f476ab3d5febd13e7f4795",
-    "db37fa6798afbcbbaa29d88b7e8cc33113ee14f817d7bb1ae0991f40342a3e7b",
-    "e2147668e5e4262c8b9bdad9d1002daed8f316055f366cfe91bafa3877fe5020",
-    "05b26e8064d55462d4648f2f842ee6c0e7ee7f9af8f940d7b7ec31b9461921bb"
+    "ef9b129df9efec94b3b63697a2b9628ff69d67a52d0e00cf27a7f051e3b8fa06",
+    "cf0b7b32e8b5e47788f13414cabc958e7ebc6dc75e01488aa0d7a078d0f3c8c2",
+    "f4836e59b2752675315d2de7d6c1e590ea33ac411e71830ea10e4f913369da7c",
+    "5bf4adec7a81ba185c2955776b7beb5bf1aac7bfba081a0ee5b69fe726b4e4c0"
   ],
   [
-    "9e704fdaa46996e98c3f3cdf78b699e07baf14e191a8c6e226c98185f2716073",
-    "b36619991ac9f16030aa1edf0e554dd287711d9f906dde06ac85298ac37fa5ff",
-    "c5c3ce0c8f853f5b8c05eef0202a1842ccacfcf50da45ac6e8b93c9d964f5e57",
-    "fffa645d0ecc4dcc58b4fc07c2cd1d3478a2c644e73367cd8a3a2bba0aa9ecad"
+    "05076e200d1fafbd5176063f9b0ffd9998f9c65c084ea9231fb9035f02235817",
+    "5394b2f3630511aad791cce98154119ae16cbf210ed63ae00724ca173e32e873",
+    "3fa922fb9a56bbc7919fc006708636c9113e906cdbe285ea179648f914685c4a",
+    "ae42076279b7c7afa2ac2567cfff677e29c2e23d24e67c0aa92ad761845859b2"
   ],
   [
-    "79e07c92a0eb92bbe8992a7dadc073ab8c7c6b6d3a96786cd51ad3cdb884d02b",
-    "e1b214e3411eb39be463c7f13528d140e465ce32dfda2c347aeea58eee9ea2ee",
-    "d7ce908874ab9e4d6946178d128e5c26186ca4297a102ee66931859532e272e5",
-    "237f49fecfa887b0b417878c10a1bc77ef2bba6cb2eae5292c4949807ea61219"
+    "1b3ed053cfb95ac9a819a3e3e8c962be40f8aa8ea6894d2209e649e2886f0a82",
+    "2ddc2ba1a2c9076e7a308a81f0dd84ba563f580ff05e068a2e11bb6cb5ff7f1a",
+    "98f520f1a2f105dc32c905986c92cd1bd8469e0ca756da5906c81d9df216da5e",
+    "787eef9001f404df6f47bb53f2cab78922d994e93cdf27695888808a1f9f4ce0"
   ]
 ]
 }

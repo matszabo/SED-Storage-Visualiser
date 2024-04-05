@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "S2BENCAHC05716J",
-  "Firmware version": "EXM04B6Q",
-  "Model number": "Samsung SSD 850 PRO 512GB",
-  "Serial number long": "Samsung_SSD_850_PRO_512GB_S2BENCAHC05716J",
+  "Serial number": "S69ENX0T718768A",
+  "Firmware version": "5B2QGXA7",
+  "Model number": "Samsung SSD 980 PRO 2TB",
+  "Serial number long": "Samsung_SSD_980_PRO_2TB_S69ENX0T718768A_1",
+  "Size bytes": 2000398934016,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -32,14 +37,14 @@
   },
   "Geometry Feature": {
     "Version": 1,
-    "ALIGN": 0,
+    "ALIGN": 1,
     "LogicalBlockSize": 512,
-    "AlignmentGranularity": 1,
+    "AlignmentGranularity": 8,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -48,24 +53,25 @@
     "Initial C_PIN_SID PIN Indicator": 0,
     "Behavior of C_PIN_SID PIN upon TPer Revert": 0
   },
-  "Opal SSC V1.00 Feature Descriptor": {
-    "Version": 1,
-    "Base ComID": 4100,
-    "Number of ComIDs": 1,
-    "Range Crossing": 0
-  },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
+  },
+  "Block SID Authentication Feature": {
+    "Version": 1,
+    "SID Authentication Blocked State": 0,
+    "SID Value State": 0,
+    "Hardware Reset": 0
   }},
 "Discovery 1": {
   "Properties": {
     "MaxComPacketSize": "0x010200",
     "MaxResponseComPacketSize": "0x010200",
     "MaxPacketSize": "0x0101ec",
-    "MaxIndTokenSize": "0x0101c8",
+    "MaxIndTokenSize": "0x010004",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
@@ -153,6 +159,7 @@
         "0x06": "0x01"
       },
       "0x0000000200030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000300000000": {
@@ -195,8 +202,10 @@
     },
     "0x0000000700000000": {
       "0x0000000700000001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000000700030001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000800000000": {
@@ -237,7 +246,7 @@
       },
       "0x00000008000100e1": {
         "0x00": "0x00000008000100e1",
-        "0x03": "[f2a400000c05a80000000900000001f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
+        "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0004050607]"
       },
       "0x0000000800030003": {
@@ -344,11 +353,10 @@
     },
     "0x0000000b00000000": {
       "0x0000000b00000001": {
-
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(SAMSUNG_SSD_MSID) 0x53414d53554e475f5353445f4d534944"
+        "0x03": "(R4PRUE62LQX6GBYXZ6S0GT0KGT2Z4KH1) 0x52345052554536324c515836474259585a3653304754304b4754325a344b4831"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -358,16 +366,16 @@
         "0x07": "0x00"
       },
       "0x0000000b00000201": {
-
       }
     },
     "0x0000020100000000": {
       "0x0000020100000001": {
+        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x42323030",
+        "0x04": "0x484f3131",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
@@ -413,38 +421,39 @@
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x42323030",
+        "0x04": "0x484f3131",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
+    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "99a665b7a1c6c8b9d0e15c62099a42ee53d3953727f383e0eb326daec51cdb5e",
-    "401d64b6079d84ec21192b07dd6252acd2b4deed3f5bccf4077d72b9554e47f5",
-    "5b62125bb8b9548b4bec400dc588d787f8a20c8ae2b2ff2561ec142b12d40e3c",
-    "23176ea8422fbadda26aa18f6f6368fbad40c7853e7f0b18edd633d6dbda1fc8"
+    "1514da90ed70fd1614ed030206ea145e154fc9d6e25d7b3fd480fe5dd3acb06b",
+    "7afd96a8259f941e246856b5e77f03fe5b30d4fb695875616c0c6b9e78010440",
+    "ecd8f25bce568c3bb304e73be5574a6c8fea8360a61aba6e0eecedc7c8e2571d",
+    "4df00607ad0fa745f485a3a0db387c4f3fdc9421bf4173583d1fabe9b7b5348f"
   ],
   [
-    "66c3d4fb66b5b3661bdaa7838a1ee49b7e775f58365ea9090f23737b58b640a8",
-    "c75e444df4f91b489222c68655c9b07f32891349680afd0f79108b1e7705abf7",
-    "11ea9ccb7f9317b530000d00fca646a3903fa9d232d4075cc3353129a0c96e7a",
-    "47c4fbf39b34f4907a55d51f38b4a00f24d51d00987422425f957abb30779a58"
+    "8f5f562a5a6550b1d74aa52342808524a1e8ab5a9fd355a5935098e7f5eafcd3",
+    "cb02072d29c73b476062b0286c8ee2ea47dca3b092a28a9a02687f3deab07b09",
+    "9de9e6a8e9498a6a938e4d31ff773d5741b8a67e3a53c05c1c7ae7cf4facb207",
+    "29426c742a7caa6911a588779d0a2f031a96851f96de9e2ae84a32c37f30b964"
   ],
   [
-    "f0cbca6511c9984cc010d003ed3e0fae2fea6bde1261a646d03bf03d863ee9b6",
-    "a5b7401fe739cd023ab467ea0a6c7d70254e72ba2e3ba05d5779d984b830578d",
-    "e85a1e8a2f3e03f496c6347de8eb51e3a5c972578d96015e3a587f5ffce92c70",
-    "966d99347accd56a0b9072ccebde585d29107e5dd0d6e1da691c38455c77364b"
+    "03b4535115aa281124bfdbe719402bc673cec13b15e38910bcd5cf9d6243a1df",
+    "3ae2aa61d483837a9f76aabacf65564508611c3681e89af6ddb77464e4fa6526",
+    "18eba4a3dc6a33cee3513bd89d96e7611be0628b11a702d42e996bdf0bbf4687",
+    "d13adb90c01d9937f08417aceeab0255c4d5027870ab1cd94cc83cc49c7a3449"
   ],
   [
-    "dafbb891ec5712f74d7a22e3d8d48662933f05275b4667f1fda64e90f9b960d9",
-    "45186fb407bb745dba0d54a877fa30ba0b06569e5c66356806bb931a88f7b3e5",
-    "14edf9875f1d80faeed71fdb5c483315d0d8f029a9e55ca01bfba7bf6aa15bd7",
-    "33a94466054f0d30d396474dc4e00cd279d79a6fa5bc67b6635f817df7b8601d"
+    "d53d92a16e01627ecffe8a4ff6e36956933f0ffeca0e2632fc8af2323d7aac25",
+    "5e29108c23c67d6b94e7e85035ede6b060f2671055d6f22d564930b151e71fcf",
+    "eebb5f01327b4be357c152b718be194964fa28b8bebe05d5afc006acdceacb2f",
+    "00a2904285193b0125ba15a7b736430d62fed9e34bd3568b8e8f4c9d1794986d"
   ]
 ]
 }

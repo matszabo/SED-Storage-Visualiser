@@ -1,7 +1,7 @@
 {
     "SSC" : "Opal",
     "SSC name" : "Opal 2.01",
-    "SSC fset" : "Opal SSC V2.00 Feature",  
+    "SSC fset" : "Opal SSC V2 Feature",  
     "mandatory" : {
         "TPer Feature" : [
             "Version",
@@ -23,9 +23,9 @@
             "Locking Enabled",
             {"Locking Supported" : "= 1"}
         ], 
-        "Opal SSC V2.00 Feature": [
-            "Feature Descriptor Version Number",
-            {"SSC Minor Version Number" : ">= 1"},
+        "Opal SSC V2 Feature": [
+            "Version",
+            {"Minor Version" : ">= 1"},
             "Base ComID",
             {"Number of ComIDs" : ">= 1"},
             "Range Crossing Behavior",
@@ -48,8 +48,6 @@
     "optional" : {
         "Block SID Authentication Feature": [
             "Version",
-            "Locking SP Freeze Lock State ",
-            "Locking SP Freeze Lock supported",
             "SID Authentication Blocked State",
             "SID Value State",
             "Hardware Reset"
@@ -68,7 +66,7 @@
             "All",
             "Any"
         ],
-        "Supported Data Removal Mechanism Feature Descriptor": [
+        "Supported Data Removal Mechanism Feature": [
             "Version",
             "Supported Data Removal Mechanism",
             "Data Removal Time Format for Bit 2",

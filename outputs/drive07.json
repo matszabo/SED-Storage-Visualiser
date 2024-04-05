@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "dc796dd241603dc1"
 },
 "Identify": {
-  "Serial number": "S69ENX0T718768A",
-  "Firmware version": "5B2QGXA7",
-  "Model number": "Samsung SSD 980 PRO 2TB",
-  "Serial number long": "Samsung_SSD_980_PRO_2TB_S69ENX0T718768A_1",
+  "Serial number": "S64DNL0T752297R",
+  "Firmware version": "2B4QFXO7",
+  "Model number": "Samsung SSD 980 500GB",
+  "Serial number long": "Samsung_SSD_980_500GB_S64DNL0T752297R_1",
+  "Size bytes": 500107862016,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -37,9 +42,9 @@
     "AlignmentGranularity": 8,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -50,24 +55,23 @@
   },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
   },
   "Block SID Authentication Feature": {
     "Version": 1,
-    "Locking SP Freeze Lock State ": 0,
-    "Locking SP Freeze Lock supported": 0,
     "SID Authentication Blocked State": 0,
     "SID Value State": 0,
     "Hardware Reset": 0
   }},
 "Discovery 1": {
   "Properties": {
-    "MaxComPacketSize": "0x010200",
-    "MaxResponseComPacketSize": "0x010200",
-    "MaxPacketSize": "0x0101ec",
-    "MaxIndTokenSize": "0x010004",
+    "MaxComPacketSize": "0x803c",
+    "MaxResponseComPacketSize": "0x803c",
+    "MaxPacketSize": "0x8028",
+    "MaxIndTokenSize": "0x8004",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
@@ -352,7 +356,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(R4PRUE62LQX6GBYXZ6S0GT0KGT2Z4KH1) 0x52345052554536324c515836474259585a3653304754304b4754325a344b4831"
+        "0x03": "(CB584ARKRB1J6QGJP73HDZZKWTCTKNX0) 0x434235383441524b5242314a3651474a50373348445a5a4b575443544b4e5830"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -428,28 +432,28 @@
 },
 "Random sample": [
   [
-    "f84190504043226fa88d1ba34309a505e7fcc215c5f5353087dd62cba75b7e45",
-    "69c6dfae1c4887d28eac3aaf342ab5ae67be186f3154a3e864e12246c2d99887",
-    "80fbcfb4c3da08936d23bdc81b06c605e09fd7e4d614e42abafd770badea14f2",
-    "b6de4bd835d50baa0730c299c1798967a2ac8fdf35c7d9dbd4692da84e60ba97"
+    "e08759c32af09a840faf2902664f37596f5e6698625c528d5bed3ec7edddd161",
+    "954c3f8d2e3a898beb7f8697feade84e90de20606f28a35e3324b4f80e9890dc",
+    "1eeb9c5e8a8b6bc0581357ecaea90a107c450208c0cc48b94de488063bb44668",
+    "bc31a11ed168a9e8a6f6fa41d3ab794372db081516a6a4f6ddf06abb605ac534"
   ],
   [
-    "18ab36a755b9504297b150ae7bb9f29267e624c79e225f0b96789bb4dfbf3195",
-    "6fc406008d6e9ff7a3bb2a716a56fdfbf38f45f0a6445a56488615564d09e85b",
-    "3bb2f864fb9c5fa871d2b25b3dbac709c11dfaf485fc64388d587ccced84b677",
-    "756fcaff628c70f1dc33491d0084ce4a95ee8cf8500de11e8cc2938f142dbb7b"
+    "9c4656bc1aca173983ee4baf37fd42c355d6c504bf5be80ec589ec31bf2e7a85",
+    "4c9413c3b719c6d3486c712f72d072ae6cae12a4108f60dc087158c0e949c1d9",
+    "913e1b925bb1e6f67a47c8dff7701d18250128ef32112f535b9e82da3dbab988",
+    "fddebd4b436708455a809cdb3b4c1edd29b8cfb5be4466ef86da1923e67bcf84"
   ],
   [
-    "ee35b9671c68219f3c148bb4869034930ad4e04d0e695e987e1ccd8aefc847ac",
-    "f4bd08056645ecb5cae00e95a163e59d28f1c5bc0742d1e2cfd9bd0c229eb7cb",
-    "2230dc1ee5fa46860b86ee96cf91d7b5b879d47917f9069b60a7f1c77f54a5ab",
-    "fe0ea0ae3ee3d425d30e40f7e52c83594155dcd39f8889aec203434ff20a475c"
+    "0e5fc8692a3c1d4a276c65f56155474b5d23fe15f908fc4fc5d1845dd4e9e9a4",
+    "7b1b9a850c6a316be1676fc673998baddf29f0dd110d39ce8f009a9a38ce635c",
+    "63aa73be8675ab9ae5fea316c36c999c8f22cf745609be62863fe24d2d774b9c",
+    "cce6dc82357916a59086f088173195872ead57da39ba0ddebda8fc6c77d02567"
   ],
   [
-    "65cbc1d11e8c32320cc673a3d7ed7683534da2bb3531c139533ed173023167c0",
-    "d576e0e22fc827a257262726e9d80c7cb34f22cb02143eed400aca9f490ac78c",
-    "357cce6c407512b6a20cebb47ea732f27fbeb1244fd9fe842a5a03eadc8f34dd",
-    "da352fcdf03e9c784d4622c067b567c55de4e570efa1ed4ba2e591fc0ff52676"
+    "6fcec8333aef5e3a6d02d2201094218b300ba201db452beec406a2ef89f963e3",
+    "d70efa645dc2dfe06ec196f98bf8b1383b9ecaaeb7fce3b9bf79c3f0ee9d3951",
+    "29c43e13a81e0083307cf510327704f0c5209e7c62f5c73cf69c50af01a46a35",
+    "56291e9fb916e4ccdaebf5890b70bc42af3b9566b35e05e6ba17f9f3e09998f4"
   ]
 ]
 }

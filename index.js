@@ -162,12 +162,12 @@ function checkPSIDpresence(device){
  * by checking UID 000000090001ff01
  */
 function setMinorVersions(device){
-    let versionHTML = document.querySelector(`[id="Opal SSC V2.00 FeatureSSC Minor Version Number"] .d${device["index"]}`);
+    let versionHTML = document.querySelector(`[id="Opal SSC V2 FeatureMinor Version"] .d${device["index"]}`);
     let cluesDetected = [];
     let textHint = [];
     let versionDetected = -1;
-    if(device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]){ // Just in case we had Opal 1 drive somehow
-        let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2.00 Feature"]["SSC Minor Version Number"];
+    if(device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]){ // Just in case we had Opal 1 drive somehow
+        let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]["Minor Version"];
         if("Discovery 2" in device["driveInfo"]){
             // newlines are on the beginning because when you put array into HTML title, it will append commas to the string
             if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
@@ -220,8 +220,8 @@ function setMinorVersions(device){
 
 function checkDataRemovalMech(device){
     let mechanismsSupported = [];
-    if(("Supported Data Removal Mechanism Feature Descriptor" in device["driveInfo"]["Discovery 0"])){
-        let dis0value = parseInt(device["driveInfo"]["Discovery 0"]["Supported Data Removal Mechanism Feature Descriptor"]["Supported Data Removal Mechanism"]);
+    if(("Supported Data Removal Mechanism Feature" in device["driveInfo"]["Discovery 0"])){
+        let dis0value = parseInt(device["driveInfo"]["Discovery 0"]["Supported Data Removal Mechanism Feature"]["Supported Data Removal Mechanism"]);
         switch (SSC) {
             case "Opal":
                 if(dis0value & 4){ // Mandatory
@@ -229,7 +229,7 @@ function checkDataRemovalMech(device){
                 // Just mark the cell as red because this is mandatory value
                 else{
                     device["SSCCompl"]["isCompliant"] = false;
-                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
+                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism FeatureSupported Data Removal Mechanism"] .d${device["index"]}`);
                     cell.title = "Data Removal Mechanism - Cryptographic erase must be supported"
                     cell.classList.add("missingBg");
                 }
@@ -239,7 +239,7 @@ function checkDataRemovalMech(device){
                 }
                 else{
                     device["SSCCompl"]["isCompliant"] = false;
-                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism Feature DescriptorSupported Data Removal Mechanism"] .d${device["index"]}`);
+                    let cell = document.querySelector(`[id="Supported Data Removal Mechanism FeatureSupported Data Removal Mechanism"] .d${device["index"]}`);
                     cell.title = "Data Removal Mechanism - Overwrite Data Erase or Block Erase must be supported"
                     cell.classList.add("missingBg");
                 }
@@ -523,28 +523,29 @@ async function prepareDrives(filenames){
     return;
 }
 
-function fillDevices(HTMLitem){
+function getAllDevIDs(){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("drives", "readonly");
         const store = transaction.objectStore("drives");
+        let indexes = []
 
         const request = store.index("indexCursor");
-        const indexCursor = request.openCursor();
+        const indexCursor = request.openCursor()
         indexCursor.onsuccess = ((event) => {
             const cursor = event.target.result;
             if(cursor){
-                HTMLitem += `<td class="d${cursor.value["index"]} driveHeader">d${cursor.value["index"]}</td>`;
+                indexes.push(`d${cursor.value["index"]}`)
                 cursor.continue();
             }
             else {
-                resolve(HTMLitem);
+                resolve(indexes);
             }
         });
         indexCursor.onerror = ((reason) => {
             console.error(`Failed to open cursor on index in populateTbody\n${reason}`);
-            resolve();
+            reject(null)
         });
-    });
+    })
 }
 
 async function generateTbody(tableName, featureSet){
@@ -556,13 +557,16 @@ async function generateTbody(tableName, featureSet){
         item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
 
         // Print device names afterwards
-        item = await fillDevices(item);
+        let indexes = await getAllDevIDs();
+        for(let index of indexes) {
+            item += `<td class="${index} driveHeader">${index}</td>`;
+        }
         tableBody.innerHTML += `${item}</tr>`;
         // This is for specific feature sets like PSID, which have no level 0 discovery table, but we need them visualised too
         if(attributes.length == 0){
             item = `<tr class="${fsetName}" id="${fsetName}Present"><td>Present</td>`;
-            for(let i = 0; i < numofDevs; i++){
-                item += `<td class="d${i}"></td>`;
+            for(let index of indexes){
+                item += `<td class="${index}"></td>`;
             }
             tableBody.innerHTML += `${item}</tr>`;
         }
@@ -576,12 +580,12 @@ async function generateTbody(tableName, featureSet){
             }
             // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
             item += `<tr class="${fsetName}" id="${fsetName}${attribute}"><td>${attribute}</td>`;
-            for(let i = 0; i < numofDevs; i++){
-                item += `<td class="d${i}"></td>`;
+            for(let index of indexes){
+                item += `<td class="${index}"></td>`;
             }
             tableBody.innerHTML += `${item}</tr>`;
         }
-    }   
+    }  
 }
 
 function hideDrive(index){

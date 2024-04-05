@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "S5GCNS0R912014W",
-  "Firmware version": "RVT24B6Q",
-  "Model number": "Samsung SSD 860 EVO M.2 500GB",
-  "Serial number long": "Samsung_SSD_860_EVO_M.2_500GB_S5GCNS0R912014W",
+  "Serial number": "S4EVNF0M660151T",
+  "Firmware version": "2B2QEXM7",
+  "Model number": "Samsung SSD 970 EVO Plus 500GB",
+  "Serial number long": "Samsung_SSD_970_EVO_Plus_500GB_S4EVNF0M660151T",
+  "Size bytes": 500107862016,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -37,9 +42,9 @@
     "AlignmentGranularity": 8,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -50,9 +55,26 @@
   },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
+  },
+  "Block SID Authentication Feature": {
+    "Version": 1,
+    "SID Authentication Blocked State": 0,
+    "SID Value State": 0,
+    "Hardware Reset": 0
+  },
+  "Namespace Locking Feature": {
+    "Version": 1,
+    "Minor Version": 0,
+    "SUM_C": 0,
+    "Range_P": 0,
+    "Range_C": 1,
+    "Maximum Key Count": 9,
+    "Unused Key Count": 8,
+    "Maximum Ranges Per Namespace": 8
   }},
 "Discovery 1": {
   "Properties": {
@@ -344,7 +366,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(A2N414FMLSZ74F695F6QL7U021PGA8T1) 0x41324e343134464d4c535a3734463639354636514c3755303231504741385431"
+        "0x03": "(ZTX4K6NM3UYS7KGNRRPKJH9MQTBCFJ6A) 0x5a5458344b364e4d33555953374b474e5252504b4a48394d51544243464a3641"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -420,28 +442,28 @@
 },
 "Random sample": [
   [
-    "f58ca23586d8cdf0ce1ba3123262366dbbb523176da45ac669e881685a3d2a7e",
-    "601c429d76c987e044ca1740e95f0f0ca3e6a992d3a847c21e00736ae8ca8eeb",
-    "5722b1d6e1e2b7adafe8c781b77036a09486eec557becb984cb62263cc0fdd3b",
-    "3f170e5a6fa72ec9ef6827ab05c8f7b8505be17c4273e8c5e1d74d868ef32ba7"
+    "6a23683a42d6ef6dabbce1081abbe9f9a410ac64f9c7a4340524ad037813a6d4",
+    "64d9d52d7cc1b4bd5a3d71125125633a331527d938e265ea22c3a6f9c3ffafe6",
+    "b01e9c18c4605f2da20c3f3df14e908791845fafb92d002dff62e64952086619",
+    "123df2ec494b8b5c946d5252d187168702c395b28f232d6492f7a91a06126224"
   ],
   [
-    "4f73bc071e3898c8e005d8aac688ac285b31907a21855f7e7aa3d0505b58b030",
-    "0ce3ae569c01dda610e77038a1599548b118f957b904d28dd8328da5be9be009",
-    "9c40669ac27e66019a674e1614dbd84751b9afd1d4388afe3202beffc68b3db5",
-    "45af9a36e82da46ff7d1a3b65b4d83b574f907300152fd21b92a5448129a1d74"
+    "202794d8ce86f9651f5d501a9ce3978dad88830e0078261e2b085266ca13d732",
+    "19b4f440e10e08a1efef89eef331433f1468eddde5993d99547cc818d0aca2fa",
+    "0c76ad03a0e1ef04bf433f09d8a6f4aa0725d34ce4f68496595f45f1d36b8bb9",
+    "4521bae612b7f27b9ee20b63fc1efd683b60eef121d22304342c13a0e521cf8d"
   ],
   [
-    "1ffe34b286ca584cfdd992271aa96fce236b0bf2f2fb4ef720acada7d4e784bb",
-    "0964910b6351b8e6bf283e72ccdceb013182e7dcc7bde6579e13704c38f4e333",
-    "9d593db3b8338ab2b92056b4e6934f76766ae68df2c4e6f47b9877e21d13bd38",
-    "7ed101162af1fb67b576cb3141b41207deef34d0411c5aef0c38b3ce56f1f243"
+    "8415819402fa328d46b1533455307110410740500cb41ddca90295f887621848",
+    "76e29905354e3d0ae9ff868feb0c850d9411e99f3d42105e8f7f158af367c50b",
+    "525a4b2c928a4f196a385569de478085ae540913935397df4876ba448b0d5c8c",
+    "5a3b1ca3d6c05c1ccfd6dbbd8047796508160efd4ef0b03ba2f42e8ab8e1cf6e"
   ],
   [
-    "2dc79df2f935f747b76dcdafcebd80d385f2a1672613fddb0d7b6df75cb973cb",
-    "2b2ee7561d16c89d32396585fddba75c488b4760aaf7edd243c8c78518c0d066",
-    "3ef6ad682bc3091cae5d66231f7ffded38db37d6f626a71215af0dedca05fce9",
-    "2545d5708e1747888127aceee5967f90a15d6462b70e7a841e04157d43de772f"
+    "ce76caec3db589d949e30c016b7f6c80940f36366521a192dddba8dd767e7101",
+    "c6fff2bd76fd4d9e9689c2e5f103c3dc6fc20734f503bb11c622ff6f745cd171",
+    "4fe8f6f660c0d90cb9a0a7fd03bf62ea90271b8f2fc5bfe3f83dd9c8d1a20cc7",
+    "4c3006201e4f95c2e1a11f2d48a6080b84b44fb0cc46f2fb97cb5a48777f355a"
   ]
 ]
 }

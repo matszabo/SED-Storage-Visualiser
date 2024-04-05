@@ -1,12 +1,17 @@
 {
 "Metadata": {
-  "Version": "1"
+  "Version": "2",
+  "Commit": "dc796dd241603dc1"
 },
 "Identify": {
-  "Serial number": "S3Z9NB0M748592R",
-  "Firmware version": "RVT03B6Q",
-  "Model number": "Samsung SSD 860 EVO 1TB",
-  "Serial number long": "Samsung_SSD_860_EVO_1TB_S3Z9NB0M748592R",
+  "Serial number": "S6PYNX0T492049W",
+  "Firmware version": "SVT02B6Q",
+  "Model number": "Samsung SSD 870 EVO 500GB",
+  "Serial number long": "Samsung_SSD_870_EVO_500GB_S6PYNX0T492049W",
+  "Size bytes": 500107862016,
+  "HW sector bytes": 512,
+  "Logical block bytes": 512,
+  "Physical block bytes": 512,
   "Source": "udev"
 },
 "Discovery 0": {
@@ -37,9 +42,9 @@
     "AlignmentGranularity": 8,
     "LowestAlignedLBA": 0
   },
-  "Opal SSC V2.00 Feature": {
-    "Feature Descriptor Version Number": 1,
-    "SSC Minor Version Number": 0,
+  "Opal SSC V2 Feature": {
+    "Version": 1,
+    "Minor Version": 0,
     "Base ComID": 4100,
     "Number of ComIDs": 1,
     "Range Crossing Behavior": 0,
@@ -50,6 +55,7 @@
   },
   "DataStore Table Feature": {
     "Version": 1,
+    "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
@@ -344,7 +350,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(G6CE9JC9BJD78G48RUGNQTXSFSDK18XH) 0x47364345394a4339424a4437384734385255474e515458534653444b31385848"
+        "0x03": "(WJ6HG0MTR05CE378TJCD8PQX7N4MZRYA) 0x574a364847304d545230354345333738544a434438505158374e344d5a525941"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -420,28 +426,28 @@
 },
 "Random sample": [
   [
-    "900eb102882825aff93e73b478eed78e5058f7db011277aab46e3f418b4144b7",
-    "82d01eb6c711cfb499bc1619eda647d707a6af05c1df4f01d594a693c736efa3",
-    "f467e1984db2cd4c59f545b1d1fcb4c29dcd7eb0e548bf28299064c022c76f69",
-    "930f80cc50874ef80717f001e49cb3ce52a0bc4bf2b74265220a9935bfc95ac2"
+    "a3f35fd9ab42237a15dd0e8db9512465c5e8e5952e3595a0b33a99c3689dc5c4",
+    "0f7e0437a1419cca8a51623848e37a1451aeaa75760a5ac785f3c86d82535c60",
+    "110dc226761b203922bb628405389695573b5641c247d455dc0a2c1c90de3add",
+    "dc42e33d941ff90c7ca849375ee471a77fc0a079ce5404a10811040bbea53ad2"
   ],
   [
-    "5ef465481ddc9318e53971c10da1f46ee70054060c2c03862bb7d75414ca201a",
-    "13ae4484ef0afa5d5c0aa2e801cdcea9cd5e75bd64d8323018b700bc481d76d5",
-    "30a9a29ffd5a012c50790e19fbafbaa3863675ac3aa2446438277f08ab2eac8d",
-    "0b31772c98cc5b7bd0b03415d4b08b3db8b21eaa5021974c227a31d2fdce9538"
+    "bf4d31b4dda8ead797bbbe7e2dca1001c7ccfa467bb86765fa919dc10aece5ae",
+    "0cefc13116ad07b98f2648c9afb35dca812949e9077afd6cb3571c69920e3ab4",
+    "2191591f7d7f546ef099d07aa71a01f93644bf920b85d3807f84eab7753e0d5e",
+    "5dc349fb2d7bbf2043e2fe8606857248c21fb8a4b0242b53a8fad4eccd5e4085"
   ],
   [
-    "7e44ff1cde8192766b38e1badae3f8ca2b364ff2527519d24ffd4d383bdcc029",
-    "a438cd80044e5f63a016c9f46ad1ac067a71b6b1026abf6b6f25712816372083",
-    "fb9aba0631706ec799756c8e1a04a8113878e5dc2b7c15f3a4d923914c373354",
-    "1ad9478a0138071de7af65af636b71a1c02df4052649dac558fe00aeb3d42d67"
+    "49269eae25ba01d23c81903a20abe15dd315b397406b6b17c9abc4c1e31018e7",
+    "2e98fcf20a4054f2f5cd4e7f8591348492d74c492b420e0b10394e86406e5eca",
+    "490c4479c1e1021bfb0c4739a0542ae318ba531500cf7929ff7205ef301abde2",
+    "7d94f4ecd7e987af33f3631e5c6f4018d12924cf26f5747010fdfb1ce487e4f6"
   ],
   [
-    "54f45b4a2ee46fa863cf161ae35d73cf0717d35709d83a67ebd0f7b59390a4bb",
-    "7152a5f1b25d389829dae76e0c985cbc0489f729a4acda5a12052c916e53cc14",
-    "cea41a1b29cd8e6d73ef4729a29ebd20abac69dee9ce87f4261646c7b3202f8c",
-    "05affe9ea1044c9db7ffbeb9dfb3a9767fbc642eeeaf588c475e67d36dd8f9fe"
+    "f4dca4bb7c6b9a749ca38206f13b44de87b2d187c4c5aba0b66fa842fd3484f8",
+    "780a80a490f3c7d0ba7c23b68b6c632e99a9007048ad5071465bb83dda2d2640",
+    "c4b3908d90b9da41acb431e94d38643a19cb96dbfbae2195b87a78739c81cd70",
+    "aa3c0536f57f9fab9f49332bd7c53a8225d617d073aa78eb9257286b67e3b946"
   ]
 ]
 }
