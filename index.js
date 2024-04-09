@@ -125,13 +125,20 @@ function findUID(JSONnode, UID){
 
 // This function currently works only for version 3, but is placed here for future versions
 function setLockingVersion(device){
-    // Check for version 3
-    if("HW Reset for LOR/DOR Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"] &
-    "MBR Shadowing Not Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"]){
-        
-    let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .d${device["index"]}`);
-    lockVerHTML.innerHTML += " (3)";
-    }   
+    let version = 1
+
+    // version 2
+    if("MBR Shadowing Not Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"]){
+        version = 2
+        // Check for version 3
+        if("HW Reset for LOR/DOR Supported" in device["driveInfo"]["Discovery 0"]["Locking Feature"]){
+            version = 3
+        }
+    }
+    if(parseInt(device["driveInfo"]["Discovery 0"]["Locking Feature"]["Version"]) != version) {
+        let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .d${device["index"]}`);
+        lockVerHTML.innerHTML += ` (${version})`;
+    }    
 }
 
 function filterDevs(){
