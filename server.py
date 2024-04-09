@@ -37,7 +37,7 @@ def isDrivePresent(serialNumber: str, firmwareVersion: str):
 def saveJSON(clientJSON):
     count = len(os.listdir("./outputs"))
     with open("./outputs/drive" + str(count) + ".json", "x") as fd:
-        json.dump(obj=clientJSON, fp=fd, ensure_ascii=False, indent=4)
+        json.dump(obj=clientJSON, fp=fd, ensure_ascii=True, indent=4)
 
 def saveMetadata(clientJSON : object):
     if(not(f"drive{clientJSON['index']}.json" in os.listdir("./metadata"))):
@@ -48,7 +48,7 @@ def saveMetadata(clientJSON : object):
         # Strore read data and clear the file so that we can overwrite it
         if(len(fd.readlines()) == 0):
             mdIndex = "0"
-            json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=False, indent=4)
+            json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=True, indent=4)
             return mdIndex
         else:
             shutil.copy(f"./metadata/drive{clientJSON['index']}.json", f"./metadata/drive{clientJSON['index']}.tmp")
@@ -65,13 +65,13 @@ def saveMetadata(clientJSON : object):
                     mdIndex = max(indexes) + 1
                     mdIndex = f"{mdIndex}"
                     data[mdIndex] = clientJSON["metadata"]
-                    json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+                    json.dump(obj=data, fp=fd, ensure_ascii=True, indent=4)
                     os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
                     return mdIndex
                 else:
                     fd.truncate(0)
                     mdIndex = "0"
-                    json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=False, indent=4)
+                    json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=True, indent=4)
                     os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
                     return mdIndex
             except Exception as error:
@@ -93,7 +93,7 @@ def removeMetadata(index, mdIndex):
             fd.truncate(0)
         with open(f"./metadata/drive{index}.json", "r+") as fd:
             del data[mdIndex]
-            json.dump(obj=data, fp=fd, ensure_ascii=False, indent=4)
+            json.dump(obj=data, fp=fd, ensure_ascii=True, indent=4)
     else:
         # File doesn't exist
         pass
@@ -111,6 +111,13 @@ def isAuthorized():
     if('user' in session):
         return True
     else:
+        return False
+    
+def isInt(object):
+    try:
+        int(object)
+        return True
+    except:
         return False
 
 
@@ -176,9 +183,13 @@ def metadataActions():
         clientJSON = request.json
         action = clientJSON["action"]
         if(action == "addMetadata"):
+            if(not isInt(clientJSON["index"])):
+                return '', 400
             mdIndex = saveMetadata(clientJSON)
             return mdIndex, 202
         elif(action == "remMetadata"):
+            if(not (isInt(clientJSON["index"]) and isInt(clientJSON["mdIndex"]))):
+                return 'Invalid index or mdIndex', 400
             removeMetadata(clientJSON["index"], clientJSON["mdIndex"])
             print(f"Removed {clientJSON['mdIndex']} metadata from disk d{clientJSON['index']}")
             return '', 200
@@ -193,6 +204,8 @@ def addDrive():
             return '', 202
         else:
             try:
+                if(not("Identify" in clientJSON and "Discovery 0" in clientJSON)):
+                    return 'Identify and Discovery 0 needed', 400
                 saveJSON(clientJSON)
                 return '', 200
             except:
@@ -205,7 +218,10 @@ def outputDelete():
         return '', 401
     else:
         clientJSON = request.json
-        if(removeDrive(clientJSON["index"])):
-            return '', 200
-        else:
-            return 'Failed to remove drive', 400
+        if(isInt(clientJSON["index"]) ):
+            if(removeDrive(clientJSON["index"])):
+                return '', 200
+            else:
+                return 'Failed to remove drive', 400
+        else :
+            return 'Provided drive index is not valid', 400
