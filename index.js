@@ -506,10 +506,20 @@ async function fetchDrive(filePath){
         return
     }
     let index = parseInt(/.*drive(\d+)\.json$/.exec(filePath)[1])
-    //debugger
     let driveJSON = await request.json();
 
     return storeDrive(driveJSON, index);
+}
+
+function deleteMissingDrives(fetchedIndexes, storedIndexes){
+    let removalPromises = []
+    
+    for(let index of storedIndexes){
+        if(fetchedIndexes.indexOf(index) < 0) {
+            removalPromises.push(removeDriveFromStorage(index))
+        }
+    }
+    return removalPromises
 }
 
 /* Loops through all drive filenames and calls fetchDrive to store them
@@ -517,16 +527,23 @@ async function fetchDrive(filePath){
  */
 async function prepareDrives(filenames){
     let devFiles = [];
+    let fetchedIndexes = []
     filenames.split(',').forEach((filename) => {
         devFiles.push(filename);
+        fetchedIndexes.push(parseInt(/.*drive(\d+)\.json$/.exec(filename)[1]))
     });
     let responses = []; // A promise array
     devFiles.forEach((filename) => {
         responses.push(fetchDrive(`./outputs/${filename}`));
         numofDevs++
     });
-    
     await Promise.all(responses);
+    let storedDevs = await getAllDevIDs()
+    let storedIndexes = []
+    for(let dev of storedDevs) {
+        storedIndexes.push(parseInt(/.*d(\d+)$/.exec(dev)[1]))
+    }
+    await Promise.all(deleteMissingDrives(fetchedIndexes, storedIndexes)) 
     return;
 }
 
