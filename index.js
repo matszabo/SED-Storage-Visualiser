@@ -113,6 +113,37 @@ async function filterByCriteria() {
     })
 }
 
+function uploadSSC() {
+    let inputFile = document.getElementById("newSSCfile")
+    if(inputFile.files.length > 0) {
+        let file = inputFile.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = (file) => {
+            fetch(`${window.location.origin}/SSCs`,
+                {
+                    method : "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body : reader.result
+                }
+                )
+                .then((response) => {
+                    if(response.ok) {
+                        window.location.reload()
+                    }
+                    else {
+                        response.text().then((respText) => {
+                            alert(`Failed to upload new SSC\n${respText}`)
+                        })
+                    }
+                })
+        }
+        reader.onerror = () => {
+            alert("Failed to upload new SSC")
+        }
+    }
+}
+
 // For easier check of required values when filling TBody
 var operators = {
     '=' : function(a, b) {return a == b},
@@ -801,7 +832,7 @@ async function fetchDevices(){
             SSCjson = JSON.parse(SSCstring);
             localStorage.setItem(SSCfilenames[i], SSCstring);
             // the filename is used here because using the SSC name was proving troublesome due to unexpected behaviour of the string
-            document.getElementById("SSCbuttons").innerHTML += `<button onclick=regenerateSSC("${SSCfilenames[i]}") id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
+            document.getElementById("SSCbuttons").innerHTML += `<button onclick="regenerateSSC('${SSCfilenames[i]}')" id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
         }
     }
     SSCjson = JSON.parse(localStorage.getItem(SSCfilenames[0]));

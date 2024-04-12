@@ -99,6 +99,13 @@ def removeMetadata(index, mdIndex):
         pass
         print("File to be removed doesn't exist")
 
+def saveSSC(SSC):
+    if(f"{SSC['SSC name']}.json" in os.listdir("./SSCs")):
+        print(f"{SSC['SSC name']} already exists in SSCs folder")
+    else:
+        with open(f"./SSCs/{SSC['SSC name']}.json", "x") as fd:
+            json.dump(obj=SSC, fp=fd, ensure_ascii=True, indent=4)
+
 def removeDrive(index):
     try:
         os.remove(f"{absRootPath}/outputs/drive{index}.json")
@@ -147,6 +154,19 @@ def fetchSSCs():
         returnString += file + ","
     returnString = returnString[:-1] # remove last ,
     return returnString
+
+@app.post('/SSCs')
+def receiveSSC():
+    if(isAuthorized()):
+        newSSC = request.json
+        if(not("SSC" in newSSC and "SSC name" in newSSC and "SSC fset" in newSSC and
+               "mandatory" in newSSC)):
+            return 'JSON needs to contain SSC, SSC name, SSC fset and mandatory values', 400
+        else:
+            saveSSC(newSSC)
+            return '', 200
+    else:
+        return '', 401
 
 @app.post('/token')
 def verifyToken():
