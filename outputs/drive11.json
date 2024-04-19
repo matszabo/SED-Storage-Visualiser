@@ -1,14 +1,14 @@
 {
 "Metadata": {
   "Version": "2",
-  "Commit": "f4206966ca84abce"
+  "Commit": "dc796dd241603dc1"
 },
 "Identify": {
-  "Serial number": "S4EVNF0M660151T",
-  "Firmware version": "2B2QEXM7",
-  "Model number": "Samsung SSD 970 EVO Plus 500GB",
-  "Serial number long": "Samsung_SSD_970_EVO_Plus_500GB_S4EVNF0M660151T",
-  "Size bytes": 500107862016,
+  "Serial number": "S3Z9NB0M748592R",
+  "Firmware version": "RVT03B6Q",
+  "Model number": "Samsung SSD 860 EVO 1TB",
+  "Serial number long": "Samsung_SSD_860_EVO_1TB_S3Z9NB0M748592R",
+  "Size bytes": 1000204886016,
   "HW sector bytes": 512,
   "Logical block bytes": 512,
   "Physical block bytes": 512,
@@ -59,22 +59,6 @@
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
-  },
-  "Block SID Authentication Feature": {
-    "Version": 1,
-    "SID Authentication Blocked State": 0,
-    "SID Value State": 0,
-    "Hardware Reset": 0
-  },
-  "Namespace Locking Feature": {
-    "Version": 1,
-    "Minor Version": 0,
-    "SUM_C": 0,
-    "Range_P": 0,
-    "Range_C": 1,
-    "Maximum Key Count": 9,
-    "Unused Key Count": 8,
-    "Maximum Ranges Per Namespace": 8
   }},
 "Discovery 1": {
   "Properties": {
@@ -366,7 +350,7 @@
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(ZTX4K6NM3UYS7KGNRRPKJH9MQTBCFJ6A) 0x5a5458344b364e4d33555953374b474e5252504b4a48394d51544243464a3641"
+        "0x03": "(G6CE9JC9BJD78G48RUGNQTXSFSDK18XH) 0x47364345394a4339424a4437384734385255474e515458534653444b31385848"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -442,28 +426,28 @@
 },
 "Random sample": [
   [
-    "6a23683a42d6ef6dabbce1081abbe9f9a410ac64f9c7a4340524ad037813a6d4",
-    "64d9d52d7cc1b4bd5a3d71125125633a331527d938e265ea22c3a6f9c3ffafe6",
-    "b01e9c18c4605f2da20c3f3df14e908791845fafb92d002dff62e64952086619",
-    "123df2ec494b8b5c946d5252d187168702c395b28f232d6492f7a91a06126224"
+    "81640e35b2a6f8e4f7e7d2f10bec6fc5ea36453eb0e293ff056b8959d273ceb3",
+    "6fa3e758221b1140398a12688ac696429bee0486a1aa7168e8850eccc570f417",
+    "16d1cfa2d42ffe0364d0cec83eee4b79ebba494d961ece4119ba452bf7223dc7",
+    "3ea18d61cdd6c9ca103f88ef22ee07360ff70142195436b170e11d33e188d33f"
   ],
   [
-    "202794d8ce86f9651f5d501a9ce3978dad88830e0078261e2b085266ca13d732",
-    "19b4f440e10e08a1efef89eef331433f1468eddde5993d99547cc818d0aca2fa",
-    "0c76ad03a0e1ef04bf433f09d8a6f4aa0725d34ce4f68496595f45f1d36b8bb9",
-    "4521bae612b7f27b9ee20b63fc1efd683b60eef121d22304342c13a0e521cf8d"
+    "e9acf61b6ed6953a408b55564f9393058cce4577ebff644bd01a72b9748fbf36",
+    "6c0b13c4557dd8bf1374c53dd6d8f562a24ded1b7771f0e16c23d2368fff7651",
+    "82517bd4f947ecf2e744b535e064032eeba7d4298d257851f42d9ac81a837ef2",
+    "a4a4b533c5599d5a25bbef6f0330eb56dff93d553dcb450a786812be76b3b021"
   ],
   [
-    "8415819402fa328d46b1533455307110410740500cb41ddca90295f887621848",
-    "76e29905354e3d0ae9ff868feb0c850d9411e99f3d42105e8f7f158af367c50b",
-    "525a4b2c928a4f196a385569de478085ae540913935397df4876ba448b0d5c8c",
-    "5a3b1ca3d6c05c1ccfd6dbbd8047796508160efd4ef0b03ba2f42e8ab8e1cf6e"
+    "42f41796d61ff2d756d6cda9ca8d949605aa3585b45875982c3aa1a3e92c957d",
+    "c840817e241f0778133a418703a2ac63a82de9d47ad6e7fa159daee672011180",
+    "16eba9fd03427de32308e5f053a42ba3b42244b881ab727413321e9dc7c7d0fe",
+    "9426639d2a68568ca9a73fbabe60789015b4e433fd976f05481a434e52d96903"
   ],
   [
-    "ce76caec3db589d949e30c016b7f6c80940f36366521a192dddba8dd767e7101",
-    "c6fff2bd76fd4d9e9689c2e5f103c3dc6fc20734f503bb11c622ff6f745cd171",
-    "4fe8f6f660c0d90cb9a0a7fd03bf62ea90271b8f2fc5bfe3f83dd9c8d1a20cc7",
-    "4c3006201e4f95c2e1a11f2d48a6080b84b44fb0cc46f2fb97cb5a48777f355a"
+    "25d497b6f8b31a0ff72e555c62f341caa5a2a9ece9ef3e6964dd83fc0b629980",
+    "f38d037ed88635d49ef7c32e9212e0e8acfb6659ffb9d7250e18faa710163d68",
+    "b91cb1c3b6e6564243423cc0f5889077d8d89ebcb8c2d68f97b3042fdd4f2d98",
+    "6a87504982c06738449fb31338785026da91ec86b877e2d708bc69e01f8df25c"
   ]
 ]
 }

@@ -4,11 +4,11 @@
   "Commit": "f4206966ca84abce"
 },
 "Identify": {
-  "Serial number": "S4EVNF0M660151T",
-  "Firmware version": "2B2QEXM7",
-  "Model number": "Samsung SSD 970 EVO Plus 500GB",
-  "Serial number long": "Samsung_SSD_970_EVO_Plus_500GB_S4EVNF0M660151T",
-  "Size bytes": 500107862016,
+  "Serial number": "S1DBNSAF857280J",
+  "Firmware version": "EXT0DB6Q",
+  "Model number": "Samsung SSD 840 EVO 250GB",
+  "Serial number long": "Samsung_SSD_840_EVO_250GB_S1DBNSAF857280J",
+  "Size bytes": 250059350016,
   "HW sector bytes": 512,
   "Logical block bytes": 512,
   "Physical block bytes": 512,
@@ -37,9 +37,9 @@
   },
   "Geometry Feature": {
     "Version": 1,
-    "ALIGN": 1,
+    "ALIGN": 0,
     "LogicalBlockSize": 512,
-    "AlignmentGranularity": 8,
+    "AlignmentGranularity": 1,
     "LowestAlignedLBA": 0
   },
   "Opal SSC V2 Feature": {
@@ -53,35 +53,25 @@
     "Initial C_PIN_SID PIN Indicator": 0,
     "Behavior of C_PIN_SID PIN upon TPer Revert": 0
   },
+  "Opal SSC V1 Feature": {
+    "Version": 1,
+    "Base ComID": 4100,
+    "Number of ComIDs": 1,
+    "Range Crossing": 0
+  },
   "DataStore Table Feature": {
     "Version": 1,
     "Minor Version": 0,
     "Maximum number of DataStore tables": 9,
     "Maximum total size of DataStore tables": 10485760,
     "DataStore table size alignment": 1
-  },
-  "Block SID Authentication Feature": {
-    "Version": 1,
-    "SID Authentication Blocked State": 0,
-    "SID Value State": 0,
-    "Hardware Reset": 0
-  },
-  "Namespace Locking Feature": {
-    "Version": 1,
-    "Minor Version": 0,
-    "SUM_C": 0,
-    "Range_P": 0,
-    "Range_C": 1,
-    "Maximum Key Count": 9,
-    "Unused Key Count": 8,
-    "Maximum Ranges Per Namespace": 8
   }},
 "Discovery 1": {
   "Properties": {
     "MaxComPacketSize": "0x010200",
     "MaxResponseComPacketSize": "0x010200",
     "MaxPacketSize": "0x0101ec",
-    "MaxIndTokenSize": "0x010004",
+    "MaxIndTokenSize": "0x0101c8",
     "MaxPackets": "0x01",
     "MaxSubpackets": "0x01",
     "MaxMethods": "0x01",
@@ -169,7 +159,6 @@
         "0x06": "0x01"
       },
       "0x0000000200030001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000300000000": {
@@ -212,10 +201,8 @@
     },
     "0x0000000700000000": {
       "0x0000000700000001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000000700030001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       }
     },
     "0x0000000800000000": {
@@ -249,14 +236,9 @@
         "0x03": "[f2a400000c05a80000000900000001f3]",
         "0x04": "[0003]"
       },
-      "0x000000080003a001": {
-        "0x00": "0x000000080003a001",
-        "0x03": "[f2a400000c05a80000000900000002f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
-        "0x04": "[03]"
-      },
       "0x00000008000100e1": {
         "0x00": "0x00000008000100e1",
-        "0x03": "[f2a400000c05a80000000900000001f3]",
+        "0x03": "[f2a400000c05a80000000900000001f3f2a400000c05a80000000900000006f3f2a40000040e01f3]",
         "0x04": "[0004050607]"
       },
       "0x0000000800030003": {
@@ -363,10 +345,11 @@
     },
     "0x0000000b00000000": {
       "0x0000000b00000001": {
+
       },
       "0x0000000b00008402": {
         "0x00": "0x0000000b00008402",
-        "0x03": "(ZTX4K6NM3UYS7KGNRRPKJH9MQTBCFJ6A) 0x5a5458344b364e4d33555953374b474e5252504b4a48394d51544243464a3641"
+        "0x03": "(SAMSUNG_SSD_MSID) 0x53414d53554e475f5353445f4d534944"
       },
       "0x0000000b0001ff01": {
         "0x00": "0x0000000b0001ff01",
@@ -376,16 +359,16 @@
         "0x07": "0x00"
       },
       "0x0000000b00000201": {
+
       }
     },
     "0x0000020100000000": {
       "0x0000020100000001": {
-        "error": "MSC_NOT_AUTHORIZED (1)"
       },
       "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x484f3131",
+        "0x04": "0x42323030",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
@@ -414,7 +397,7 @@
     "0x0000020500000000": {
       "0x0000020500000001": {
         "0x00": "0x0000020500000001",
-        "0x06": "0x09",
+        "0x06": "0x08",
         "0x07": "0x00"
       },
       "0x0000020500000002": {
@@ -431,39 +414,38 @@
   "0x0000020100030001": {
         "0x00": "0x0000020100030001",
         "0x02": "0x022300085000000000000000",
-        "0x04": "0x484f3131",
+        "0x04": "0x42323030",
         "0x05": "0x00000001",
         "0x07": "[a44f70616c]",
         "0x08": "0x00"
   },
   "0x0000110100000001": {
-    "error": "MSC_NOT_AUTHORIZED"
   }
 },
 "Random sample": [
   [
-    "6a23683a42d6ef6dabbce1081abbe9f9a410ac64f9c7a4340524ad037813a6d4",
-    "64d9d52d7cc1b4bd5a3d71125125633a331527d938e265ea22c3a6f9c3ffafe6",
-    "b01e9c18c4605f2da20c3f3df14e908791845fafb92d002dff62e64952086619",
-    "123df2ec494b8b5c946d5252d187168702c395b28f232d6492f7a91a06126224"
+    "034306b534cd12e40b3c9ca5e30904721954a6b00678fcfb0493fbd0de037397",
+    "93fd4b51819f344f7549d579773260bb4dac09d7d377b039f5775188504374d7",
+    "e2ae5932953b73edb1da9d9012b313061c854cc9a91485ac8d3557c19e501779",
+    "781bf7e286b0c61570432a3fef1c4fb5791e33748258a6180c34b73bb3cc12fb"
   ],
   [
-    "202794d8ce86f9651f5d501a9ce3978dad88830e0078261e2b085266ca13d732",
-    "19b4f440e10e08a1efef89eef331433f1468eddde5993d99547cc818d0aca2fa",
-    "0c76ad03a0e1ef04bf433f09d8a6f4aa0725d34ce4f68496595f45f1d36b8bb9",
-    "4521bae612b7f27b9ee20b63fc1efd683b60eef121d22304342c13a0e521cf8d"
+    "11b14b14ef3d7ca02783c542c081e3ce071203731c27000e98074089fb083704",
+    "a057d45c7550a99189cea21a6c76a7fb4e4627da1c8ca9724ae5b5757583021e",
+    "08a854695c952b0676a5e0d5c7970a64ac92518b22d8d25ae82e80b7369a297d",
+    "9d07a0f0709852c750c1a85f74f5e609960c4d7d306f23f043bfc3226b6a870f"
   ],
   [
-    "8415819402fa328d46b1533455307110410740500cb41ddca90295f887621848",
-    "76e29905354e3d0ae9ff868feb0c850d9411e99f3d42105e8f7f158af367c50b",
-    "525a4b2c928a4f196a385569de478085ae540913935397df4876ba448b0d5c8c",
-    "5a3b1ca3d6c05c1ccfd6dbbd8047796508160efd4ef0b03ba2f42e8ab8e1cf6e"
+    "6ce9d409a17ca95e6a73d169d68cc11de880979ad051172e0e974e658c7e5ee7",
+    "e0a077341f4f599cc9fdaa64a681fe70e12a03a3cd694a251fa45043b0424d1d",
+    "4d3259fd7899a1a70d89d8d1613cff917bf3291e132719abba09c3e45a04a893",
+    "a4dcbc3e5e31f817c859db604ce487048e3158c4a414ee801f7ba9c2a697c6c2"
   ],
   [
-    "ce76caec3db589d949e30c016b7f6c80940f36366521a192dddba8dd767e7101",
-    "c6fff2bd76fd4d9e9689c2e5f103c3dc6fc20734f503bb11c622ff6f745cd171",
-    "4fe8f6f660c0d90cb9a0a7fd03bf62ea90271b8f2fc5bfe3f83dd9c8d1a20cc7",
-    "4c3006201e4f95c2e1a11f2d48a6080b84b44fb0cc46f2fb97cb5a48777f355a"
+    "06b979626d129e24267a9ef75f089dbce9fe3fe702eda9169747730394d206be",
+    "04b141c06ca9f30702c85d27aa3dd2e7363d5c4a44a4039ef8c7474b6d1c642e",
+    "7e2e1a6b12f1fee71aa8bc15c712790154671000f2fd3855e09a9b76901b2307",
+    "019f488a8abc318fce071525050ad5c93876d955685e492de953e212198f14df"
   ]
 ]
 }
