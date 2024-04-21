@@ -7,7 +7,7 @@
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
 from dotenv import load_dotenv
-import bcrypt, os, json, shutil
+import bcrypt, os, json, shutil, re
 
 app = Flask(__name__)
 
@@ -36,7 +36,9 @@ def isDrivePresent(serialNumber: str, firmwareVersion: str):
 
 def saveJSON(clientJSON):
     count = len(os.listdir("./outputs"))
-    with open("./outputs/drive" + str(count) + ".json", "x") as fd:
+    lastFile = sorted(os.listdir("./outputs"))[count - 1]
+    newIndex = int(re.search('(\d+)\.json', lastFile).group(1)) + 1
+    with open(f"./outputs/drive{newIndex}.json", "x") as fd:
         json.dump(obj=clientJSON, fp=fd, ensure_ascii=True, indent=4)
 
 def saveMetadata(clientJSON : object):
@@ -228,7 +230,8 @@ def addDrive():
                     return 'Identify and Discovery 0 needed', 400
                 saveJSON(clientJSON)
                 return '', 200
-            except:
+            except Exception as error:
+                print(error)
                 print("Failed to save given JSON")
                 return '', 400
             
