@@ -1,0 +1,74 @@
+{
+    "SSC" : "Opal",
+    "SSC name" : "Opal 2.00",
+    "SSC fset" : "Opal SSC V2 Feature",  
+    "mandatory" : {
+        "TPer Feature" : [
+            "Version",
+            "ComID Mgmt Supported",
+            {"Streaming Supported" : "= 1"},
+            "Buffer Mgmt Supported",
+            "ACK/NAK Supported",
+            "Async Supported",
+            {"Sync Supported" : "= 1"}
+        ], 
+        "Locking Feature": [
+            {"Version" : ">= 1"},
+            "MBR Done",
+            "MBR Enabled",
+            {"Media Encryption" : "= 1"},
+            "Locked",
+            "Locking Enabled",
+            {"Locking Supported" : "= 1"}
+        ], 
+        "Opal SSC V2 Feature": [
+            "Version",
+            {"Minor Version" : "= 0"},
+            "Base ComID",
+            {"Number of ComIDs" : ">= 1"},
+            "Range Crossing Behavior",
+            {"Number of Locking SP Admin Authorities Supported" : ">= 4"},
+        {"Number of Locking SP User Authorities Supported" : ">= 8"},
+            "Initial C_PIN_SID PIN Indicator",
+            "Behavior of C_PIN_SID PIN upon TPer Revert"
+        ], 
+        "DataStore Table Feature": [
+            "Version",
+            {"Maximum number of DataStore tables" : ">= 1"},
+            {"Maximum total size of DataStore tables" : ">= 0xA0000"},
+            {"DataStore table size alignment" : ">= 1"}
+        ]
+    },
+
+    "optional" : {
+        "Block SID Authentication Feature": [
+            "Version",
+            "SID Authentication Blocked State",
+            "SID Value State",
+            "Hardware Reset"
+        ],
+        "Geometry Feature": [
+            "Version",
+            "ALIGN",
+            "LogicalBlockSize",
+            "AlignmentGranularity",
+            "LowestAlignedLBA"
+        ], 
+        "Single User Mode Feature": [
+            "Version",
+            "Number of Locking Objects Supported",
+            "Policy",
+            "All",
+            "Any"
+        ],
+        "Supported Data Removal Mechanism Feature": [
+            "Version",
+            "Supported Data Removal Mechanism",
+            "Data Removal Time Format for Bit 2",
+            "Data Removal Time for Supported Data Removal Mechanism Bit 2"
+        ],
+        "PSID feature" :[
+
+        ]
+    }
+}
