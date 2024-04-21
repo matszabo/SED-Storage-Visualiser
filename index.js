@@ -194,18 +194,29 @@ function checkPSIDpresence(device){
     }
 }
 
+// filling out minor version field for the implicit control in populateBody()
+function setOpalMinorVer(device) {
+    if(device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]) {
+        // older feature descriptor (2.01, 2.00), fill out minor version based on presence of Interface control template
+        if("Discovery 2" in device["driveInfo"]) {
+            if(device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]["Version"] == 1) {
+                device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]["Minor Version"] = (findUID(device["driveInfo"]["Discovery 2"], "0x0000020400000007"))? 0 : 1
+            }
+        }  
+    } 
+}
+
 /* Function fills the minor version row in SSC V2 Feature set based on other present sets
  * Currently checks for presence of Block SID (02 mandatory addition) and of Interface
  * control template (00) by checking for its UID 0x0000020400000007 have to add PSID check for 01
  * by checking UID 000000090001ff01
  */
-function setMinorVersions(device){
+function checkMinorVersions(device){
     let versionHTML = document.querySelector(`[id="Opal SSC V2 FeatureMinor Version"] .d${device["index"]}`);
     let cluesDetected = [];
     let textHint = [];
     let versionDetected = -1;
     if(device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]){ // Just in case we had Opal 1 drive somehow
-        let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]["Minor Version"];
         if("Discovery 2" in device["driveInfo"]){
             // newlines are on the beginning because when you put array into HTML title, it will append commas to the string
             if(device["driveInfo"]["Discovery 0"]["Block SID Authentication Feature"]){
@@ -221,17 +232,19 @@ function setMinorVersions(device){
                 textHint.push("\nInterface control template detected (removed in .01)")
             }
             // Normal Opal 2.02
-            if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.length == 2 ){
+            if(cluesDetected.indexOf(2) != -1 & cluesDetected.indexOf(1) != -1 & cluesDetected.indexOf(0) == -1 & selectedSSC == "Opal 2.02"){
                 versionDetected = 2;
             }
             // Normal Opal 2.01
-            else if(cluesDetected.length == 1 & cluesDetected.indexOf(1) != -1){
+            else if(cluesDetected.indexOf(0) == -1 & cluesDetected.indexOf(1) != -1 & selectedSSC == "Opal 2.01"){
                 versionDetected = 1;
             }
             // Normal Opal 2.00
-            else if(cluesDetected.length == 1 & cluesDetected.indexOf(0) != -1){
+            else if(cluesDetected.indexOf(0) != -1 & selectedSSC == "Opal 2.00"){
                 versionDetected = 0;
             }
+            
+            let minorVerNum = device["driveInfo"]["Discovery 0"]["Opal SSC V2 Feature"]["Minor Version"]
             
             if(minorVerNum != versionDetected){
                 // Conflicts were found, print maximum found version and indicate discrepancy
@@ -654,23 +667,34 @@ async function checkDevCompliance(device){
     if((!Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
         hideDrive(device["index"]);
     }
+
+    switch (String(selectedSSC)) {
+        case "Opal 2.02":
+        case "Opal 2.01":
+        case "Opal 2.00":
+            setOpalMinorVer(device);
+        case "Pyrite 2.01":
+            break;
+        default:
+            console.error(`Unknown SSC encountered in checkDevCompliance(): ${String(selectedSSC)}`);
+            break;
+    }
+
     checkDataRemovalMech(device);
     checkPSIDpresence(device);
     findSupportedFsets(device);
     populateTbody(device, dis0ManFsets);
     populateTbody(device, dis0optFsets);
 
+    // duplicit switch for post-table-population operations
     switch (String(selectedSSC)) {
         case "Opal 2.02":
-            setMinorVersions(device);
         case "Opal 2.01":
-            break;
         case "Opal 2.00":
-            break;
+            checkMinorVersions(device);
         case "Pyrite 2.01":
             break;
         default:
-            console.error(`Unknown SSC encountered in checkDevCompliance(): ${String(selectedSSC)}`);
             break;
     }
 

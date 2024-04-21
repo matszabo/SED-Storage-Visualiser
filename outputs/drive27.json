@@ -26,7 +26,6 @@
   },
   "Locking Feature": {
     "Version": 2,
-    "HW Reset for LOR/DOR Supported": 1,
     "MBR Shadowing Not Supported": 0,
     "MBR Done": 0,
     "MBR Enabled": 0,
