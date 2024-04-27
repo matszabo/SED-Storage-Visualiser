@@ -733,6 +733,7 @@ async function regenerateSSC(SSCname){
     SSCbuttonsHTML.forEach((buttonHTML) => {
         buttonHTML.classList.value = "deselectedButton";
     })
+    document.getElementById("searchDev").value = ""
     let selectedButton = document.querySelector(`[id="${SSCname}"]`);
     selectedButton.classList.add("selectedButton");
     let SSCtext = localStorage.getItem(SSCname);
@@ -930,7 +931,10 @@ function openDB(){
     });
 }
 
-window.onload = openDB();
+window.onload = (() => {
+    document.getElementById("searchDev").value = ""
+    openDB()
+})
 document.getElementById("loginPrompt").addEventListener('submit', (event) => {
     event.preventDefault();
     loginFromPrompt()
