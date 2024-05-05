@@ -1,0 +1,166 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
+body {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+header {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    border-bottom: solid 1px gray;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2:not(#legendDiv h2){
+    text-align: center;
+    border: 2px solid;
+    margin-bottom: 0px;
+}
+
+.redBg{
+    background-color: red;
+}
+
+.orBg{
+    background-color: orange;
+}
+
+.grBg{
+    background-color: lightgreen
+}
+
+.infoContent {
+    column-count: 2;
+    margin-top: 1rem;
+    margin-left: 1rem;
+}
+
+.infoTab {
+    margin-bottom: 3rem;
+}
+
+#Dis1Header {
+    display: grid;
+    grid-template-columns: 3;
+}
+
+#metadataInfo > input {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+#dataRemContainer {
+    display: none;
+}
+
+.infoContent > * {
+    margin-top: 0px;
+}
+
+.infoContent > p {
+    overflow-wrap: break-word;
+}
+
+.mdEntry {
+    border: 1px solid;
+    display: grid;
+    grid-template-columns: 80% 20%;
+}
+
+.mdEntry > button {
+    width: fit-content;
+    height: fit-content;
+}
+
+.mdContent {
+    margin-left: 1rem;
+}
+
+#remMDBut {
+    margin-left: 10px;
+    height: fit-content;
+    align-self: center;
+}
+
+.submitButton {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.closeBtn, .modal-content > h4 {
+    display: inline-block;
+}
+
+.closeBtn {
+    float: right;
+}
+
+.mdEntry > button {
+    width: fit-content;
+    height: fit-content;
+}
+
+.modal{
+    position: fixed;
+    top: 0pt;
+    right: 0pt;
+    left: 0pt;
+    bottom: 0pt;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}
+
+.modal-content{
+    padding: 20px;
+    background-color: gainsboro;
+    border-radius: 3px;
+}
+
+.modal.show{
+    opacity: 1;
+    z-index: 20;
+}
+
+#legendDiv {
+    display: none;
+    background-color: white;
+    position: absolute;
+    z-index: 10;
+    transition: 0.5s;
+    padding: 5px;
+    border: solid 2px black;
+}
+
+#legendDiv thead {
+    border: solid 1px black;
+}
+
+#legendDiv table {
+    border-collapse: collapse;
+    text-align: center;
+}
+
+#legendDiv tbody td {
+    border-left: solid 0.1px black;
+    border-right: solid 0.1px black;
+    border-bottom: solid 0.1px black;
+    padding: 10px;
+}
+
+
+
+header > #rightHeader {
+    display: grid;
+    grid-template-rows: 33% 33% 33%;
+}
+
+header > #rightHeader > div {
+    justify-self: end;
+}

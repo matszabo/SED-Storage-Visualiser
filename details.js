@@ -75,15 +75,17 @@ function printSessionInfo(){
                 TPerElement.innerHTML += `<p class="redBg">${field} : MISSING</p>`;
             }
             else{
-                if(parseInt(SessionInfo[field] < parseInt(TPerManFields[field]))){
-                    TPerElement.innerHTML += `<p class="redBg"">${field} : ${SessionInfo[field]} (Required minimum: ${TPerManFields[field]})</p>`;
+                if(parseInt(SessionInfo[field]) < parseInt(TPerManFields[field]) & parseInt(SessionInfo[field]) != 0){
+                    TPerElement.innerHTML += `<p class="redBg" title="Required minimum: ${TPerManFields[field]}"><b>${field}</b> : ${SessionInfo[field]}</p>`;
                 }
-                TPerElement.innerHTML += `<p">${field} : ${SessionInfo[field]}</p>`;
+                else if(parseInt(SessionInfo[field]) > parseInt(TPerManFields[field]) || parseInt(SessionInfo[field]) == 0) {
+                    TPerElement.innerHTML += `<p class="grBg" title="Better than required minimum: ${TPerManFields[field]}"><b>${field}</b> : ${SessionInfo[field]}</p> `;
+                }
+                else {
+                    TPerElement.innerHTML += `<p><b>${field}</b> : ${SessionInfo[field]}</p>`;
+                }    
             }
         }
-        TPerElement.innerHTML += `<h3>Optional fields</h3><div id="TPerOptional"></div>`;
-        // Check for additional fields
-        TPerElement = document.getElementById("TPerOptional");
         for(field in SessionInfo){
             if(!(field in TPerManFields)){
                 TPerElement.innerHTML += `<p>${field} : ${SessionInfo[field]}</p>`
@@ -123,20 +125,21 @@ function checkOpalMinorVer(){
 }
 
 function printDataRemMech(){
-    if(devInfo["dataRemMechs"].length > 0){
-        let sessionHTML = document.getElementById("SessionInfo");
-        let info = `<h2>Detected Data Removal Mechanisms</h2>\n`
+    if(devInfo["dataRemMechs"].length > 0) {
+        document.getElementById("dataRemContainer").style.display = "block"
+        let HTML = document.getElementById("dataRemInfo");
+        let info = ""
         for(let mechanism of devInfo["dataRemMechs"]){
             info += `<p>${mechanism}</p>\n`
         }
-        sessionHTML.insertAdjacentHTML("afterend", info);
+        HTML.innerHTML += info
     }
 }
 
 function printDetails(){
     let identification = document.getElementById("devID");
     for(key in devInfo["driveInfo"]["Identify"]){
-        identification.innerHTML += `<p>${key}: ${devInfo["driveInfo"]["Identify"][key]}</p>`
+        identification.innerHTML += `<p><b>${key}</b>: ${devInfo["driveInfo"]["Identify"][key]}</p>`
     }
     printSessionInfo();
     if(("Opal SSC V2.00 Feature" in devInfo["driveInfo"]["Discovery 0"])){
@@ -211,7 +214,7 @@ function removeMetadata(mdIndex){
                     let entries = cursor.value;
                     delete entries[mdIndex]
                     cursor.update(entries);
-                    printMetadata();
+                    window.location.reload()
                 }
             }
         })
@@ -239,7 +242,7 @@ function saveToStore(metadata, mdIndex){
                 resolve()
             }
             else{
-                let addReq = store.add({mdIndex : metadata}, devInfo["index"]);
+                let addReq = store.add({[mdIndex] : metadata}, devInfo["index"]);
                 addReq.onsuccess = () =>{
                     console.log(`Added metadata with index ${addReq.result} successfully`);
                     resolve();
@@ -260,7 +263,6 @@ function saveToStore(metadata, mdIndex){
 function printMetadata(){
     let mdHTML = document.getElementById("metadataDiv")
     mdHTML.innerHTML = "";
-
     const transaction = db.transaction("metadata", "readwrite");
     const store = transaction.objectStore("metadata");
 
@@ -270,65 +272,65 @@ function printMetadata(){
         if(cursor){
             let entries = cursor.value;
             Object.entries(entries).forEach(([index, content]) => {
-                mdHTML.innerHTML += `<button style="display: none;" class="authorized" id="remMDBut" onclick=removeMetadata(${index})>Remove</button>`
-                if(content["notes"]) mdHTML.innerHTML += `<p>Notes: ${content["notes"]}</p>`
-                if(content["url"]) mdHTML.innerHTML += `<a href="${content["url"]}">URL: ${content["url"]}</a>`
+                let entry = `<div class="mdEntry">`
+                entry += `<div class="mdContent">`
+                if(content["name"]) entry += `<div style="display: flex; flex-direction: row;"><h4>${content["name"]}</h4>`
+                entry += `<button style="display: none;" class="authorized" id="remMDBut" onclick=removeMetadata(${index})>Remove</button></div>`
+                if(content["notes"]) entry += `<p>Notes: ${content["notes"]}</p>`
+                if(content["url"]) entry += `<p>URL: <a href="${content["url"]}">${content["url"]}</a></p>`
                 if(content["filename"]){
-                    mdHTML.innerHTML += `<p>Filename: ${content["filename"]}</p>`;
-                    mdHTML.innerHTML += `<pre>Filename: ${content["content"]}</pre>`;
+                    entry += `<p>Filename: ${content["filename"]}</p>`;
+                    entry += `<pre>${content["content"]}</pre>`;
                     
                 }
+                
+                entry += `</div></div>`
+                mdHTML.innerHTML += entry
             });
         }
     }
     request.onerror = (reason) => {
-        console.error(`Failed to fetch metadata in printMetadata() for device d${devInfo["index"]}\n${reason}`);
+        console.error(`Failed to fetch metadata for device d${devInfo["index"]}\n${reason}`);
     }
 }
 
 function saveMetadata(){
-    return new Promise((resolve, reject) => {
-        let inputFile = document.getElementById("mdFile");
-        let note = document.getElementById("mdText").value;
-        let urlContent = document.getElementById("mdUrl").value;
-        if(inputFile.files.length > 0){
-            let file = inputFile.files[0];
-            let reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = () => {
-                let data = {
-                    notes : note,
-                    url : urlContent,
-                    filename : file.name,
-                    content : reader.result
-                }
-                saveToServer(data).then((mdIndex) => {
-                    saveToStore(data, mdIndex).then(() => {
-                        printMetadata();
-                        resolve();
-                    })
-                })
-            }
-            reader.onerror = () => {
-                console.error(`Failed to read uploaded file, reason:\n${reader.result}`);
-                reject()
-            }
-        }
-        else{
+    let mdName = document.getElementById("mdName").value
+    let inputFile = document.getElementById("mdFile");
+    let note = document.getElementById("mdText").value;
+    let urlContent = document.getElementById("mdUrl").value;
+    if(inputFile.files.length > 0){
+        let file = inputFile.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
             let data = {
+                name : mdName,
                 notes : note,
                 url : urlContent,
-                filename : null,
-                content : null
+                filename : file.name,
+                content : reader.result
             }
-            saveToServer(data).then((mdIndex) => {
-                saveToStore(data, mdIndex).then(() => {
-                    printMetadata();
-                    resolve();
-                })
+            saveToServer(data).then(() => {
+                window.location.reload()
             })
-        }   
-    });
+        }
+        reader.onerror = () => {
+            alert(`Failed to read uploaded file, reason:\n${reader.result}`);
+        }
+    }
+    else{
+        let data = {
+            name : mdName,
+            notes : note,
+            url : urlContent,
+            filename : null,
+            content : null
+        }
+        saveToServer(data).then(() => {
+            window.location.reload()
+        })
+    }   
 }
 
 function fetchMetadata(){
@@ -345,6 +347,7 @@ function fetchMetadata(){
                     response.json().then((data) => {
                         let storePromises = [];
                         Object.entries(data).forEach(([mdIndex, metadata]) => {
+                            console.log(`Saving ${mdIndex}`)
                             storePromises.push(saveToStore(metadata, mdIndex)) 
                         })
                         Promise.all(storePromises).then(() => {
@@ -363,7 +366,25 @@ function fetchMetadata(){
     });
 }
 
+function showMDPrompt() {
+    let MDelement = document.getElementById("mdModal")
+    MDelement.style.display = "flex"
+    MDelement.classList.add("show")
+}
+
+function closeMDPrompt(){
+    document.getElementById("mdModal").classList.remove("show")
+}
+
+function clearMDFields() {
+    document.getElementById("mdName").value = ""
+    document.getElementById("mdText").value = ""
+    document.getElementById("mdUrl").value = ""
+    document.getElementById("mdFile").value = ""
+}
+
 getSelectedDev().then(() => {
+    clearMDFields()
     printDetails();
     printJSON();
     fetchMetadata().then(() => {
@@ -373,3 +394,12 @@ getSelectedDev().then(() => {
         checkAuthStatus();
     })
 });
+
+let legButtton = document.getElementById("legendButton")
+legButtton.addEventListener("mouseover", (event) => {
+    document.getElementById("legendDiv").style.display = "block"
+})
+
+legButtton.addEventListener("mouseout", (event) => {
+    document.getElementById("legendDiv").style.display = "none"
+})

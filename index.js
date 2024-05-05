@@ -168,7 +168,7 @@ function setLockingVersion(device){
     }
     if(parseInt(device["driveInfo"]["Discovery 0"]["Locking Feature"]["Version"]) != version) {
         let lockVerHTML = document.querySelector(`[id="Locking FeatureVersion"] .d${device["index"]}`);
-        lockVerHTML.innerHTML += ` (${version})`;
+        lockVerHTML.textContent += ` (${version})`;
     }    
 }
 
@@ -180,17 +180,17 @@ function checkPSIDpresence(device){
     let driveCell = document.querySelector(`[id="PSID featurePresent"] .d${device["index"]}`);
     if("Discovery 2" in device["driveInfo"]){
         if(findUID(device["driveInfo"]["Discovery 2"], "0x000000090001ff01")){
-            driveCell.innerHTML = "Yes"
+            driveCell.textContent = "Yes"
             device["driveInfo"]["Discovery 0"]["PSID feature"] = {}; // Add this for future looping to indicate presence of the authority
         }
         else{
             driveCell.classList.add("missingBg");
-            driveCell.innerHTML = `No`;
+            driveCell.textContent = `No`;
         }
     }
     else{
         driveCell.classList.add("orBg");
-        driveCell.innerHTML = `Unknown`;
+        driveCell.textContent = `Unknown`;
     }
 }
 
@@ -249,21 +249,21 @@ function checkMinorVersions(device){
             if(minorVerNum != versionDetected){
                 // Conflicts were found, print maximum found version and indicate discrepancy
                 if(versionDetected == -1){
-                    versionHTML.innerHTML = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
+                    versionHTML.textContent = `${minorVerNum} (${Math.max(...cluesDetected)}!)`;
                     device["SSCCompl"]["isCompliant"] = false;
                     versionHTML.title += "\nSSC Minor Version conflicting:\n";
                     versionHTML.title += textHint;
                 }
                 // Detected version clear, but different from reported version
                 else {
-                    versionHTML.innerHTML = `${minorVerNum} (${versionDetected})`;
+                    versionHTML.textContent = `${minorVerNum} (${versionDetected})`;
                     versionHTML.title += `\nMinor version could be ${versionDetected} based on following hints:\n`
                     versionHTML.title += textHint
                 }
             }
         }
         else{
-            versionHTML.innerHTML = `${minorVerNum} (unknown)`;
+            versionHTML.textContent = `${minorVerNum} (unknown)`;
             versionHTML.title += `\nVersion couldn't be properly guessed because Discovery 2 is missing in the device's analysis`
         } 
     }
@@ -360,7 +360,7 @@ function populateDevList(){
         const transaction = db.transaction("drives", "readonly");
         const store = transaction.objectStore("drives");
         let devList = document.getElementById("devList");
-        devList.innerHTML = `<input type="checkbox" class="devCBox" name="allDevs" checked="true" id="allDevsCbox">All<br>`;
+        devList.innerHTML = `<div class="devItem"><input type="checkbox" class="devCBox" name="allDevs" checked="true" id="allDevsCbox">All</div>`;
     
         const request = store.openCursor();
         request.onsuccess = ((event) => {
@@ -368,8 +368,10 @@ function populateDevList(){
             
             if(cursor){
                 let device = cursor.value;
-                devList.innerHTML += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
-                devList.innerHTML += `<button class="authorized" id="d${device["index"]}" style="display: none;" onclick=removeDevice(${device["index"]})>X</button><br>`
+                let devItem = "<div class='devItem'>"
+                devItem += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
+                devItem += `<button class="authorized" id="d${device["index"]}" style="display: none;" onclick=removeDevice(${device["index"]})>X</button><br>`
+                devList.innerHTML += `${devItem}</div>`
                 cursor.continue();
             }
             else{
@@ -584,7 +586,7 @@ async function prepareDrives(filenames){
     await Promise.all(responses);
     let storedDevs = await getAllDevIDs()
     let storedIndexes = []
-    for(let dev of storedDevs) {
+    for(let dev in storedDevs) {
         storedIndexes.push(parseInt(/.*d(\d+)$/.exec(dev)[1]))
     }
     await Promise.all(deleteMissingDrives(fetchedIndexes, storedIndexes)) 
@@ -602,7 +604,7 @@ function getAllDevIDs(){
         indexCursor.onsuccess = ((event) => {
             const cursor = event.target.result;
             if(cursor){
-                indexes.push(`d${cursor.value["index"]}`)
+                indexes[`d${cursor.value["index"]}`] = cursor.value["driveInfo"]["Identify"]["Model number"]
                 cursor.continue();
             }
             else {
@@ -619,21 +621,21 @@ function getAllDevIDs(){
 async function generateTbody(tableName, featureSet){
     let tableBody = document.getElementById(tableName);
     tableBody.innerHTML = "";
+    let indexes = await getAllDevIDs();
     for(const fsetName in featureSet){
         let attributes = featureSet[fsetName];
         let item = ""; //This is needed because items added because innerHTML will "close themselves" after each call, so we need a buffer
         item += `<tr class="fsetRow ${fsetName}" id="${fsetName}"><td class="darkCol">${fsetName}</td>`;
 
         // Print device names afterwards
-        let indexes = await getAllDevIDs();
-        for(let index of indexes) {
-            item += `<td class="${index} driveHeader">${index}</td>`;
+        for(let index in indexes) {
+            item += `<td class="${index} driveHeader" title="${indexes[index]}">${index}</td>`;
         }
         tableBody.innerHTML += `${item}</tr>`;
         // This is for specific feature sets like PSID, which have no level 0 discovery table, but we need them visualised too
         if(attributes.length == 0){
             item = `<tr class="${fsetName}" id="${fsetName}Present"><td>Present</td>`;
-            for(let index of indexes){
+            for(let index in indexes){
                 item += `<td class="${index}"></td>`;
             }
             tableBody.innerHTML += `${item}</tr>`;
@@ -648,7 +650,7 @@ async function generateTbody(tableName, featureSet){
             }
             // we need to combine fset name and attr value, because f.e. version could cause duplicate IDs
             item += `<tr class="${fsetName}" id="${fsetName}${attribute}"><td>${attribute}</td>`;
-            for(let index of indexes){
+            for(let index in indexes){
                 item += `<td class="${index}"></td>`;
             }
             tableBody.innerHTML += `${item}</tr>`;
@@ -939,3 +941,62 @@ document.getElementById("loginPrompt").addEventListener('submit', (event) => {
     event.preventDefault();
     loginFromPrompt()
 })
+
+let legButtton = document.getElementById("legendButton")
+legButtton.addEventListener("mouseover", (event) => {
+    document.getElementById("legendDiv").style.display = "block"
+})
+
+legButtton.addEventListener("mouseout", (event) => {
+    document.getElementById("legendDiv").style.display = "none"
+})
+
+document.getElementById("devButton").addEventListener("click", (event) => {
+    let devContainer = document.getElementById("devsSelection")
+    let devDisplay = getComputedStyle(devContainer)["display"]
+    let filterContainer = document.getElementById("filterSelection")
+    let filterDisplay = getComputedStyle(filterContainer)["display"]
+
+    if(devDisplay == "none") {
+        if(filterDisplay == "block") {
+            filterContainer.style.display = "none"
+        }
+
+        devContainer.style.display = "block"
+    }
+    else {
+        devContainer.style.display = "none"
+    }
+
+    
+})
+
+document.getElementById("filterButton").addEventListener("click", (event) => {
+    let filterContainer = document.getElementById("filterSelection")
+    let filterDisplay = getComputedStyle(filterContainer)["display"]
+    let devContainer = document.getElementById("devsSelection")
+    let devDisplay = getComputedStyle(devContainer)["display"]
+
+    if(filterDisplay == "none") {
+        if(devDisplay == "block") {
+            devContainer.style.display = "none"
+        }
+
+        filterContainer.style.display = "block"
+    }
+    else {
+        filterContainer.style.display = "none"
+    }
+
+})
+
+function showItem(elementName) {
+    let element = document.getElementById(elementName)
+    let display = getComputedStyle(element)["display"]
+    if(display == "none") {
+        element.style.display = "block"
+    }
+    else {
+        element.style.display = "none"
+    }
+}

@@ -6,14 +6,30 @@
         <link rel="stylesheet" href="mystyle.css"/>
     </head>
     <body>
+
+    <header>
+        <div id="leftHeader">
+            <h1>SED Storage Visualiser</h1>
+            <p>This site collects information about drives compliant with the TCG Storage Core standard, especially
+                with individual SSCs. Information shown is gathered using <a class="aHighlight" href="https://github.com/crocs-muni/opal-toolset">Opal toolset.</a>
+                The design for this tool was inspired by <a class="aHighlight" href="https://www.fi.muni.cz/~xsvenda/jcalgtest/table.html">JCAlgTest</a>
+            </p>
+            <p>
+                This was created as a part of a diploma thesis, with code being present <a class="aHighlight" href="https://github.com/matszabo/TCG-Storage-Visuallizer">on GitHub.</a>
+            </p>
+        </div>
+        <div id="rightHeader">
+            <div id="loginCell">
+                <button id="loginBut" onclick=showprompt()>Login</button>
+                <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+            </div>
+            <div></div>
+            <div id="debuggingCell">
+                <button onclick=refetchhDB()>(debugging) Clear local database</button>
+            </div>
+        </div>
+    </header>
         
-    
-    <h1>Opal Logger</h1>
-    <p>This site aims to collect information about capabilities of allegedly Opal compliant disks.<br>
-    Information is gathered using <a href="https://github.com/crocs-muni/opal-toolset">a tool</a></p>
-    <button onclick=refetchhDB()>(debugging) Clear local database</button>
-    <button id="loginBut" onclick=showprompt()>Login</button>
-    <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
     <form class="modal" id="loginPrompt">
         <div class="modal-content">
             <h3>Login</h3>
@@ -26,93 +42,130 @@
             <button onclick=loginFromPrompt()>Login</button>
         </div>
     </form>
-    <h2>List of devices</h2>
-    <input type="search" id="searchDev" onblur=filterDevs()>
-    <div id="devList"></div>
+    
+    <div class="table-selections">
+        <button id="devButton">Devices</button>
+        <button id="filterButton">Filter</button>
+        <button id="legendButton">Legend</button>
+    </div>
 
-    <div name="addDevPrompt" style="display: none;" class="authorized">
-        <h4>Add device:</h4>
-        <input type="file" id="devFile"><br>
-        <button onclick=addDevice()>Submit</button>
+    <div id="legendDiv">
+        <h2>Legend</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cell type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="cellType">number</td>
+                    <td>The value should be compliant with selected SSC</td>
+                </tr>
+                <tr>
+                    <td class="redBg cellType">number/Missing</td>
+                    <td>The mandatory value doesn't match the required value by the SSC or wasn't found.</td>
+                </tr>
+                <tr>
+                    <td class="redBg cellType" style="background-color: lightcoral">number/Missing</td>
+                    <td>The optional value doesn't match the required value by the SSC or wasn't found.</td>
+                </tr>
+                <tr>
+                    <td class="cellType">number (number)</td>
+                    <td>The reported value may not be correct based on found clues. The "actual" value in brackets is suggested by this tool.</td>
+                </tr>
+                <tr>
+                    <td class="orBg cellType">Unknown</td>
+                    <td>Field with said value wasn't found because the entire category of data is missing (f.e. Discovery 1 or 2 missing)</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     
-    <h2>Filter</h2>
-    <div class="tiles">
-        <div class="tile">
-            <div id="SSCbuttons">
-                <h2>SSCs</h2>
-            </div>
-            <input type="file" class="authorized" id="newSSCfile" style="display: none;" onchange=uploadSSC()></input>
-        </div>
-        <div class="tile">
-            <div class="tiles">
-                <h2>Feature sets</h2>
-                <div class="tile">
-                    <h3>Mandatory</h3>
-                    <div id="fSetManList"></div>                    
-                </div>
-                <div class="tile">
-                    <h3>Optional</h3>
-                    <div id="fSetOptList"></div>                    
-                </div>
+    <div id="selectionDiv">
+
+        <div id="devsSelection">
+            <h2 class="devItem">List of devices</h2>
+            <input type="search" id="searchDev" onblur=filterDevs()>
+            <div id="devList"></div>
+            <div name="addDevPrompt" style="display: none;" class="authorized">
+                <h4>Add device:</h4>
+                <input type="file" id="devFile"><br>
+                <button onclick=addDevice() id="add-device-button">Submit</button>
             </div>
         </div>
-        <div class="tile">
+
+
+        <div id="filterSelection">
             <div class="tiles">
-                <h2>Feature sets supported by drives</h2>
                 <div class="tile">
-                    <h3>Mandatory</h3>
-                    <div id="fSetManSupList"></div>                    
+                    <h2>SSCs</h2>
+                    <button id="showSSCButton" onclick="showItem('SSCbuttons')">Select SSC</button>
+                    <div class="dropdownItems" id="SSCbuttons">
+                        <input type="file" class="authorized" id="newSSCfile" style="display: none;" onchange=uploadSSC()></input>
+                    </div>
+                    
                 </div>
                 <div class="tile">
-                    <h3>Optional</h3>
-                    <div id="fSetOptSupList"></div>                    
+                    <h2>Feature sets</h2>
+                    <div class="verticalTiles">
+                        <div class="inner-tile">
+                            <h3>Mandatory</h3>
+                            <button id="showManButton" onclick="showItem('fSetManList')">Show</button>
+                            <div class="dropdownItems" id="fSetManList"></div>                    
+                        </div>
+                        <div class="inner-tile">
+                            <h3>Optional</h3>
+                            <button id="showOptButton" onclick="showItem('fSetOptList')">Show</button>
+                            <div class="dropdownItems" id="fSetOptList"></div>                    
+                        </div>
+                    </div>
+                </div>
+                <div class="tile">
+                    <h2>Feature sets supported by drives</h2>
+                    <div class="verticalTiles">
+                        <div class="inner-tile">
+                            <h3>Mandatory</h3>
+                            <button id="manSuppButton" onclick="showItem('fSetManSupList')">Show</button>
+                            <div class="dropdownItems" id="fSetManSupList"></div>                    
+                        </div>
+                        <div class="inner-tile">
+                            <h3>Optional</h3>
+                            <button id="optSuppButton" onclick="showItem('fSetOptSupList')">Show</button>
+                            <div class="dropdownItems" id="fSetOptSupList"></div>                    
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <h2>Legend</h2>
-    <table>
+
+    <table class="mainTab" id="manTab">
         <thead>
             <tr>
-                <th>Cell type</th>
-                <th>Description</th>
+                <td></td>
+                <td>
+                    <h3>Mandatory</h3>
+                </td>
+                <td></td>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td class="cellType">number</td>
-                <td>The value should be compliant with selected SSC</td>
-            </tr>
-            <tr>
-                <td class="redBg cellType">number/Missing</td>
-                <td>The mandatory value doesn't match the required value by the SSC or wasn't found.</td>
-            </tr>
-            <tr>
-                <td class="redBg cellType" style="background-color: lightcoral">number/Missing</td>
-                <td>The optional value doesn't match the required value by the SSC or wasn't found.</td>
-            </tr>
-            <tr>
-                <td class="cellType">number (number)</td>
-                <td>The reported value may not be correct based on found clues. The "actual" value in brackets is suggested by this tool.</td>
-            </tr>
-            <tr>
-                <td class="orBg cellType">Unknown</td>
-                <td>Field with said value wasn't found because the entire category of data is missing (f.e. Discovery 1 or 2 missing)</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h3>Mandatory</h3>
-    <table class="mainTab" id="manTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
         <tbody id = "manFeatures">
         </tbody>
     </table>
 
-    <h3>Optional</h3>
-
-    <table class="mainTab" id="optTab" style="white-space:nowrap" width="600px" cellspacing="2" cellpadding="4">
+    <table class="mainTab" id="optTab">
+        <thead>
+            <tr>
+                <td></td>
+                <td>
+                    <h3>Optional</h3>
+                </td>
+                <td></td>
+            </tr>
+        </thead>
         <tbody id = "optFeatures">
         </tbody>
     </table>

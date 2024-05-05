@@ -3,12 +3,10 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
     <head>
-        <link rel="stylesheet" href="mystyle.css"/>
+        <link rel="stylesheet" href="details.css"/>
     </head>
     <body>
-
-        <button id="loginBut" onclick=showprompt()>Login</button>
-        <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+  
         <div class="modal" id="loginPrompt">
             <div class="modal-content">
                 <h3>Login</h3>
@@ -22,26 +20,93 @@
             </div>
         </div>
 
-        <h1>Device details</h1>
+        <header>
+            <div>
+                <button id="legendButton">Legend</button>
+                <div id="legendDiv">
+                    <h2>Legend</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cell type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cellType">number</td>
+                                <td>The value should be compliant with selected SSC</td>
+                            </tr>
+                            <tr>
+                                <td class="cellType grBg">number</td>
+                                <td>The value is better than required minimum by the SSC</td>
+                            </tr>
+                            <tr>
+                                <td class="redBg cellType">number/Missing</td>
+                                <td>The mandatory value doesn't match the required value by the SSC or wasn't found.</td>
+                            </tr>
+                            <tr>
+                                <td class="redBg cellType" style="background-color: lightcoral">number/Missing</td>
+                                <td>The optional value doesn't match the required value by the SSC or wasn't found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h1>Details</h1>
+            </div>
+            <div id="rightHeader">
+                <div>
+                    <button id="loginBut" onclick=showprompt()>Login</button>
+                    <button id="logoutBut" class="authorized" style="display: none;" onclick=logout()>Logout</button>
+                </div>
+                <div>
+                </div>
+                <div></div>
+            </div>
+        </header>
 
-        <h2>Device Identification</h2>
-        <div id="devID"></div>
+        
+        <div class="infoTab">
+            <h2>Device Identification</h2>
+            <div class="infoContent" id="devID"></div>
+        </div>
+        
+        <div class="infoTab">
+            <h2>Session Manager info</h2>
+            <div class="infoContent" id="SessionInfo"></div>
+        </div>
 
-        <h2>Session Manager info</h2>
-        <div id="SessionInfo"></div>
+        <div id="dataRemContainer" class="infoTab">
+            <h2>Data removal mechanisms</h2>
+            <div class="infoContent" id="dataRemInfo"></div>
+        </div>
+        
 
         <h2>Stored metadata</h2>
-        <h3 style="display: none;" class="authorized">Add metadata:</h3>
-        <div style="display: none;" class="authorized" id="metadataInfo">
-            Notes: <input type="text" name="" id="mdText"><br>
-            URL to metadata: <input type="text" name="" id="mdUrl"><br>
-            <input type="file" id="mdFile"><br>
-            <button type="submit" onclick=saveMetadata()>Upload metadata</button>
+        <div style="display: none;" class="authorized" id="mdHeader">
+            <button  onclick="showMDPrompt()">Add</button>
         </div>
+        <div class="authorized modal" id="mdModal">
+            <div class="modal-content" id="metadataInfo">
+                <h4>Add your metadata</h4> <button class="closeBtn" onclick="closeMDPrompt()">X</button>
+                <p>Name</p>
+                <input type="text" id="mdName">
+                <p>Notes</p>
+                <input type="text" id="mdText">
+                <p>URL</p>
+                <input type="text" name="" id="mdUrl" placeholder="www.storage.com/rngtesting.json"><br>
+                <p>File</p>
+                <input type="file" id="mdFile"><br>
+                <button class="submitButton" type="submit" onclick=saveMetadata()>Upload</button>
+            </div>
+        </div>
+        
         
         <div id="metadataDiv"></div>
 
-        <h2>Raw JSON</h2>
+        <h2 id="JSONh2">Raw JSON</h2>
         <pre id="JSONdump"></pre>
 
     </body>
