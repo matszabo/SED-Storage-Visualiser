@@ -22,6 +22,12 @@ admin_name = os.environ.get("ADMIN_NAME")
 salt = os.environ.get("SALT").encode('utf-8')
 pwd = os.environ.get("PASSWORD").encode('utf-8')
 
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+)
+
 def isDrivePresent(serialNumber: str, firmwareVersion: str):
     filesSaved = os.listdir("./outputs")
     for fileName in filesSaved:
@@ -248,3 +254,6 @@ def outputDelete():
                 return 'Failed to remove drive', 400
         else :
             return 'Provided drive index is not valid', 400
+        
+if __name__ == "__main__":
+    app.run('0.0.0.0', port=8000)
