@@ -158,7 +158,7 @@ function printJSON(){
 function saveToServer(mdJSON){
     return new Promise((resolve, reject) => {
         fetch(
-            `${window.location.origin}/metadata`,
+            `/metadata`,
             {
                 method : "POST", 
                 headers: {"Content-Type": "application/json"},
@@ -182,7 +182,7 @@ function saveToServer(mdJSON){
 function removeFromServer(mdIndex){
     return new Promise((resolve, reject) => {
         fetch(
-            `${window.location.origin}/metadata`,
+            `/metadata`,
             {
                 method : "POST", 
                 headers: {"Content-Type": "application/json"},
@@ -337,10 +337,10 @@ function fetchMetadata(){
     return new Promise((resolve, reject) => {
         // Here a try-catch blocked is used instead of a promise catch because fetch() rejects only due to a type error, not due to a 400
         try {
-            fetch(`./metadata/drive${devInfo["index"]}.json`)
+            fetch(`/Metadata/drive${devInfo["index"]}.json`)
             .then((response) => {
                 if(!response.ok){
-                    console.error(`Failed to fetch ./metadata/drive${devInfo["index"]}.json`)
+                    console.error(`Failed to fetch drive${devInfo["index"]}.json`)
                     resolve();
                 }
                 else{

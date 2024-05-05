@@ -1,6 +1,6 @@
 function checkToken(){
     return new Promise((resolve, reject) => {
-        fetch(`./token`, {method : "POST"})
+        fetch(`/token`, {method : "POST"})
         .then((response) => {
             if(!response.ok) {
                 reject()
@@ -29,7 +29,7 @@ function showAuthorizedContent(){
 function login(username, password){
     let headers = new Headers();
     headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
-    fetch(`./login`, {
+    fetch(`/login`, {
         method:"POST",
         headers: headers})
     .then((response) => {
@@ -46,7 +46,7 @@ function login(username, password){
 }
 
 function logout(){
-    fetch(`./logout`, {
+    fetch(`/logout`, {
         method:"POST"})
     .then((response) => {
         if(response.status != 200){

@@ -120,7 +120,7 @@ function uploadSSC() {
         let reader = new FileReader();
         reader.readAsText(file);
         reader.onload = (file) => {
-            fetch(`${window.location.origin}/SSCs`,
+            fetch(`/SSCs`,
                 {
                     method : "POST",
                     headers: {"Content-Type": "application/json"},
@@ -369,7 +369,7 @@ function populateDevList(){
             if(cursor){
                 let device = cursor.value;
                 let devItem = "<div class='devItem'>"
-                devItem += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
+                devItem += `<input class="devCBox" id="d${device["index"]}" type="checkbox" checked="true"></input><a target="_blank" class="devRef" id="d${device["index"]}" href="HTML/details.html?dev=${device["index"]}">d${device["index"]} : ${device["driveInfo"]["Identify"]["Model number"]}, Firmware version: ${device["driveInfo"]["Identify"]["Firmware version"]}</a>`;
                 devItem += `<button class="authorized" id="d${device["index"]}" style="display: none;" onclick=removeDevice(${device["index"]})>X</button><br>`
                 devList.innerHTML += `${devItem}</div>`
                 cursor.continue();
@@ -580,7 +580,7 @@ async function prepareDrives(filenames){
     });
     let responses = []; // A promise array
     devFiles.forEach((filename) => {
-        responses.push(fetchDrive(`./outputs/${filename}`));
+        responses.push(fetchDrive(`Outputs/${filename}`));
         numofDevs++
     });
     await Promise.all(responses);
@@ -765,7 +765,7 @@ function addDevice(){
         reader.readAsText(file);
         reader.onload = () => {
             fetch(
-                `${window.location.origin}/outputs`,
+                `/outputs`,
                 {
                     method : "POST", 
                     headers: {"Content-Type": "application/json"},
@@ -810,7 +810,7 @@ function removeDevice(index){
     let confirmation = confirm(`Are you sure you want to remove drive d${index}?`)
     if(confirmation) {
         fetch(
-            `${window.location.origin}/outputs`,
+            `/outputs`,
             {
                 method : "DELETE", 
                 headers: {"Content-Type": "application/json"},
@@ -850,7 +850,7 @@ async function fetchDevices(){
     let SSCjson;
     let i;
     for(i in SSCfilenames){
-        let response = await fetch(`./SSCs/${SSCfilenames[i]}`);
+        let response = await fetch(`SSCs/${SSCfilenames[i]}`);
         if(!response.ok){
             console.error(`Failed to fetch SSC from: ./SSCs/${SSCfilenames[i]}`)
         }

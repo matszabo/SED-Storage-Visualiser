@@ -29,10 +29,10 @@ app.config.update(
 )
 
 def isDrivePresent(serialNumber: str, firmwareVersion: str):
-    filesSaved = os.listdir("./outputs")
+    filesSaved = os.listdir("./Public/Outputs")
     for fileName in filesSaved:
         try:
-            with open("./outputs/" + fileName, "r") as fd:
+            with open("./Public/Outputs/" + fileName, "r") as fd:
                 data = json.load(fd)
                 if(serialNumber == data["Identify"]["Serial number"] and firmwareVersion == data["Identify"]["Firmware version"]):
                     return True
@@ -41,25 +41,25 @@ def isDrivePresent(serialNumber: str, firmwareVersion: str):
     return False
 
 def saveJSON(clientJSON):
-    count = len(os.listdir("./outputs"))
-    lastFile = sorted(os.listdir("./outputs"))[count - 1]
+    count = len(os.listdir("./Public/Outputs"))
+    lastFile = sorted(os.listdir("./Public/Outputs"))[count - 1]
     newIndex = int(re.search('(\d+)\.json', lastFile).group(1)) + 1
-    with open(f"./outputs/drive{newIndex}.json", "x") as fd:
+    with open(f"./Public/Outputs/drive{newIndex}.json", "x") as fd:
         json.dump(obj=clientJSON, fp=fd, ensure_ascii=True, indent=4)
 
 def saveMetadata(clientJSON : object):
-    if(not(f"drive{clientJSON['index']}.json" in os.listdir("./metadata"))):
-        with open(f"./metadata/drive{clientJSON['index']}.json", "x") as fd:
+    if(not(f"drive{clientJSON['index']}.json" in os.listdir("./Public/Metadata"))):
+        with open(f"./Public/Metadata/drive{clientJSON['index']}.json", "x") as fd:
             pass
     data = {}
-    with open(f"./metadata/drive{clientJSON['index']}.json", "r+") as fd:
+    with open(f"./Public/Metadata/drive{clientJSON['index']}.json", "r+") as fd:
         # Strore read data and clear the file so that we can overwrite it
         if(len(fd.readlines()) == 0):
             mdIndex = "0"
             json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=True, indent=4)
             return mdIndex
         else:
-            shutil.copy(f"./metadata/drive{clientJSON['index']}.json", f"./metadata/drive{clientJSON['index']}.tmp")
+            shutil.copy(f"./Public/Metadata/drive{clientJSON['index']}.json", f"./Public/Metadata/drive{clientJSON['index']}.tmp")
             try:
                 fd.seek(0) # to account for the readlines()
                 data = json.load(fd)
@@ -74,32 +74,32 @@ def saveMetadata(clientJSON : object):
                     mdIndex = f"{mdIndex}"
                     data[mdIndex] = clientJSON["metadata"]
                     json.dump(obj=data, fp=fd, ensure_ascii=True, indent=4)
-                    os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+                    os.remove(f"./Public/Metadata/drive{clientJSON['index']}.tmp")
                     return mdIndex
                 else:
                     fd.truncate(0)
                     mdIndex = "0"
                     json.dump(obj={mdIndex : clientJSON["metadata"]}, fp=fd, ensure_ascii=True, indent=4)
-                    os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+                    os.remove(f"./Public/Metadata/drive{clientJSON['index']}.tmp")
                     return mdIndex
             except Exception as error:
                 print(error)
-                os.remove(f"./metadata/drive{clientJSON['index']}.json")
-                shutil.copy(f"./metadata/drive{clientJSON['index']}.tmp", f"./metadata/drive{clientJSON['index']}.json")
-                os.remove(f"./metadata/drive{clientJSON['index']}.tmp")
+                os.remove(f"./Public/Metadata/drive{clientJSON['index']}.json")
+                shutil.copy(f"./Public/Metadata/drive{clientJSON['index']}.tmp", f"./Public/Metadata/drive{clientJSON['index']}.json")
+                os.remove(f"./Public/Metadata/drive{clientJSON['index']}.tmp")
             
 
 def removeMetadata(index, mdIndex):
-    if(f"drive{index}.json" in os.listdir("./metadata")):
+    if(f"drive{index}.json" in os.listdir("./Public/Metadata")):
         data = {}
-        with open(f"./metadata/drive{index}.json", "r+") as fd:
+        with open(f"./Public/Metadata/drive{index}.json", "r+") as fd:
             # Strore read data and clear the file so that we can overwrite it
             data = json.load(fd)
             if(not mdIndex in data):
                 print(f"Metadata with index {mdIndex} not found")
                 return
             fd.truncate(0)
-        with open(f"./metadata/drive{index}.json", "r+") as fd:
+        with open(f"./Public/Metadata/drive{index}.json", "r+") as fd:
             del data[mdIndex]
             json.dump(obj=data, fp=fd, ensure_ascii=True, indent=4)
     else:
@@ -108,15 +108,15 @@ def removeMetadata(index, mdIndex):
         print("File to be removed doesn't exist")
 
 def saveSSC(SSC):
-    if(f"{SSC['SSC name']}.json" in os.listdir("./SSCs")):
+    if(f"{SSC['SSC name']}.json" in os.listdir("./Public/SSCs")):
         print(f"{SSC['SSC name']} already exists in SSCs folder")
     else:
-        with open(f"./SSCs/{SSC['SSC name']}.json", "x") as fd:
+        with open(f"./Public/SSCs/{SSC['SSC name']}.json", "x") as fd:
             json.dump(obj=SSC, fp=fd, ensure_ascii=True, indent=4)
 
 def removeDrive(index):
     try:
-        os.remove(f"{absRootPath}/outputs/drive{index}.json")
+        os.remove(f"{absRootPath}/Public/Outputs/drive{index}.json")
         return True
     except OSError as error:
         print(error)
@@ -139,15 +139,15 @@ def isInt(object):
 # Default routing of files
 @app.get('/')
 def defaultRoute():
-    return send_from_directory("./", "index.html")
+    return send_from_directory("./Public/HTML/", "index.html")
 
 @app.get('/<path:path>')
 def returnFile(path):
-    return send_from_directory("./", path)
+    return send_from_directory("./Public/", path)
 
 @app.get('/names')
 def fetchFilenames():
-    savedFiles = os.listdir("./outputs")
+    savedFiles = os.listdir("./Public/Outputs")
     returnString = ""
     for file in savedFiles: # ",".join()
         returnString += file + ","
@@ -156,7 +156,7 @@ def fetchFilenames():
 
 @app.get('/SSCs')
 def fetchSSCs():
-    savedFiles = os.listdir("./SSCs")
+    savedFiles = os.listdir("./Public/SSCs")
     returnString = ""
     for file in savedFiles: # ",".join()
         returnString += file + ","
