@@ -65,6 +65,9 @@ function checkAuthStatus(){
     checkToken().then(() => {
         showAuthorizedContent()
     })
+    .catch(() => {
+        // Ignore as not to fill console with error messages
+    })
 }
 
 function loginFromPrompt(){
