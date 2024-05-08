@@ -1,15 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
-/**
-    TODO List:
-    - change handling of number of devs - count only successfully stored
-    - fetchDevices - check connection
-    - change naming of indexCursor - maybe change entire name of index property?
-    - add styling
-    - add secure messaging check
-    - consider size of all possible SSCs (is LocalStorage enough?)
-*/
-
 var db;
 var numofDevs = 0;
 var selectedSSC = "";
@@ -31,25 +21,20 @@ function filterPromise(index) {
         request.onsuccess = ((event) => {
             let device = event.target.result
             if(filtrationCriteria.supportedFsets.length != 0) {
-                //if(index == )
                 // if not all fsets from SSC aray in drive then hide by drive, also check for currently selected SSC
                 if(!(filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set)) &&
                 Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))) {
-                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\nSupported Fset present: ${filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set))}`)
                     resolve(false)
                 }
                 else {
-                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\nSupported Fset present: ${filtrationCriteria.supportedFsets.every(set => device["SSCCompl"]["foundFsets"].includes(set))}`)
                     resolve(true)
                 }
             }
             else {
                 if(!(Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
-                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\n`)
                     resolve(false)
                 }
                 else {
-                    //console.log(`d${device["index"]} :\nSSC compliant: ${Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC))}\n`)
                     resolve(true)
                 }
             }
@@ -352,7 +337,6 @@ function filterBySupportedSSC(checkbox){
         filtrationCriteria.supportedFsets.splice(index, 1)
     }
     filterByCriteria()
-    // open db
 }
 
 function populateDevList(){
@@ -533,7 +517,7 @@ function storeDrive(drive, indexNum){
         const transaction = db.transaction("drives", "readwrite");
         const store = transaction.objectStore("drives");
 
-        let putReq = store.put({index : indexNum, driveInfo : drive, SSCCompl : {isCompliant : true, complBreaches : [], OpalMinorVerConflicts : []}});
+        let putReq = store.put({index : indexNum, driveInfo : drive, SSCCompl : {isCompliant : true, complBreaches : []}, timeModified : Date.now()});
         putReq.onsuccess = ((event) => {
             resolve();
         });
@@ -557,39 +541,76 @@ async function fetchDrive(filePath){
     return storeDrive(driveJSON, index);
 }
 
-function deleteMissingDrives(fetchedIndexes, storedIndexes){
+function deleteMissingDrives(serverIndexes, storedIndexes){
     let removalPromises = []
     
     for(let index of storedIndexes){
-        if(fetchedIndexes.indexOf(index) < 0) {
+        if(serverIndexes.indexOf(index) < 0) {
             removalPromises.push(removeDriveFromStorage(index))
         }
     }
     return removalPromises
 }
 
+function getDrivesForUpdate(filelist) {
+    // deep copy of object: https://developer.mozilla.org/en-US/docs/Glossary/Deep_copy
+    let returnList = JSON.parse(JSON.stringify(filelist))
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("drives", "readonly");
+        const store = transaction.objectStore("drives");
+
+        const request = store.openCursor()
+        request.onsuccess = ((event) => {
+            const cursor = event.target.result
+            if(cursor) {
+                // This is done to conform with admin's way of numbering devices (at least to digits were always present)
+                let index = cursor.key.toLocaleString("en-US", {minimumIntegerDigits: 2})
+                let filename = `drive${index}.json`
+                
+                if(filename in filelist) {
+                    // client creates local UTC timestamp after receiving file, so it can be newer than server's file timestamp
+                    if(cursor.value["timeModified"] >= filelist[filename]) {
+                        delete returnList[filename]
+                    }
+                }
+                cursor.continue()
+            }
+            else {
+                resolve(returnList)
+            }
+        })
+        request.onerror = ((reason) => {
+            alert(reason)
+            reject(returnList)
+        })
+    })
+}
+
 /* Loops through all drive filenames and calls fetchDrive to store them
  * This may look weird, but it was made to allow synchronization of various async functions
  */
 async function prepareDrives(filenames){
-    let devFiles = [];
-    let fetchedIndexes = []
-    filenames.split(',').forEach((filename) => {
-        devFiles.push(filename);
-        fetchedIndexes.push(parseInt(/.*drive(\d+)\.json$/.exec(filename)[1]))
-    });
-    let responses = []; // A promise array
-    devFiles.forEach((filename) => {
-        responses.push(fetchDrive(`Outputs/${filename}`));
+    let drivesToFetch = [];
+    let serverIndexes = []
+
+    for(let filename in filenames) {
+        serverIndexes.push(parseInt(/.*drive(\d+)\.json$/.exec(filename)[1]))
         numofDevs++
-    });
+    }
+
+    drivesToFetch = await getDrivesForUpdate(filenames)
+    let responses = []; // A promise array
+    for(let filename in drivesToFetch) {
+        responses.push(fetchDrive(`Outputs/${filename}`));
+    }
     await Promise.all(responses);
+
     let storedDevs = await getAllDevIDs()
     let storedIndexes = []
     for(let dev in storedDevs) {
         storedIndexes.push(parseInt(/.*d(\d+)$/.exec(dev)[1]))
     }
-    await Promise.all(deleteMissingDrives(fetchedIndexes, storedIndexes)) 
+    await Promise.all(deleteMissingDrives(serverIndexes, storedIndexes)) 
     return;
 }
 
@@ -723,7 +744,7 @@ function populateTables(){
             }
         });
         request.onerror = ((reason) => {
-            console.error(`Failed to open drives Object Store in fetchDevices()`);
+            console.error(reason);
             resolve();
         });
     });
@@ -835,11 +856,11 @@ function removeDevice(index){
 }
 
 async function fetchDevices(){
-    let files = await fetch(`./names`);
-    if(!files.ok){
-        console.error("Failed to fetch names of present drives");
+    let filenames = await fetch(`./names`);
+    if(!filenames.ok){
+        alert("Failed to fetch names of present drives, check your connection");
     }
-    let filenames = await files.text();
+    filenames = await filenames.json()
     let SSCfiles = await fetch(`./SSCs`);
     if(!SSCfiles.ok){
         console.error("Failed to fetch list of present SSCs")

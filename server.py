@@ -7,7 +7,7 @@
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
 from dotenv import load_dotenv
-import bcrypt, os, json, shutil, re
+import bcrypt, os, json, shutil, re, time
 
 app = Flask(__name__)
 
@@ -148,11 +148,12 @@ def returnFile(path):
 @app.get('/names')
 def fetchFilenames():
     savedFiles = os.listdir("./Public/Outputs")
-    returnString = ""
-    for file in savedFiles: # ",".join()
-        returnString += file + ","
-    returnString = returnString[:-1] # remove last ,
-    return returnString
+    returnJSON = {}
+    for file in savedFiles:
+        # Python returns timestamp seconds and float, so we need to convert it for JS
+        returnJSON[file] = int(os.path.getmtime(f"./Public/Outputs/{file}")) * 1000
+        print(file, returnJSON[file])
+    return returnJSON
 
 @app.get('/SSCs')
 def fetchSSCs():
