@@ -7,7 +7,7 @@
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
 from dotenv import load_dotenv
-import bcrypt, os, json, shutil, re, time
+import bcrypt, os, json, shutil, re
 
 app = Flask(__name__)
 
@@ -15,18 +15,19 @@ absRootPath = os.path.dirname(os.path.abspath(__file__))
 
 app.permanent_session_lifetime = timedelta(hours=8)
 
-load_dotenv(f"{absRootPath}.env")
+load_dotenv("./.env")
 
 app.secret_key = os.environ.get("SECRET_KEY")
 admin_name = os.environ.get("ADMIN_NAME")
-salt = os.environ.get("SALT").encode('utf-8')
 pwd = os.environ.get("PASSWORD").encode('utf-8')
 
+# https://flask.palletsprojects.com/en/3.0.x/web-security/
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
+
 
 def isDrivePresent(serialNumber: str, firmwareVersion: str):
     filesSaved = os.listdir("./Public/Outputs")
@@ -136,6 +137,14 @@ def isInt(object):
         return False
 
 
+@app.after_request
+def setHeaders(response):
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+
+    response.headers['Content-Security-Policy'] = "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    return response
 # Default routing of files
 @app.get('/')
 def defaultRoute():
@@ -152,7 +161,6 @@ def fetchFilenames():
     for file in savedFiles:
         # Python returns timestamp seconds and float, so we need to convert it for JS
         returnJSON[file] = int(os.path.getmtime(f"./Public/Outputs/{file}")) * 1000
-        print(file, returnJSON[file])
     return returnJSON
 
 @app.get('/SSCs')
