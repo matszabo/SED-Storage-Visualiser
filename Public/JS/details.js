@@ -224,7 +224,7 @@ function removeMetadata(mdIndex){
     }
 }
 
-function saveToStore(metadata, mdIndex){
+function saveToStore(metadata){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("metadata", "readwrite");
         const store = transaction.objectStore("metadata");
@@ -232,17 +232,14 @@ function saveToStore(metadata, mdIndex){
         const request = store.openCursor(devInfo["index"]);
         request.onsuccess = (event) => {
             let cursor = event.target.result;
-            if(cursor){
+            if(cursor) {
                 let entries = cursor.value;
-                if(mdIndex in entries){
-                    console.log(`Rewriting metadata for ${mdIndex}`);
-                }
-                entries[mdIndex] = metadata;
+                entries = metadata;
                 cursor.update(entries);
                 resolve()
             }
             else{
-                let addReq = store.add({[mdIndex] : metadata}, devInfo["index"]);
+                let addReq = store.add(metadata, devInfo["index"]);
                 addReq.onsuccess = () =>{
                     console.log(`Added metadata with index ${addReq.result} successfully`);
                     resolve();
@@ -254,44 +251,49 @@ function saveToStore(metadata, mdIndex){
             }
         }
         request.onerror = (reason) => {
-            console.error(`Failed to store metadata in saveToStore() for device d${devInfo["index"]}\n${reason}`);
+            console.error(`Failed to store metadata in for device d${devInfo["index"]}\n${reason}`);
             reject();
         }
     });
 }
 
 function printMetadata(){
-    let mdHTML = document.getElementById("metadataDiv")
-    mdHTML.innerHTML = "";
-    const transaction = db.transaction("metadata", "readwrite");
-    const store = transaction.objectStore("metadata");
+    return new Promise((resolve, reject) => {
+        let mdHTML = document.getElementById("metadataDiv")
+        mdHTML.innerHTML = "";
+        const transaction = db.transaction("metadata", "readwrite");
+        const store = transaction.objectStore("metadata");
 
-    const request = store.openCursor(devInfo["index"]);
-    request.onsuccess = (event) => {
-        let cursor = event.target.result;
-        if(cursor){
-            let entries = cursor.value;
-            Object.entries(entries).forEach(([index, content]) => {
-                let entry = `<div class="mdEntry">`
-                entry += `<div class="mdContent">`
-                if(content["name"]) entry += `<div style="display: flex; flex-direction: row;"><h4>${content["name"]}</h4>`
-                entry += `<button style="display: none;" class="authorized" id="remMDBut" onclick=removeMetadata(${index})>Remove</button></div>`
-                if(content["notes"]) entry += `<p>Notes: ${content["notes"]}</p>`
-                if(content["url"]) entry += `<p>URL: <a href="${content["url"]}">${content["url"]}</a></p>`
-                if(content["filename"]){
-                    entry += `<p>Filename: ${content["filename"]}</p>`;
-                    entry += `<pre>${content["content"]}</pre>`;
+        const request = store.get(devInfo["index"]);
+        request.onsuccess = (event) => {
+            let entries = event.target.result;
+            if(Object.keys(entries).length > 0) {
+                Object.entries(entries).forEach(([index, content]) => {
+                    let entry = `<div class="mdEntry">`
+                    entry += `<div class="mdContent">`
+                    if(content["name"]) entry += `<div style="display: flex; flex-direction: row;"><h4>${content["name"]}</h4>`
+                    entry += `<button style="display: none;" class="authorized" id="remMDBut" onclick=removeMetadata(${index})>Remove</button></div>`
+                    if(content["notes"]) entry += `<p>Notes: ${content["notes"]}</p>`
+                    if(content["url"]) entry += `<p>URL: <a href="//${content["url"]}">${content["url"]}</a></p>`
+                    if(content["filename"]){
+                        entry += `<p>Filename: ${content["filename"]}</p>`;
+                        entry += `<pre>${content["content"]}</pre>`;
+                        
+                    }
                     
-                }
-                
-                entry += `</div></div>`
-                mdHTML.innerHTML += entry
-            });
+                    entry += `</div></div>`
+                    mdHTML.innerHTML += entry
+                    
+                });
+            }
+            resolve()
         }
-    }
-    request.onerror = (reason) => {
-        console.error(`Failed to fetch metadata for device d${devInfo["index"]}\n${reason}`);
-    }
+        request.onerror = (reason) => {
+            console.error(`Failed to fetch metadata for device d${devInfo["index"]}\n${reason}`);
+            reject()
+        }
+    })
+    
 }
 
 function saveMetadata(){
@@ -344,17 +346,13 @@ function fetchMetadata(){
                     resolve();
                 }
                 else{
-                    response.json().then((data) => {
-                        let storePromises = [];
-                        Object.entries(data).forEach(([mdIndex, metadata]) => {
-                            console.log(`Saving ${mdIndex}`)
-                            storePromises.push(saveToStore(metadata, mdIndex)) 
-                        })
-                        Promise.all(storePromises).then(() => {
-                            resolve();
-                        })
+                    response.json().then((metadata) => {
+                        saveToStore(metadata).then(() => {
+                            resolve()
+                        }) 
                         .catch(() => {
                             console.error(`Failed during fetching of metadata`)
+                            reject()
                         })
                     });
                 }
@@ -387,11 +385,12 @@ getSelectedDev().then(() => {
     clearMDFields()
     printDetails();
     printJSON();
-    fetchMetadata().then(() => {
-        printMetadata();
-    })
+    fetchMetadata()
     .finally(() => {
-        checkAuthStatus();
+        printMetadata()
+        .finally(() => {
+            checkAuthStatus();
+        })
     })
 });
 
