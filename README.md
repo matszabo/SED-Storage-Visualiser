@@ -11,8 +11,9 @@ protect authentication of the created admin during logins.
 
 ## Requirements
 - Python 3.10 and higher
+- Python 3 venv
 - nginx or some other proxy
-
+(Tested on Ubuntu 22.04.4 LTS and Debian 12.5.0)
 ## Setup
 There are two part to the setup of this tool. 
 
@@ -25,6 +26,11 @@ added the **nginxExample.conf** file, which is quite easy to modify and based on
 self-signed certificate. For a more complete example, you can go to [Mozilla's website](https://ssl-config.mozilla.org/).
 
 ## Run the project
+**Make sure you have your virtual enviroment activated**
+```bash
+. .venv/bin/activate
+```
+
 You can run the project by either doing
 
 ```bash
