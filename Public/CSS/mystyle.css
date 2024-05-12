@@ -109,6 +109,8 @@ table {
     display: none;
     position: absolute;
     z-index: 1;
+    border: solid 1px black;
+    padding: 2px;
 }
 
 #SSCbuttons > button {

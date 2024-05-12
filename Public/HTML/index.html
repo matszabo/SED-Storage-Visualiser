@@ -88,6 +88,7 @@
         <div id="devsSelection">
             <h2 class="devItem">List of devices</h2>
             <input type="search" id="searchDev" onblur=filterDevs()>
+            <small title="Drive search is tied to selected filters. For example: if Opal 2.02 is selected, then drives with Pyrite won't be selected and you need to tick them explicitly.">&#9432;</small>
             <div id="devList"></div>
             <div name="addDevPrompt" style="display: none;" class="authorized">
                 <h4>Add device:</h4>
@@ -102,6 +103,9 @@
                 <div class="tile">
                     <h2>SSCs</h2>
                     <button id="showSSCButton" onclick="showItem('SSCbuttons')">Select SSC</button>
+                    <span title="Selecting an SSC causes the page to regenerate, resetting the drive selection and filtration. This is done because filtration options can differ between SSCs.">
+                    &#9432;
+                    </span>
                     <div class="dropdownItems" id="SSCbuttons">
                         <input type="file" class="authorized" id="newSSCfile" style="display: none;" onchange=uploadSSC()></input>
                     </div>
@@ -123,7 +127,7 @@
                     </div>
                 </div>
                 <div class="tile">
-                    <h2>Feature sets supported by drives</h2>
+                    <h2>Feature sets supported by drives <small title="This will select drives which reported selected features in Discovery 0">&#9432;</small></h2>
                     <div class="verticalTiles">
                         <div class="inner-tile">
                             <h3>Mandatory</h3>
