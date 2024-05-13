@@ -1,9 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
-""" TODO 
-    - add logging?
-"""
-
 from flask import Flask, request, send_from_directory, render_template, make_response, session
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -41,7 +37,7 @@ def isDrivePresent(serialNumber: str, firmwareVersion: str):
             print(f"Error while reading file {fileName}, skipping")
     return False
 
-def saveJSON(clientJSON):
+def saveDrive(clientJSON):
     count = len(os.listdir("./Public/Outputs"))
     lastFile = sorted(os.listdir("./Public/Outputs"))[count - 1]
     newIndex = int(re.search('(\d+)\.json', lastFile).group(1)) + 1
@@ -140,11 +136,11 @@ def isInt(object):
 @app.after_request
 def setHeaders(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-
     response.headers['Content-Security-Policy'] = "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     return response
+
 # Default routing of files
 @app.get('/')
 def defaultRoute():
@@ -166,11 +162,25 @@ def fetchFilenames():
 @app.get('/SSCs')
 def fetchSSCs():
     savedFiles = os.listdir("./Public/SSCs")
+    savedFiles = sorted(savedFiles)
     returnString = ""
     for file in savedFiles: # ",".join()
         returnString += file + ","
     returnString = returnString[:-1] # remove last ,
     return returnString
+
+@app.delete('/SSCs')
+def deleteSSC():
+    if(isAuthorized()):
+        filename = request.json["SSCfile"]
+        savedFiles = os.listdir("./Public/SSCs")
+        if(filename in savedFiles):
+            os.remove(f"./Public/SSCs/{filename}")
+            return '', 200
+        else:
+            return '', 400
+    else:
+        return '', 401
 
 @app.post('/SSCs')
 def receiveSSC():
@@ -243,7 +253,7 @@ def addDrive():
             try:
                 if(not("Identify" in clientJSON and "Discovery 0" in clientJSON)):
                     return 'Identify and Discovery 0 needed', 400
-                saveJSON(clientJSON)
+                saveDrive(clientJSON)
                 return '', 200
             except Exception as error:
                 print(error)

@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
-/**
- * Treat onupgradeneeded() here as error, because database should already be created by index.js
- */
 
 // Mandatory Discovery fields, indicated values are required minimums, there are no maximums
 const TPerManFields = {
@@ -60,7 +57,7 @@ function getSelectedDev(){
     });
 }
 
-// TODO change to table
+
 function printSessionInfo(){
     let TPerElement = document.getElementById("SessionInfo");
     if("Discovery 1" in devInfo["driveInfo"]){
@@ -97,33 +94,6 @@ function printSessionInfo(){
     }
 }
 
-function checkOpalMinorVer(){
-    // Version conflicts were found
-    if(devInfo["SSCCompl"]["OpalMinorVerConflicts"].length > 0){
-        let SSCComplHTML = document.getElementById("SSCCompl");
-        let output = "";
-        devInfo["SSCCompl"]["OpalMinorVerConflicts"].forEach((clue, index) => {
-            switch (clue) {
-                case 0:
-                    output += "<p>Interface control template found (.00 only feature)</p>";
-                    break;
-                case 1:
-                    output += "<p>PSID authority found (>= .01 feature)</p>";
-                    break;
-                case 2:
-                    output += "<p>Block SID Authentication feature found (>= .02 feature)</p>";
-                    if(devInfo["SSCCompl"]["OpalMinorVerConflicts"].indexOf(1) == -1){
-                        output += "<p>PSID authority missing (>= .01 feature)</p>";
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-        SSCComplHTML.insertAdjacentHTML("afterend", `<h3>Opal minor version mismatches:</h3>${output}`);
-    }
-}
-
 function printDataRemMech(){
     if(devInfo["dataRemMechs"].length > 0) {
         document.getElementById("dataRemContainer").style.display = "block"
@@ -142,13 +112,10 @@ function printDetails(){
         identification.innerHTML += `<p><b>${key}</b>: ${devInfo["driveInfo"]["Identify"][key]}</p>`
     }
     printSessionInfo();
-    if(("Opal SSC V2.00 Feature" in devInfo["driveInfo"]["Discovery 0"])){
-        checkOpalMinorVer();
-    }
     printDataRemMech();
 }
 
-function printJSON(){
+function printDriveJSON(){
     let outputInfo = devInfo["driveInfo"];
     delete outputInfo["Discovery 0"]["PSID feature"];
     // This is done here again, because pre-formatting in index.js didn't work
@@ -384,7 +351,7 @@ function clearMDFields() {
 getSelectedDev().then(() => {
     clearMDFields()
     printDetails();
-    printJSON();
+    printDriveJSON();
     fetchMetadata()
     .finally(() => {
         printMetadata()

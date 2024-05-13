@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
 function checkToken(){
     return new Promise((resolve, reject) => {
         fetch(`/token`, {method : "POST"})

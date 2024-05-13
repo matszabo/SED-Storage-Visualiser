@@ -219,6 +219,9 @@ body{
     border: 1px solid black;
 }
 
+.SSCBut {
+    min-width: 80px;
+}
 
 a:visited{
     text-decoration: none;
@@ -240,6 +243,7 @@ a:hover{
 
 .deselectedButton{
     border: 1px solid black;
+    border-radius: 4px;
 }
 
 .tiles{

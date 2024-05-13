@@ -13,6 +13,9 @@ var filtrationCriteria = {
     supportedFsets : []
 }
 
+/* a wrapper around database call for function filterBySSCandFsets()
+ * does the actual check for feature sets and SSC
+ */
 function filterPromise(index) {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("drives", "readonly");
@@ -157,10 +160,6 @@ function setLockingVersion(device){
     }    
 }
 
-function filterDevs(){
-    filterByCriteria()
-}
-
 function checkPSIDpresence(device){
     let driveCell = document.querySelector(`[id="PSID featurePresent"] .d${device["index"]}`);
     if("Discovery 2" in device["driveInfo"]){
@@ -196,7 +195,7 @@ function setOpalMinorVer(device) {
  * control template (00) by checking for its UID 0x0000020400000007 have to add PSID check for 01
  * by checking UID 000000090001ff01
  */
-function checkMinorVersions(device){
+function checkOpal2MinorVer(device){
     let versionHTML = document.querySelector(`[id="Opal SSC V2 FeatureMinor Version"] .d${device["index"]}`);
     let cluesDetected = [];
     let textHint = [];
@@ -339,7 +338,7 @@ function filterBySupportedSSC(checkbox){
     filterByCriteria()
 }
 
-function populateDevList(){
+function populateFilteringSection(){
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("drives", "readonly");
         const store = transaction.objectStore("drives");
@@ -401,6 +400,7 @@ function populateDevList(){
     });
 }
 
+// filling feature set atrribute value in mandatory and optional tables
 function setFsetAttrValue(device, fsetName, attrName, requiredValue){
     let devValue;
     let HTMLitem = document.querySelector(`[id="${fsetName}${attrName}"] .d${device["index"]}`);
@@ -448,7 +448,6 @@ function setFsetAttrValue(device, fsetName, attrName, requiredValue){
 function populateTbody(device, featureSet){
     let requiredVal;
     let attributes;
-    // Print feature set name
     for(const fsetName in featureSet){
         attributes = featureSet[fsetName];
         // Prepare rows for values from Feature sets
@@ -510,7 +509,6 @@ function renderCBoxes(){
  * Even failures lead to resolution because we don't want a single failure to stop everything
  * the failure is written into console so that it's noticed by the dev
  * 
- * TODO: Describe schema of db 
  */
 function storeDrive(drive, indexNum){
     return new Promise((resolve, reject) => {
@@ -552,6 +550,7 @@ function deleteMissingDrives(serverIndexes, storedIndexes){
     return removalPromises
 }
 
+// returns drives that need to be fetched from server (based on modification date)
 function getDrivesForUpdate(filelist) {
     // deep copy of object: https://developer.mozilla.org/en-US/docs/Glossary/Deep_copy
     let returnList = JSON.parse(JSON.stringify(filelist))
@@ -580,7 +579,7 @@ function getDrivesForUpdate(filelist) {
             }
         })
         request.onerror = ((reason) => {
-            alert(reason)
+            console.error(reason)
             reject(returnList)
         })
     })
@@ -686,11 +685,11 @@ function hideDrive(index){
 
 async function checkDevCompliance(device){
     device["SSCCompl"]["complBreaches"] = [];
-    //if(!(device["devInfo"]))
     if((!Object.keys(device["driveInfo"]["Discovery 0"]).some(str => str.includes(SSC)))){
         hideDrive(device["index"]);
     }
 
+    // pre-table-population checks
     switch (String(selectedSSC)) {
         case "Opal 2.02":
         case "Opal 2.01":
@@ -714,7 +713,7 @@ async function checkDevCompliance(device){
         case "Opal 2.02":
         case "Opal 2.01":
         case "Opal 2.00":
-            checkMinorVersions(device);
+            checkOpal2MinorVer(device);
         case "Pyrite 2.01":
             break;
         default:
@@ -751,11 +750,38 @@ function populateTables(){
 
 } 
 
+function removeSSC(fileName) {
+    let confirmation = confirm(`Are you sure you want to remove ${fileName}?`)
+    if(confirmation) {
+        fetch(
+            `/SSCs`,
+            {
+                method : "DELETE", 
+                headers: {"Content-Type": "application/json"},
+                body : JSON.stringify({"SSCfile" : fileName})
+        })
+        .then((response) => {
+            if(!response.ok) {
+                alert("Failed to remove SSC")
+            }
+            else {
+                window.location.reload()
+            }
+        })
+        
+    }
+}
+
+// regeneration of filters and tables based on SSC change
 async function regenerateSSC(SSCname){
-    let SSCbuttonsHTML = document.querySelectorAll(`[id="SSCbuttons"] button`);
-    SSCbuttonsHTML.forEach((buttonHTML) => {
-        buttonHTML.classList.value = "deselectedButton";
-    })
+    let SSCbuttonsHTML = document.getElementsByClassName("SSCBut");
+    for(let buttonHTML of SSCbuttonsHTML) {
+        buttonHTML.classList.add("deselectedButton")
+        if(buttonHTML.classList.contains("selectedButton")) {
+            buttonHTML.classList.remove("selectedButton")
+        }
+    }
+
     document.getElementById("searchDev").value = ""
     let selectedButton = document.querySelector(`[id="${SSCname}"]`);
     selectedButton.classList.add("selectedButton");
@@ -767,7 +793,7 @@ async function regenerateSSC(SSCname){
     dis0ManFsets = SSCjson["mandatory"];
     dis0optFsets = SSCjson["optional"];
 
-    await populateDevList();
+    await populateFilteringSection();
 
     renderCBoxes();
 
@@ -794,7 +820,7 @@ function addDevice(){
             }
             ).then((response) =>{
                 if(!response.ok){
-                    console.error(`Failed to save new drive`)
+                    alert(`Failed to save new drive`)
                 }
                 else {
                     if(response.status == 202) {
@@ -880,7 +906,7 @@ async function fetchDevices(){
             SSCjson = JSON.parse(SSCstring);
             localStorage.setItem(SSCfilenames[i], SSCstring);
             // the filename is used here because using the SSC name was proving troublesome due to unexpected behaviour of the string
-            document.getElementById("SSCbuttons").innerHTML += `<button onclick="regenerateSSC('${SSCfilenames[i]}')" id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button>`;
+            document.getElementById("SSCbuttons").innerHTML += `<div><button class="SSCBut" onclick="regenerateSSC('${SSCfilenames[i]}')" id="${SSCfilenames[i]}">${SSCjson["SSC name"]}</button><button style="display: none;" class="authorized" onclick="removeSSC('${SSCfilenames[i]}')">X</button></div>`;
         }
     }
     SSCjson = JSON.parse(localStorage.getItem(SSCfilenames[0]));
@@ -893,7 +919,7 @@ async function fetchDevices(){
     selectedButton.classList.add("selectedButton");
 
     await prepareDrives(filenames);
-    await populateDevList();
+    await populateFilteringSection();
     renderCBoxes();
 
     await generateTbody("manFeatures", dis0ManFsets);
@@ -903,6 +929,7 @@ async function fetchDevices(){
     checkAuthStatus()
 }
 
+// clear object stores and reload page to have them filled again by data from server
 function refetchhDB() {
     let confirmation = confirm("Are you sure you want to re-fetch all drives from the server?\nThis won't affect the server data, but may take some time to complete")
 
